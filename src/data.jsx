@@ -1,15 +1,15 @@
 // ============================================================
-// Datos: marcas, productos, drops
+// Datos — F50 Tunit como lanzamiento principal, Hora Dorada secundario
 // ============================================================
 
 const BRANDS = [
   {
     id: 'adidas',
     name: 'adidas',
-    tagline: 'Signature series',
-    count: 14,
-    accent: '#c89853',
-    models: ['F50', 'Predator', 'Copa Pure', 'X Crazyfast']
+    tagline: 'F50 Tunit · Predator · Copa',
+    count: 16,
+    accent: '#ccff33',
+    models: ['F50 Tunit', 'F50 Hora Dorada', 'Predator', 'Copa Pure']
   },
   {
     id: 'nike',
@@ -41,16 +41,28 @@ const ALL_SIZES = ['39', '40', '41', '42', '43', '44', '45'];
 
 const PRODUCTS = [
   {
+    id: 'f50-tunit',
+    name: 'F50 Tunit Archive',
+    brand: 'adidas',
+    line: 'F50 Tunit · Reedición',
+    price: 529990,
+    badge: 'Nuevo Drop',
+    featured: true,
+    colorway: 'Solar Yellow / Electric Blue',
+    sizes: ['40', '41', '42', '43', '44'],
+    img: 'assets/tunit-single.jpg',
+    imgFit: 'cover'
+  },
+  {
     id: 'f50-hora-dorada',
     name: 'F50 Hora Dorada Elite',
     brand: 'adidas',
     line: 'Signature Messi',
     price: 489990,
     badge: 'Edición Limitada',
-    featured: true,
     colorway: 'Solar Gold / Wonder Clay',
     sizes: ['40', '41', '42', '43', '44'],
-    img: 'assets/botin-dorado-rock.jpg',
+    img: 'assets/hora-dorada-boot.jpg',
     imgFit: 'cover'
   },
   {
@@ -155,25 +167,12 @@ const PRODUCTS = [
     colorway: 'Bright Lapis / Black',
     sizes: ['41', '42', '43', '44'],
     imgLabel: 'NB TEKELA'
-  },
-  {
-    id: 'king-ultimate',
-    name: 'King Ultimate FG',
-    brand: 'puma',
-    line: 'King',
-    price: 299990,
-    badge: 'Clásico',
-    colorway: 'Black / Gold Heritage',
-    sizes: ['40', '41', '42', '43'],
-    imgLabel: 'PUMA KING'
   }
 ];
 
-// Próximo lanzamiento (para countdown)
 const NEXT_DROP = {
   name: 'Nike Mercurial Superfly 10 — "Air Max"',
   brand: 'Nike',
-  // 7 días desde ahora para simulación
   dateISO: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000 + 3 * 60 * 60 * 1000).toISOString(),
   description: 'El nuevo capítulo del Mercurial llega con espuma Air Max en la mediasuela y una silueta completamente rediseñada. 150 unidades en Argentina.',
   units: 150,
@@ -182,36 +181,36 @@ const NEXT_DROP = {
 
 const PAST_DROPS = [
   {
-    id: 'drop-001',
-    title: 'F50 Hora Dorada',
+    id: 'drop-tunit',
+    title: 'F50 Tunit Archive',
     brand: 'adidas',
-    subtitle: 'Signature Messi · FW26',
-    date: '18 ABR 2026',
+    subtitle: 'Reedición 2026',
+    date: '23 ABR 2026',
     status: 'DISPONIBLE',
-    img: 'assets/hero-messi-standing.jpg'
+    img: 'assets/tunit-single.jpg'
   },
   {
-    id: 'drop-002',
+    id: 'drop-hora-dorada',
+    title: 'F50 Hora Dorada',
+    brand: 'adidas',
+    subtitle: 'Signature Messi',
+    date: '18 ABR 2026',
+    status: 'POCAS UNIDADES',
+    img: 'assets/hora-dorada-boot.jpg'
+  },
+  {
+    id: 'drop-blueprint',
     title: 'Blueprint Pack',
     brand: 'Nike',
     subtitle: 'Mercurial · Phantom · Tiempo',
     date: '02 ABR 2026',
     status: 'AGOTADO',
     imgLabel: 'NIKE BLUEPRINT'
-  },
-  {
-    id: 'drop-003',
-    title: 'Eclipse Pack',
-    brand: 'Puma',
-    subtitle: 'Future · Ultra',
-    date: '20 MAR 2026',
-    status: 'POCAS UNIDADES',
-    imgLabel: 'PUMA ECLIPSE'
   }
 ];
 
 const TESTIMONIALS = [
-  { name: 'Mateo S.', role: 'Club Atlético Belgrano', text: 'Llegaron antes de tiempo y en caja original. La F50 Hora Dorada es otro nivel.' },
+  { name: 'Mateo S.', role: 'Club Atlético Belgrano', text: 'Llegaron antes de tiempo y en caja original. El F50 Tunit es otro nivel — el amarillo se ve aún más vivo en vivo.' },
   { name: 'Nicolás R.', role: 'Liga Cordobesa', text: 'Es la tercera vez que compro. El asesoramiento por talle es clave.' },
   { name: 'Franco M.', role: 'Futsal Profesional', text: 'Tengo los Phantom que acá en Córdoba no conseguís en ningún otro lado.' }
 ];

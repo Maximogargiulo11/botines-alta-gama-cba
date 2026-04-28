@@ -3,7 +3,7 @@
 // ============================================================
 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-  "accent": "#c89853",
+  "accent": "#ccff33",
   "display": "'Playfair Display', serif",
   "heroLayout": "split",
   "columns": 4,
@@ -12,11 +12,11 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
 
 const THEMES = {
   dark: {
-    '--bg': '#0a0a0a',
-    '--bg-2': '#131110',
-    '--bg-3': '#1c1916',
+    '--bg': '#050d18',
+    '--bg-2': '#0a1626',
+    '--bg-3': '#102238',
     '--text': '#f5f1ea',
-    '--cream': '#efe6d6',
+    '--cream': '#eaf4ff',
   },
   sepia: {
     '--bg': '#1a1410',
@@ -128,6 +128,8 @@ const App = () => {
         />
 
         <TrustStrip />
+
+        <SecondaryLaunch onViewProduct={(id) => setProductOpen(id)} />
 
         <DropsSection onNotify={() => setNotifyOpen(true)} />
 

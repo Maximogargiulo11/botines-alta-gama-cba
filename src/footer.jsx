@@ -7,8 +7,8 @@ const Footer = () => {
   return (
     <>
       <Marquee items={[
-        'F50 HORA DORADA DISPONIBLE',
-        'MERCURIAL SUPERFLY 10 — PRÓXIMO DROP',
+        'F50 TUNIT ARCHIVE — NUEVO DROP',
+        'HORA DORADA · SIGNATURE MESSI · 120 UNIDADES',
         'ENVÍOS A TODO EL PAÍS',
         '3 CUOTAS SIN INTERÉS',
         'AUTENTICIDAD GARANTIZADA',

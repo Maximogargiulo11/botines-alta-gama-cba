@@ -260,7 +260,7 @@ const TrustStrip = () => {
         gap: isMobile ? 20 : 40
       }}>
         {[
-          { icon: 'shield', title: '100% originales', sub: 'Certificado de autenticidad' },
+          { icon: 'shield', title: '', sub: 'Certificado de autenticidad' },
           { icon: 'truck', title: 'Envío en 48h', sub: 'A todo el país' },
           { icon: 'check', title: '3 cuotas s/i', sub: 'Todas las tarjetas' },
           { icon: 'spark', title: 'Asesoría', sub: 'WhatsApp directo' }

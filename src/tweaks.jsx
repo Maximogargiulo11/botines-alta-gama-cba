@@ -22,10 +22,10 @@ const TweaksPanel = ({ tweaks, setTweaks, onClose }) => {
         <label>Color de acento</label>
         <div className="tweak-swatches">
           {[
+            { v: '#ccff33', label: 'Volt' },
             { v: '#c89853', label: 'Dorado' },
             { v: '#d4d4d4', label: 'Platino' },
             { v: '#ff3b30', label: 'Rojo' },
-            { v: '#39ff14', label: 'Verde flúor' },
             { v: '#7aa2ff', label: 'Cyan' },
           ].map(c => (
             <button key={c.v}

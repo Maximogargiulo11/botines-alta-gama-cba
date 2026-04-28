@@ -10,8 +10,10 @@ const ProductDetail = ({ productId, onClose, onAddToCart }) => {
   if (!p) return null;
 
   const brand = BRANDS.find(b => b.id === p.brand);
-  const gallery = p.id === 'f50-hora-dorada'
-    ? ['assets/botin-dorado-rock.jpg', 'assets/hero-messi-standing.jpg', 'assets/botin-suela.jpg', 'assets/messi-sitting-rock.jpg']
+  const gallery = p.id === 'f50-tunit'
+    ? ['assets/tunit-single.jpg', 'assets/tunit-hero-main.jpg', 'assets/tunit-sole.jpg', 'assets/tunit-closeup.jpg']
+    : p.id === 'f50-hora-dorada'
+    ? ['assets/hora-dorada-boot.jpg', 'assets/hora-dorada-messi-standing.jpg', 'assets/hora-dorada-sole.jpg', 'assets/hora-dorada-closeup.jpg']
     : [null, null, null];
 
   const add = () => {
