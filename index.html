@@ -3,26 +3,28 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Botines Alta Gama CBA — Selección Curada</title>
+<title>Botines Alta Gama CBA — F50 Tunit</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;0,6..96,800;0,6..96,900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;0,6..96,800;0,6..96,900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
   :root {
-    --bg: #0a0a0a;
-    --bg-2: #131110;
-    --bg-3: #1c1916;
-    --line: rgba(255,255,255,0.08);
-    --line-strong: rgba(255,255,255,0.16);
-    --text: #f5f1ea;
-    --text-dim: rgba(245,241,234,0.62);
-    --text-muted: rgba(245,241,234,0.42);
-    --accent: #c89853;
-    --accent-bright: #e3b366;
-    --accent-deep: #8a6a3a;
-    --cream: #efe6d6;
-    --rust: #6b3e24;
+    /* Paleta F50 TUNIT — verde flúor + azul eléctrico */
+    --bg: #050d18;
+    --bg-2: #0a1624;
+    --bg-3: #111f32;
+    --line: rgba(204,255,51,0.1);
+    --line-strong: rgba(204,255,51,0.22);
+    --text: #f3f7ff;
+    --text-dim: rgba(243,247,255,0.62);
+    --text-muted: rgba(243,247,255,0.42);
+    --accent: #ccff33;        /* volt / verde flúor */
+    --accent-bright: #d9ff5c;
+    --accent-deep: #8fbf24;
+    --electric: #1e6cff;      /* azul eléctrico */
+    --electric-deep: #0f3a8a;
+    --cream: #eaf4ff;
     --display: 'Playfair Display', serif;
     --body: 'Inter', sans-serif;
     --mono: 'JetBrains Mono', monospace;
@@ -35,11 +37,11 @@
   button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
   img { display: block; max-width: 100%; }
 
-  ::selection { background: var(--accent); color: #000; }
+  ::selection { background: var(--accent); color: #050d18; }
 
   ::-webkit-scrollbar { width: 10px; height: 10px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: rgba(200,152,83,0.3); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb { background: rgba(204,255,51,0.3); border-radius: 10px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
   .__boot {
@@ -69,16 +71,6 @@
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   .fade-in { animation: fadeIn 0.5s ease-out both; }
 
-  @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-  }
-  .shimmer {
-    background: linear-gradient(90deg, transparent 0%, rgba(200,152,83,0.15) 50%, transparent 100%);
-    background-size: 200% 100%;
-    animation: shimmer 3s linear infinite;
-  }
-
   .h-scroll::-webkit-scrollbar { display: none; }
   .h-scroll { scrollbar-width: none; }
 
@@ -94,11 +86,7 @@
     font-weight: 500;
   }
 
-  .divider {
-    height: 1px;
-    background: var(--line);
-    width: 100%;
-  }
+  .divider { height: 1px; background: var(--line); width: 100%; }
 
   .btn {
     display: inline-flex; align-items: center; justify-content: center;
@@ -113,11 +101,12 @@
   }
   .btn-primary {
     background: var(--accent);
-    color: #0a0a0a;
+    color: #050d18;
   }
   .btn-primary:hover {
     background: var(--accent-bright);
     transform: translateY(-1px);
+    box-shadow: 0 10px 30px rgba(204,255,51,0.25);
   }
   .btn-ghost {
     background: transparent;
@@ -128,13 +117,21 @@
     border-color: var(--accent);
     color: var(--accent);
   }
+  .btn-electric {
+    background: var(--electric);
+    color: var(--text);
+  }
+  .btn-electric:hover {
+    background: #3a82ff;
+    transform: translateY(-1px);
+  }
 
   .img-placeholder {
     background-color: var(--bg-3);
     background-image: repeating-linear-gradient(
       45deg,
-      rgba(200,152,83,0.05) 0,
-      rgba(200,152,83,0.05) 1px,
+      rgba(204,255,51,0.05) 0,
+      rgba(204,255,51,0.05) 1px,
       transparent 1px,
       transparent 12px
     );
@@ -153,12 +150,13 @@
     text-transform: uppercase;
   }
 
+  /* Tweaks panel */
   .tweaks-panel {
     position: fixed;
     bottom: 24px;
     right: 24px;
     width: 320px;
-    background: rgba(15,13,11,0.95);
+    background: rgba(10,22,36,0.95);
     backdrop-filter: blur(20px);
     border: 1px solid var(--line-strong);
     padding: 24px;
@@ -179,9 +177,7 @@
     padding-bottom: 12px;
     border-bottom: 1px solid var(--line);
   }
-  .tweak-row {
-    margin-bottom: 18px;
-  }
+  .tweak-row { margin-bottom: 18px; }
   .tweak-row label {
     display: block;
     font-size: 10px;
@@ -219,7 +215,21 @@
   .tweak-options button:last-child { border-right: none; }
   .tweak-options button.active {
     background: var(--accent);
-    color: #000;
+    color: #050d18;
+  }
+
+  /* Glow effect */
+  @keyframes voltPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+  .volt-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent);
+    animation: voltPulse 2s ease-in-out infinite;
   }
 </style>
 </head>
@@ -242,6 +252,7 @@
 <script type="text/babel" src="src/overlays.jsx"></script>
 <script type="text/babel" src="src/footer.jsx"></script>
 <script type="text/babel" src="src/tweaks.jsx"></script>
+<script type="text/babel" src="src/secondary.jsx"></script>
 <script type="text/babel" src="src/app.jsx"></script>
 
 </body>
