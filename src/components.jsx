@@ -128,7 +128,17 @@ const Marquee = ({ items }) => {
   );
 };
 
+const useMobile = () => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+  return isMobile;
+};
+
 Object.assign(window, {
   fmtPrice, ImgPlaceholder, ProductImage, SectionHeader, Badge, Marquee,
-  useState, useEffect, useRef, useMemo, useCallback
+  useState, useEffect, useRef, useMemo, useCallback, useMobile
 });

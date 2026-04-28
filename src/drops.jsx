@@ -24,70 +24,77 @@ const pad = (n) => n.toString().padStart(2, '0');
 
 const DropsSection = ({ onNotify }) => {
   const t = useCountdown(NEXT_DROP.dateISO);
+  const isMobile = useMobile();
 
   return (
     <section id="drops" data-screen-label="02 Drops" style={{
       position: 'relative',
-      padding: '120px 0',
+      padding: isMobile ? '72px 0' : '120px 0',
       background: 'var(--bg-2)',
       borderTop: '1px solid var(--line)',
       borderBottom: '1px solid var(--line)',
       overflow: 'hidden'
     }}>
-      {/* Fondo con textura radial */}
       <div style={{
         position: 'absolute', inset: 0, pointerEvents: 'none',
         background: 'radial-gradient(ellipse at 80% 20%, rgba(200,152,83,0.08), transparent 60%)'
       }} />
 
       <div className="container" style={{ position: 'relative' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: 80, alignItems: 'center', marginBottom: 100 }}>
-          {/* Izq — Countdown */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : '1.1fr 0.9fr',
+          gap: isMobile ? 40 : 80,
+          alignItems: 'center',
+          marginBottom: isMobile ? 60 : 100
+        }}>
+          {/* Countdown */}
           <div>
-            <div className="eyebrow" style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
+            <div className="eyebrow" style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: isMobile ? 16 : 24 }}>
               <span style={{ width: 28, height: 1, background: 'var(--accent)' }} />
               Próximo drop
             </div>
             <h2 style={{
               fontFamily: 'var(--display)',
-              fontSize: 'clamp(44px, 6vw, 80px)',
+              fontSize: isMobile ? 'clamp(40px, 12vw, 60px)' : 'clamp(44px, 6vw, 80px)',
               lineHeight: 0.98,
               letterSpacing: '-0.025em',
               color: 'var(--cream)',
-              marginBottom: 24,
+              marginBottom: isMobile ? 16 : 24,
               fontStyle: 'italic'
             }}>
               Mercurial<br />
               <span style={{ color: 'var(--accent)', fontStyle: 'normal' }}>Superfly 10</span>
             </h2>
-            <p style={{ fontSize: 16, color: 'var(--text-dim)', lineHeight: 1.6, maxWidth: 480, marginBottom: 32, textWrap: 'pretty' }}>
-              {NEXT_DROP.description}
-            </p>
+            {!isMobile && (
+              <p style={{ fontSize: 16, color: 'var(--text-dim)', lineHeight: 1.6, maxWidth: 480, marginBottom: 32, textWrap: 'pretty' }}>
+                {NEXT_DROP.description}
+              </p>
+            )}
 
-            {/* Countdown big */}
+            {/* Countdown */}
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(4, 1fr)',
-              gap: 16,
-              marginBottom: 40,
-              maxWidth: 520
+              gap: isMobile ? 8 : 16,
+              marginBottom: isMobile ? 28 : 40,
+              maxWidth: isMobile ? '100%' : 520
             }}>
               {[
                 { label: 'Días', val: pad(t.days) },
-                { label: 'Horas', val: pad(t.hours) },
+                { label: 'Hs', val: pad(t.hours) },
                 { label: 'Min', val: pad(t.mins) },
                 { label: 'Seg', val: pad(t.secs) }
               ].map((c, i) => (
                 <div key={i} style={{
                   border: '1px solid var(--line)',
                   background: 'rgba(10,10,10,0.5)',
-                  padding: '20px 16px',
+                  padding: isMobile ? '14px 8px' : '20px 16px',
                   textAlign: 'center',
-                  position: 'relative'
                 }}>
                   <div style={{
                     fontFamily: 'var(--display)',
-                    fontSize: 'clamp(40px, 5vw, 56px)',
+                    fontSize: isMobile ? 'clamp(32px, 8vw, 44px)' : 'clamp(40px, 5vw, 56px)',
                     lineHeight: 1,
                     color: 'var(--accent-bright)',
                     fontVariantNumeric: 'tabular-nums'
@@ -97,10 +104,10 @@ const DropsSection = ({ onNotify }) => {
                   <div style={{
                     fontFamily: 'var(--mono)',
                     fontSize: 9,
-                    letterSpacing: '0.3em',
+                    letterSpacing: '0.25em',
                     color: 'var(--text-muted)',
                     textTransform: 'uppercase',
-                    marginTop: 8
+                    marginTop: 6
                   }}>
                     {c.label}
                   </div>
@@ -109,58 +116,60 @@ const DropsSection = ({ onNotify }) => {
             </div>
 
             <div style={{ display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap' }}>
-              <button className="btn btn-primary" onClick={onNotify}>
-                Avisame del lanzamiento <Icon name="bolt" size={14} />
+              <button className="btn btn-primary" onClick={onNotify}
+                style={{ flex: isMobile ? 1 : 'none' }}>
+                Avisame <Icon name="bolt" size={14} />
               </button>
-              <div style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--text-muted)', letterSpacing: '0.15em' }}>
+              <div style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--text-muted)', letterSpacing: '0.12em' }}>
                 {NEXT_DROP.units} unidades · {fmtPrice(NEXT_DROP.price)}
               </div>
             </div>
           </div>
 
-          {/* Der — preview visual */}
-          <div style={{ position: 'relative', aspectRatio: '4/5', maxWidth: 480, justifySelf: 'end', width: '100%' }}>
-            <div style={{
-              position: 'absolute', inset: 0,
-              background: 'var(--bg-3)',
-              backgroundImage: 'repeating-linear-gradient(45deg, rgba(200,152,83,0.08) 0, rgba(200,152,83,0.08) 1px, transparent 1px, transparent 12px)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              border: '1px solid var(--line)'
-            }}>
-              <div style={{ textAlign: 'center', padding: 40 }}>
-                <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--accent)', letterSpacing: '0.3em', marginBottom: 16 }}>
-                  TEASER · EN 7 DÍAS
-                </div>
-                <div style={{ fontFamily: 'var(--display)', fontSize: 32, color: 'var(--text-dim)', fontStyle: 'italic', lineHeight: 1.2, marginBottom: 20 }}>
-                  La silueta se<br/>revela pronto.
-                </div>
-                <div style={{
-                  width: '100%', aspectRatio: '1/1', maxWidth: 280, margin: '0 auto',
-                  background: 'rgba(10,10,10,0.6)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  border: '1px solid rgba(200,152,83,0.2)'
-                }}>
-                  <div style={{ fontSize: 64, color: 'var(--accent)', opacity: 0.6, fontFamily: 'var(--display)', fontStyle: 'italic' }}>?</div>
+          {/* Preview visual — solo desktop */}
+          {!isMobile && (
+            <div style={{ position: 'relative', aspectRatio: '4/5', maxWidth: 480, justifySelf: 'end', width: '100%' }}>
+              <div style={{
+                position: 'absolute', inset: 0,
+                background: 'var(--bg-3)',
+                backgroundImage: 'repeating-linear-gradient(45deg, rgba(200,152,83,0.08) 0, rgba(200,152,83,0.08) 1px, transparent 1px, transparent 12px)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                border: '1px solid var(--line)'
+              }}>
+                <div style={{ textAlign: 'center', padding: 40 }}>
+                  <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--accent)', letterSpacing: '0.3em', marginBottom: 16 }}>
+                    TEASER · EN 7 DÍAS
+                  </div>
+                  <div style={{ fontFamily: 'var(--display)', fontSize: 32, color: 'var(--text-dim)', fontStyle: 'italic', lineHeight: 1.2, marginBottom: 20 }}>
+                    La silueta se<br/>revela pronto.
+                  </div>
+                  <div style={{
+                    width: '100%', aspectRatio: '1/1', maxWidth: 280, margin: '0 auto',
+                    background: 'rgba(10,10,10,0.6)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    border: '1px solid rgba(200,152,83,0.2)'
+                  }}>
+                    <div style={{ fontSize: 64, color: 'var(--accent)', opacity: 0.6, fontFamily: 'var(--display)', fontStyle: 'italic' }}>?</div>
+                  </div>
                 </div>
               </div>
+              <div style={{
+                position: 'absolute', top: -1, right: -1, padding: '8px 14px',
+                background: 'var(--accent)', color: '#000',
+                fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.2em'
+              }}>
+                28 / 04 / 2026
+              </div>
             </div>
-            {/* Corner marker */}
-            <div style={{
-              position: 'absolute', top: -1, right: -1, padding: '8px 14px',
-              background: 'var(--accent)', color: '#000',
-              fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.2em'
-            }}>
-              28 / 04 / 2026
-            </div>
-          </div>
+          )}
         </div>
 
         {/* Drops anteriores */}
-        <div style={{ paddingTop: 60, borderTop: '1px solid var(--line)' }}>
+        <div style={{ paddingTop: isMobile ? 40 : 60, borderTop: '1px solid var(--line)' }}>
           <SectionHeader
             eyebrow="Archivo"
             title="Drops recientes"
-            right={
+            right={!isMobile && (
               <button style={{
                 fontFamily: 'var(--mono)', fontSize: 11,
                 color: 'var(--text)', letterSpacing: '0.2em', textTransform: 'uppercase',
@@ -169,11 +178,15 @@ const DropsSection = ({ onNotify }) => {
               }}>
                 Ver todos <Icon name="arrow_right" size={12} />
               </button>
-            }
+            )}
           />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 32 }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+            gap: isMobile ? 28 : 32
+          }}>
             {PAST_DROPS.map((d, i) => (
-              <DropCard key={d.id} drop={d} idx={i} />
+              <DropCard key={d.id} drop={d} idx={i} isMobile={isMobile} />
             ))}
           </div>
         </div>
@@ -182,7 +195,7 @@ const DropsSection = ({ onNotify }) => {
   );
 };
 
-const DropCard = ({ drop, idx }) => {
+const DropCard = ({ drop, idx, isMobile }) => {
   const [hover, setHover] = useState(false);
   return (
     <article
@@ -190,7 +203,11 @@ const DropCard = ({ drop, idx }) => {
       onMouseLeave={() => setHover(false)}
       style={{ cursor: 'pointer' }}
     >
-      <div style={{ position: 'relative', aspectRatio: '4/5', overflow: 'hidden', marginBottom: 20, background: 'var(--bg-3)' }}>
+      <div style={{
+        position: 'relative',
+        aspectRatio: isMobile ? '16/9' : '4/5',
+        overflow: 'hidden', marginBottom: 16, background: 'var(--bg-3)'
+      }}>
         {drop.img ? (
           <img src={drop.img}
             style={{
@@ -199,13 +216,13 @@ const DropCard = ({ drop, idx }) => {
               transition: 'transform 0.6s ease'
             }} />
         ) : (
-          <ImgPlaceholder label={drop.imgLabel} aspect="4/5" />
+          <ImgPlaceholder label={drop.imgLabel} aspect={isMobile ? '16/9' : '4/5'} />
         )}
         <div style={{
-          position: 'absolute', top: 16, left: 16,
-          fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.22em',
+          position: 'absolute', top: 12, left: 12,
+          fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.2em',
           color: drop.status === 'AGOTADO' ? '#ef9b9b' : drop.status === 'POCAS UNIDADES' ? 'var(--accent)' : '#a7e3a7',
-          padding: '6px 10px',
+          padding: '5px 10px',
           background: 'rgba(0,0,0,0.6)',
           backdropFilter: 'blur(8px)',
           border: '1px solid currentColor'
@@ -213,7 +230,7 @@ const DropCard = ({ drop, idx }) => {
           {drop.status}
         </div>
         <div style={{
-          position: 'absolute', bottom: 16, right: 16,
+          position: 'absolute', bottom: 12, right: 12,
           fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--cream)',
           letterSpacing: '0.2em', opacity: 0.8
         }}>
@@ -221,12 +238,12 @@ const DropCard = ({ drop, idx }) => {
         </div>
       </div>
 
-      <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--accent)', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 10 }}>
+      <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--accent)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 8 }}>
         0{idx + 1} · {drop.brand}
       </div>
       <h3 style={{
         fontFamily: 'var(--display)',
-        fontSize: 28, color: 'var(--text)', fontStyle: 'italic', marginBottom: 6,
+        fontSize: isMobile ? 22 : 28, color: 'var(--text)', fontStyle: 'italic', marginBottom: 4,
         lineHeight: 1.15
       }}>
         {drop.title}
