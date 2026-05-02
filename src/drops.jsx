@@ -263,24 +263,15 @@ const DropCard = ({ drop, idx, isMobile }) => {
 const DropsPage = ({ onClose }) => {
   const isMobile = useMobile();
 
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = ''; };
-  }, []);
-
   return (
     <div className="fade-in" style={{
-      position: 'fixed',
-      inset: 0,
+      minHeight: 'calc(100vh - 85px)',
       background: 'var(--bg)',
-      zIndex: 50,
-      overflowY: 'auto',
-      overscrollBehavior: 'contain'
     }}>
-      {/* Sticky header */}
+      {/* Sticky sub-header (below the Nav) */}
       <div style={{
         position: 'sticky',
-        top: 0,
+        top: 85,
         background: 'rgba(0,0,0,0.92)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',

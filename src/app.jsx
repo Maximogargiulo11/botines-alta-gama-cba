@@ -123,28 +123,34 @@ const App = () => {
         onNavTo={navTo}
       />
       <main>
-        <Hero
-          onExplore={() => navTo('catalog')}
-          onViewProduct={(id) => setProductOpen(id)}
-        />
+        {dropsPageOpen ? (
+          <DropsPage onClose={() => { setDropsPageOpen(false); window.scrollTo({ top: 0, behavior: 'instant' }); }} />
+        ) : (
+          <>
+            <Hero
+              onExplore={() => navTo('catalog')}
+              onViewProduct={(id) => setProductOpen(id)}
+            />
 
-        <TrustStrip />
+            <TrustStrip />
 
-        <SecondaryLaunch onViewProduct={(id) => setProductOpen(id)} />
+            <SecondaryLaunch onViewProduct={(id) => setProductOpen(id)} />
 
-        <DropsSection onNotify={() => setNotifyOpen(true)} onViewAll={() => setDropsPageOpen(true)} />
+            <DropsSection onNotify={() => setNotifyOpen(true)} onViewAll={() => { setDropsPageOpen(true); window.scrollTo({ top: 0, behavior: 'instant' }); }} />
 
-        <BrandsGrid onBrand={handleBrand} />
+            <BrandsGrid onBrand={handleBrand} />
 
-        <Catalog
-          onViewProduct={(id) => setProductOpen(id)}
-          brandFilter={brandFilter}
-          setBrandFilter={setBrandFilter}
-        />
+            <Catalog
+              onViewProduct={(id) => setProductOpen(id)}
+              brandFilter={brandFilter}
+              setBrandFilter={setBrandFilter}
+            />
 
-        <AboutSection />
+            <AboutSection />
 
-        <Testimonials />
+            <Testimonials />
+          </>
+        )}
       </main>
       <Footer />
 
@@ -186,9 +192,6 @@ const App = () => {
 
       {tweaksOpen && (
         <TweaksPanel tweaks={tweaks} setTweaks={setTweaks} onClose={() => setTweaksOpen(false)} />
-      )}
-      {dropsPageOpen && (
-        <DropsPage onClose={() => setDropsPageOpen(false)} />
       )}
     </>
   );
