@@ -271,7 +271,7 @@ const DropsPage = ({ onClose }) => {
       {/* Sticky sub-header (below the Nav) */}
       <div style={{
         position: 'sticky',
-        top: 85,
+        top: isMobile ? 76 : 96,
         background: 'rgba(0,0,0,0.92)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
