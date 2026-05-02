@@ -37,6 +37,7 @@ const App = () => {
   const [notifyOpen, setNotifyOpen] = useState(false);
   const [tweaks, setTweaks] = useState(TWEAK_DEFAULTS);
   const [tweaksOpen, setTweaksOpen] = useState(false);
+  const [dropsPageOpen, setDropsPageOpen] = useState(false);
 
   // Tweaks protocol
   useEffect(() => {
@@ -131,7 +132,7 @@ const App = () => {
 
         <SecondaryLaunch onViewProduct={(id) => setProductOpen(id)} />
 
-        <DropsSection onNotify={() => setNotifyOpen(true)} />
+        <DropsSection onNotify={() => setNotifyOpen(true)} onViewAll={() => setDropsPageOpen(true)} />
 
         <BrandsGrid onBrand={handleBrand} />
 
@@ -185,6 +186,9 @@ const App = () => {
 
       {tweaksOpen && (
         <TweaksPanel tweaks={tweaks} setTweaks={setTweaks} onClose={() => setTweaksOpen(false)} />
+      )}
+      {dropsPageOpen && (
+        <DropsPage onClose={() => setDropsPageOpen(false)} />
       )}
     </>
   );

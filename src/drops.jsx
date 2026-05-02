@@ -22,7 +22,7 @@ function computeRemaining(targetISO) {
 
 const pad = (n) => n.toString().padStart(2, '0');
 
-const DropsSection = ({ onNotify }) => {
+const DropsSection = ({ onNotify, onViewAll }) => {
   const t = useCountdown(NEXT_DROP.dateISO);
   const isMobile = useMobile();
 
@@ -170,7 +170,7 @@ const DropsSection = ({ onNotify }) => {
             eyebrow="Archivo"
             title="Drops recientes"
             right={!isMobile && (
-              <button style={{
+              <button onClick={onViewAll} style={{
                 fontFamily: 'var(--mono)', fontSize: 11,
                 color: 'var(--text)', letterSpacing: '0.2em', textTransform: 'uppercase',
                 display: 'flex', alignItems: 'center', gap: 10,
@@ -185,10 +185,17 @@ const DropsSection = ({ onNotify }) => {
             gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
             gap: isMobile ? 28 : 32
           }}>
-            {PAST_DROPS.map((d, i) => (
+            {ALL_DROPS.slice(0, 3).map((d, i) => (
               <DropCard key={d.id} drop={d} idx={i} isMobile={isMobile} />
             ))}
           </div>
+          {isMobile && (
+            <div style={{ textAlign: 'center', marginTop: 32 }}>
+              <button onClick={onViewAll} className="btn btn-ghost" style={{ width: '100%', justifyContent: 'center' }}>
+                Ver todos los drops <Icon name="arrow_right" size={14} />
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </section>
@@ -253,4 +260,86 @@ const DropCard = ({ drop, idx, isMobile }) => {
   );
 };
 
-Object.assign(window, { DropsSection });
+const DropsPage = ({ onClose }) => {
+  const isMobile = useMobile();
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, []);
+
+  return (
+    <div className="fade-in" style={{
+      position: 'fixed',
+      inset: 0,
+      background: 'var(--bg)',
+      zIndex: 50,
+      overflowY: 'auto',
+      overscrollBehavior: 'contain'
+    }}>
+      {/* Sticky header */}
+      <div style={{
+        position: 'sticky',
+        top: 0,
+        background: 'rgba(0,0,0,0.92)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderBottom: '1px solid var(--line)',
+        padding: isMobile ? '16px 20px' : '18px 32px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        zIndex: 10
+      }}>
+        <button
+          onClick={onClose}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 10,
+            fontFamily: 'var(--mono)', fontSize: 11,
+            letterSpacing: '0.2em', textTransform: 'uppercase',
+            color: 'var(--text-dim)'
+          }}
+        >
+          <Icon name="chevron_left" size={16} />
+          Volver
+        </button>
+        <div style={{
+          fontFamily: 'var(--mono)', fontSize: 10,
+          letterSpacing: '0.25em', textTransform: 'uppercase',
+          color: 'var(--text-muted)'
+        }}>
+          {ALL_DROPS.length} drops
+        </div>
+      </div>
+
+      <div className="container" style={{ paddingTop: isMobile ? 48 : 72, paddingBottom: 100 }}>
+        <div style={{ marginBottom: isMobile ? 48 : 72 }}>
+          <div className="eyebrow" style={{ marginBottom: 16 }}>Archivo completo</div>
+          <h1 style={{
+            fontFamily: 'var(--display)',
+            fontSize: isMobile ? 'clamp(48px, 14vw, 72px)' : 'clamp(56px, 7vw, 96px)',
+            lineHeight: 0.95,
+            letterSpacing: '-0.03em',
+            fontStyle: 'italic',
+            color: 'var(--cream)'
+          }}>
+            Todos los<br />
+            <span style={{ fontStyle: 'normal', color: 'var(--accent)' }}>Drops</span>
+          </h1>
+        </div>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+          gap: isMobile ? 40 : 48
+        }}>
+          {ALL_DROPS.map((d, i) => (
+            <DropCard key={d.id} drop={d} idx={i} isMobile={isMobile} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+Object.assign(window, { DropsSection, DropsPage });

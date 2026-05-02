@@ -179,7 +179,16 @@ const NEXT_DROP = {
   price: 549990
 };
 
-const PAST_DROPS = [
+const ALL_DROPS = [
+  {
+    id: 'drop-united',
+    title: 'United Pack',
+    brand: 'Nike',
+    subtitle: 'Capítulo 3',
+    date: '30 ABR 2026',
+    status: 'POCAS UNIDADES',
+    imgLabel: 'NIKE UNITED'
+  },
   {
     id: 'drop-tunit',
     title: 'F50 Tunit Archive',
@@ -206,8 +215,54 @@ const PAST_DROPS = [
     date: '02 ABR 2026',
     status: 'AGOTADO',
     imgLabel: 'NIKE BLUEPRINT'
+  },
+  {
+    id: 'drop-predator-ll',
+    title: 'Predator Elite LL',
+    brand: 'adidas',
+    subtitle: 'Core Black / Solar Red',
+    date: '15 MAR 2026',
+    status: 'AGOTADO',
+    imgLabel: 'ADIDAS PREDATOR'
+  },
+  {
+    id: 'drop-future-eclipse',
+    title: 'Future 7 Ultimate',
+    brand: 'Puma',
+    subtitle: 'Eclipse Pack',
+    date: '01 MAR 2026',
+    status: 'AGOTADO',
+    imgLabel: 'PUMA FUTURE'
+  },
+  {
+    id: 'drop-phantom-haaland',
+    title: 'Phantom GX II Elite',
+    brand: 'Nike',
+    subtitle: 'Erling Haaland Pack',
+    date: '12 FEB 2026',
+    status: 'AGOTADO',
+    imgLabel: 'NIKE PHANTOM'
+  },
+  {
+    id: 'drop-copa-white',
+    title: 'Copa Pure II Elite',
+    brand: 'adidas',
+    subtitle: 'Core White / Lucid Lemon',
+    date: '25 ENE 2026',
+    status: 'AGOTADO',
+    imgLabel: 'ADIDAS COPA'
+  },
+  {
+    id: 'drop-furon-sterling',
+    title: 'Furon V7+ Pro FG',
+    brand: 'New Balance',
+    subtitle: 'Raheem Sterling Edition',
+    date: '05 ENE 2026',
+    status: 'AGOTADO',
+    imgLabel: 'NB FURON'
   }
 ];
+const PAST_DROPS = ALL_DROPS;
 
 const TESTIMONIALS = [
   { name: 'Mateo S.', role: 'Club Atlético Belgrano', text: 'Llegaron antes de tiempo y en caja original. El F50 Tunit es otro nivel — el amarillo se ve aún más vivo en vivo.' },
@@ -216,5 +271,5 @@ const TESTIMONIALS = [
 ];
 
 Object.assign(window, {
-  BRANDS, PRODUCTS, NEXT_DROP, PAST_DROPS, TESTIMONIALS, ALL_SIZES
+  BRANDS, PRODUCTS, NEXT_DROP, ALL_DROPS, PAST_DROPS, TESTIMONIALS, ALL_SIZES
 });
