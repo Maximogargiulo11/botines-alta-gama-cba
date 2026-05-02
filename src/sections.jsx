@@ -9,7 +9,7 @@ const BrandsGrid = ({ onBrand }) => {
       <div className="container">
         <SectionHeader
           eyebrow="Marcas que trabajamos"
-          title={<>Cuatro marcas.<br /><em style={{ fontFamily: 'var(--display)' }}>Una sola curaduría.</em></>}
+          title={<>Cuatro marcas.<br /><em style={{ fontFamily: 'var(--display)' }}>En un solo lugar.</em></>}
           subtitle={isMobile ? null : "Traemos exclusivamente los últimos lanzamientos de las líneas elite. Nada de réplicas, nada de stock viejo."}
           right={!isMobile && (
             <div style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--text-muted)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>

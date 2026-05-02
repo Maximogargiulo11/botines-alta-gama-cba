@@ -109,27 +109,16 @@ const Nav = ({ onOpen, cartCount, activeSection, onNavTo }) => {
 
           {/* Logo centrado */}
           <button onClick={() => handleNav('home')} style={{
-            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, cursor: 'pointer'
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'pointer', background: 'transparent', padding: 0
           }}>
-            <div style={{
-              fontFamily: 'var(--display)',
-              fontSize: isMobile ? 18 : 22,
-              fontWeight: 500,
-              letterSpacing: '0.15em',
-              color: 'var(--text)',
-              lineHeight: 1
-            }}>
-              BOTINES
-            </div>
-            <div style={{
-              fontFamily: 'var(--mono)',
-              fontSize: 9,
-              letterSpacing: '0.42em',
-              color: 'var(--accent)',
-              marginTop: 4
-            }}>
-              ALTA GAMA · CBA
-            </div>
+            <img src="assets/logo-bag.png" alt="Botines Alta Gama"
+              style={{
+                height: isMobile ? 44 : 56,
+                width: 'auto',
+                display: 'block',
+                filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.4))'
+              }} />
           </button>
 
           {/* Acciones derecha */}

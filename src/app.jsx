@@ -3,7 +3,7 @@
 // ============================================================
 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-  "accent": "#ccff33",
+  "accent": "#ffffff",
   "display": "'Playfair Display', serif",
   "heroLayout": "split",
   "columns": 4,
@@ -12,11 +12,11 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
 
 const THEMES = {
   dark: {
-    '--bg': '#050d18',
-    '--bg-2': '#0a1626',
-    '--bg-3': '#102238',
-    '--text': '#f5f1ea',
-    '--cream': '#eaf4ff',
+    '--bg': '#000000',
+    '--bg-2': '#0a0a0a',
+    '--bg-3': '#141414',
+    '--text': '#ffffff',
+    '--cream': '#ffffff',
   },
   sepia: {
     '--bg': '#1a1410',
