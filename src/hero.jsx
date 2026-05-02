@@ -13,11 +13,11 @@ const Hero = ({ onExplore, onViewProduct }) => {
     }}>
       {/* Background image con degradé */}
       <div style={{ position: 'absolute', inset: 0 }}>
-        <img src="assets/tunit-hero-main.jpg" alt="F50 Tunit campaign"
+        <img src="assets/tunit-player-face.jpg" alt="F50 Tunit campaign"
           style={{
             width: '100%', height: '100%',
             objectFit: 'cover',
-            objectPosition: 'center center',
+            objectPosition: 'center top',
             opacity: 0.95
           }} />
         {isMobile ? (
