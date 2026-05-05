@@ -10,6 +10,7 @@ const Icon = ({ name, size = 20, stroke = 1.5, style = {}, ...rest }) => {
     menu: <><path d="M4 7h16" /><path d="M4 12h16" /><path d="M4 17h16" /></>,
     close: <><path d="M6 6l12 12" /><path d="M18 6l-6 12" style={{display:'none'}}/><path d="M6 18 18 6" /></>,
     arrow_right: <><path d="M5 12h14" /><path d="m13 5 7 7-7 7" /></>,
+    arrow_left: <><path d="M19 12H5" /><path d="m11 5-7 7 7 7" /></>,
     arrow_down: <><path d="M12 5v14" /><path d="m5 13 7 7 7-7" /></>,
     arrow_ul: <><path d="M17 17 7 7" /><path d="M7 17V7h10" /></>,
     check: <><path d="m5 12 5 5 10-11" /></>,

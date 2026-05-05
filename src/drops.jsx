@@ -22,7 +22,7 @@ function computeRemaining(targetISO) {
 
 const pad = (n) => n.toString().padStart(2, '0');
 
-const DropsSection = ({ onNotify, onViewAll }) => {
+const DropsSection = ({ onNotify, onViewAll, onOpenDrop }) => {
   const t = useCountdown(NEXT_DROP.dateISO);
   const isMobile = useMobile();
 
@@ -72,7 +72,6 @@ const DropsSection = ({ onNotify, onViewAll }) => {
               </p>
             )}
 
-            {/* Countdown */}
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(4, 1fr)',
@@ -185,8 +184,8 @@ const DropsSection = ({ onNotify, onViewAll }) => {
             gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
             gap: isMobile ? 28 : 32
           }}>
-            {ALL_DROPS.slice(0, 3).map((d, i) => (
-              <DropCard key={d.id} drop={d} idx={i} isMobile={isMobile} />
+            {PAST_DROPS.slice(0, 3).map((d, i) => (
+              <DropCard key={d.id} drop={d} idx={i} isMobile={isMobile} onClick={() => onOpenDrop && onOpenDrop(d.id)} />
             ))}
           </div>
           {isMobile && (
@@ -202,10 +201,11 @@ const DropsSection = ({ onNotify, onViewAll }) => {
   );
 };
 
-const DropCard = ({ drop, idx, isMobile }) => {
+const DropCard = ({ drop, idx, isMobile, onClick }) => {
   const [hover, setHover] = useState(false);
   return (
     <article
+      onClick={onClick}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       style={{ cursor: 'pointer' }}
@@ -260,77 +260,4 @@ const DropCard = ({ drop, idx, isMobile }) => {
   );
 };
 
-const DropsPage = ({ onClose }) => {
-  const isMobile = useMobile();
-
-  return (
-    <div className="fade-in" style={{
-      minHeight: 'calc(100vh - 85px)',
-      background: 'var(--bg)',
-    }}>
-      {/* Sticky sub-header (below the Nav) */}
-      <div style={{
-        position: 'sticky',
-        top: isMobile ? 76 : 96,
-        background: 'rgba(0,0,0,0.92)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        borderBottom: '1px solid var(--line)',
-        padding: isMobile ? '16px 20px' : '18px 32px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        zIndex: 10
-      }}>
-        <button
-          onClick={onClose}
-          style={{
-            display: 'flex', alignItems: 'center', gap: 10,
-            fontFamily: 'var(--mono)', fontSize: 11,
-            letterSpacing: '0.2em', textTransform: 'uppercase',
-            color: 'var(--text-dim)'
-          }}
-        >
-          <Icon name="chevron_left" size={16} />
-          Volver
-        </button>
-        <div style={{
-          fontFamily: 'var(--mono)', fontSize: 10,
-          letterSpacing: '0.25em', textTransform: 'uppercase',
-          color: 'var(--text-muted)'
-        }}>
-          {ALL_DROPS.length} drops
-        </div>
-      </div>
-
-      <div className="container" style={{ paddingTop: isMobile ? 48 : 72, paddingBottom: 100 }}>
-        <div style={{ marginBottom: isMobile ? 48 : 72 }}>
-          <div className="eyebrow" style={{ marginBottom: 16 }}>Archivo completo</div>
-          <h1 style={{
-            fontFamily: 'var(--display)',
-            fontSize: isMobile ? 'clamp(48px, 14vw, 72px)' : 'clamp(56px, 7vw, 96px)',
-            lineHeight: 0.95,
-            letterSpacing: '-0.03em',
-            fontStyle: 'italic',
-            color: 'var(--cream)'
-          }}>
-            Todos los<br />
-            <span style={{ fontStyle: 'normal', color: 'var(--accent)' }}>Drops</span>
-          </h1>
-        </div>
-
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
-          gap: isMobile ? 40 : 48
-        }}>
-          {ALL_DROPS.map((d, i) => (
-            <DropCard key={d.id} drop={d} idx={i} isMobile={isMobile} />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-Object.assign(window, { DropsSection, DropsPage });
+Object.assign(window, { DropsSection });

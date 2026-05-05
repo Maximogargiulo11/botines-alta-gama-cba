@@ -8,7 +8,7 @@ const BRANDS = [
     name: 'adidas',
     tagline: 'F50 Tunit · Predator · Copa',
     count: 16,
-    accent: '#ccff33',
+    accent: '#ffffff',
     models: ['F50 Tunit', 'F50 Hora Dorada', 'Predator', 'Copa Pure']
   },
   {
@@ -179,16 +179,7 @@ const NEXT_DROP = {
   price: 549990
 };
 
-const ALL_DROPS = [
-  {
-    id: 'drop-united',
-    title: 'United Pack',
-    brand: 'Nike',
-    subtitle: 'Capítulo 3',
-    date: '30 ABR 2026',
-    status: 'POCAS UNIDADES',
-    imgLabel: 'NIKE UNITED'
-  },
+const PAST_DROPS = [
   {
     id: 'drop-tunit',
     title: 'F50 Tunit Archive',
@@ -196,7 +187,24 @@ const ALL_DROPS = [
     subtitle: 'Reedición 2026',
     date: '23 ABR 2026',
     status: 'DISPONIBLE',
-    img: 'assets/tunit-single.jpg'
+    img: 'assets/tunit-single.jpg',
+    price: 529990,
+    colorway: 'Solar Yellow / Electric Blue',
+    sizes: ['40', '41', '42', '43', '44'],
+    units: 80,
+    collection: 'adidas Originals · F50 Archive',
+    designer: 'adidas Football Innovation Team',
+    lead: 'Veintidós años después, adidas vuelve a abrir el archivo del botín que cambió las reglas del juego. El F50 Tunit regresa con su sistema modular intacto: un upper, dos colorways, infinitas combinaciones.',
+    description: 'adidas toca el archivo una vez más. El último lanzamiento del icónico F50 Tunit regresa con upper desmontable en solar yellow y placa de carbono, recuperando el sistema modular que definió una era. Cada par viene con dos uppers intercambiables y bolsa de transporte.',
+    why: 'Cuando adidas lanzó el F50 Tunit en 2004, planteó una pregunta simple: ¿por qué un botín debe ser una sola cosa? El sistema permitía intercambiar uppers según el clima y la cancha, conectados a una base común mediante un sistema de tornillos. Lo usó Beckham, lo usó Henry, lo usó Robben — hasta que el mercado pidió simplificar y el sistema desapareció. Esta reedición no es nostalgia: es un statement sobre customización en una era donde todo se personaliza menos los botines.',
+    facts: [
+      ['Sistema', 'Upper desmontable + base común'],
+      ['Placa', 'Carbono Carbitex CX6'],
+      ['Tacos', '12 SG mixtos + 8 FG'],
+      ['Peso', '215g (talle 42)'],
+      ['Origen', 'Hecho en Alemania']
+    ],
+    gallery: ['assets/tunit-card-hero.jpg', 'assets/tunit-single.jpg', 'assets/tunit-closeup.jpg', 'assets/tunit-sole.jpg', 'assets/tunit-detail.jpg', 'assets/tunit-player-holding.jpg']
   },
   {
     id: 'drop-hora-dorada',
@@ -205,7 +213,50 @@ const ALL_DROPS = [
     subtitle: 'Signature Messi',
     date: '18 ABR 2026',
     status: 'POCAS UNIDADES',
-    img: 'assets/hora-dorada-boot.jpg'
+    img: 'assets/hora-dorada-boot.jpg',
+    price: 489990,
+    colorway: 'Solar Gold / Wonder Clay',
+    sizes: ['40', '41', '42', '43', '44'],
+    units: 120,
+    collection: 'adidas × Leo Messi · FW26 Signature',
+    designer: 'adidas Football × LM10 Studio',
+    lead: 'La hora dorada — ese momento en que la luz se vuelve oro y todo tiene un peso distinto. Messi y adidas la traducen a un botín.',
+    description: 'adidas presenta la nueva signature F50 de Messi. Un tributo al momento en que la luz se vuelve oro. Edición limitada de 120 unidades con colorway Solar Gold y acabado metálico único, inspirada en el último partido del 10 con la luz del atardecer.',
+    why: 'Toda signature de Messi cuenta una historia. Las Adi-Pure de 2007 hablaban del pibe del PlayStation. Las F50 adiZero de 2010 eran sobre velocidad. Hora Dorada es sobre algo más personal: el final del partido, la luz cayéndose, el campo vacío. El acabado metálico no es un truco visual — es lo que pasa cuando una cámara de televisión captura los últimos minutos del entretiempo. adidas trabajó con el equipo personal de Messi durante 14 meses para llegar a este tono específico de oro.',
+    facts: [
+      ['Numeración', '120 pares globales'],
+      ['Acabado', 'Metálico solar gold'],
+      ['Plantilla', 'Bordado #LM10 hilo dorado'],
+      ['Caja', 'Edición especial con certificado'],
+      ['Drop', '18 ABR 2026 · 09:00 ART']
+    ],
+    gallery: ['assets/hora-dorada-boot.jpg', 'assets/hora-dorada-closeup.jpg', 'assets/hora-dorada-sole.jpg', 'assets/hora-dorada-messi-standing.jpg', 'assets/hora-dorada-messi-sitting.jpg']
+  },
+  {
+    id: 'drop-united-pack',
+    title: "Nike 'United' Pack",
+    brand: 'Nike',
+    subtitle: 'Chapter 3 · Women\'s Football',
+    date: '30 ABR 2026',
+    status: 'DISPONIBLE',
+    img: 'assets/drop-nike-united.jpg',
+    price: 459990,
+    colorway: 'White / Pink Blast / Black',
+    sizes: ['38', '39', '40', '41', '42'],
+    units: 200,
+    collection: 'Nike Football · United Pack Chapter 3',
+    designer: "Nike Women's Football Studio",
+    lead: 'Capítulo 3 de la serie que une a las jugadoras más influyentes del fútbol femenino bajo una sola estética.',
+    description: '@nikefootball reúne a algunas de las mejores jugadoras del fútbol femenino y embajadoras de la marca para lanzar el capítulo 3 de esta serie.',
+    why: 'En 2023, antes de la Copa del Mundo, Nike lanzó el primer United Pack: una colorway compartida por todas sus embajadoras del juego femenino — Lavelle, Bronze, Hegerberg, Marta. Fue una declaración: el fútbol femenino merecía su propio momento de drop, no un colorway adaptado del masculino. Llegó luego el United Golden, después dos capítulos en 2024. Este Capítulo 3 sigue la tradición: un solo aspecto, todas las siluetas (Mercurial, Phantom, Tiempo), atado a un calendario específicamente de competencias femeninas.',
+    facts: [
+      ['Capítulo', '3 de la serie United'],
+      ['Siluetas', 'Mercurial · Phantom · Tiempo'],
+      ['Atletas', 'Lavelle · Bronze · Putellas · Hegerberg'],
+      ['Lanzamiento original', '2023, pre-Mundial Femenino'],
+      ['Colorway', 'White con detalles en pink blast']
+    ],
+    gallery: ['assets/drop-nike-united.jpg']
   },
   {
     id: 'drop-blueprint',
@@ -217,52 +268,78 @@ const ALL_DROPS = [
     imgLabel: 'NIKE BLUEPRINT'
   },
   {
-    id: 'drop-predator-ll',
+    id: 'drop-eclipse',
+    title: 'Eclipse Pack',
+    brand: 'Puma',
+    subtitle: 'Future · Ultra',
+    date: '20 MAR 2026',
+    status: 'POCAS UNIDADES',
+    imgLabel: 'PUMA ECLIPSE'
+  },
+  {
+    id: 'drop-mad-ready',
+    title: 'Mad Ready Pack',
+    brand: 'Nike',
+    subtitle: 'Tiempo Legend 10',
+    date: '08 MAR 2026',
+    status: 'AGOTADO',
+    imgLabel: 'NIKE MAD READY'
+  },
+  {
+    id: 'drop-furon-sterling',
+    title: 'Furon V7+ Sterling',
+    brand: 'New Balance',
+    subtitle: 'Raheem Sterling Edition',
+    date: '24 FEB 2026',
+    status: 'DISPONIBLE',
+    imgLabel: 'NB FURON'
+  },
+  {
+    id: 'drop-supercharge',
+    title: 'Supercharge Pack',
+    brand: 'Puma',
+    subtitle: 'Ultra 5 Ultimate',
+    date: '12 FEB 2026',
+    status: 'POCAS UNIDADES',
+    imgLabel: 'PUMA SUPERCHARGE'
+  },
+  {
+    id: 'drop-haaland',
+    title: 'Erling Haaland Pack',
+    brand: 'Nike',
+    subtitle: 'Phantom GX II Elite',
+    date: '28 ENE 2026',
+    status: 'AGOTADO',
+    imgLabel: 'NIKE PHANTOM HAALAND'
+  },
+  {
+    id: 'drop-king-heritage',
+    title: 'King Heritage',
+    brand: 'Puma',
+    subtitle: 'Black & Gold Classic',
+    date: '10 ENE 2026',
+    status: 'DISPONIBLE',
+    imgLabel: 'PUMA KING'
+  },
+  {
+    id: 'drop-predator-solar',
     title: 'Predator Elite LL',
     brand: 'adidas',
-    subtitle: 'Core Black / Solar Red',
-    date: '15 MAR 2026',
+    subtitle: 'Solar Red Edition',
+    date: '22 DIC 2025',
     status: 'AGOTADO',
     imgLabel: 'ADIDAS PREDATOR'
   },
   {
-    id: 'drop-future-eclipse',
-    title: 'Future 7 Ultimate',
-    brand: 'Puma',
-    subtitle: 'Eclipse Pack',
-    date: '01 MAR 2026',
-    status: 'AGOTADO',
-    imgLabel: 'PUMA FUTURE'
-  },
-  {
-    id: 'drop-phantom-haaland',
-    title: 'Phantom GX II Elite',
-    brand: 'Nike',
-    subtitle: 'Erling Haaland Pack',
-    date: '12 FEB 2026',
-    status: 'AGOTADO',
-    imgLabel: 'NIKE PHANTOM'
-  },
-  {
-    id: 'drop-copa-white',
-    title: 'Copa Pure II Elite',
-    brand: 'adidas',
-    subtitle: 'Core White / Lucid Lemon',
-    date: '25 ENE 2026',
-    status: 'AGOTADO',
-    imgLabel: 'ADIDAS COPA'
-  },
-  {
-    id: 'drop-furon-sterling',
-    title: 'Furon V7+ Pro FG',
+    id: 'drop-tekela-lapis',
+    title: 'Tekela V4+ Pro',
     brand: 'New Balance',
-    subtitle: 'Raheem Sterling Edition',
-    date: '05 ENE 2026',
-    status: 'AGOTADO',
-    imgLabel: 'NB FURON'
+    subtitle: 'Bright Lapis',
+    date: '05 DIC 2025',
+    status: 'POCAS UNIDADES',
+    imgLabel: 'NB TEKELA'
   }
 ];
-const PAST_DROPS = ALL_DROPS;
 
 const TESTIMONIALS = [
   { name: 'Mateo S.', role: 'Club Atlético Belgrano', text: 'Llegaron antes de tiempo y en caja original. El F50 Tunit es otro nivel — el amarillo se ve aún más vivo en vivo.' },
@@ -271,5 +348,5 @@ const TESTIMONIALS = [
 ];
 
 Object.assign(window, {
-  BRANDS, PRODUCTS, NEXT_DROP, ALL_DROPS, PAST_DROPS, TESTIMONIALS, ALL_SIZES
+  BRANDS, PRODUCTS, NEXT_DROP, PAST_DROPS, TESTIMONIALS, ALL_SIZES
 });

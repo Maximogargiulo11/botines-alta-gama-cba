@@ -35,9 +35,10 @@ const App = () => {
   const [overlay, setOverlay] = useState(null); // 'cart' | 'search' | 'account' | null
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [notifyOpen, setNotifyOpen] = useState(false);
+  const [allDropsOpen, setAllDropsOpen] = useState(false);
+  const [dropDetailId, setDropDetailId] = useState(null);
   const [tweaks, setTweaks] = useState(TWEAK_DEFAULTS);
   const [tweaksOpen, setTweaksOpen] = useState(false);
-  const [dropsPageOpen, setDropsPageOpen] = useState(false);
 
   // Tweaks protocol
   useEffect(() => {
@@ -55,7 +56,6 @@ const App = () => {
   useEffect(() => {
     const root = document.documentElement;
     root.style.setProperty('--accent', tweaks.accent);
-    // deriva accent-bright y accent-deep por lightness trick
     root.style.setProperty('--accent-bright', tweaks.accent);
     root.style.setProperty('--display', tweaks.display);
     const th = THEMES[tweaks.theme] || THEMES.dark;
@@ -123,34 +123,32 @@ const App = () => {
         onNavTo={navTo}
       />
       <main>
-        {dropsPageOpen ? (
-          <DropsPage onClose={() => { setDropsPageOpen(false); window.scrollTo({ top: 0, behavior: 'instant' }); }} />
-        ) : (
-          <>
-            <Hero
-              onExplore={() => navTo('catalog')}
-              onViewProduct={(id) => setProductOpen(id)}
-            />
+        <Hero
+          onExplore={() => navTo('catalog')}
+          onViewProduct={(id) => setProductOpen(id)}
+        />
 
-            <TrustStrip />
+        <TrustStrip />
 
-            <SecondaryLaunch onViewProduct={(id) => setProductOpen(id)} />
+        <SecondaryLaunch onViewProduct={(id) => setProductOpen(id)} />
 
-            <DropsSection onNotify={() => setNotifyOpen(true)} onViewAll={() => { setDropsPageOpen(true); window.scrollTo({ top: 0, behavior: 'instant' }); }} />
+        <DropsSection
+          onNotify={() => setNotifyOpen(true)}
+          onViewAll={() => setAllDropsOpen(true)}
+          onOpenDrop={(id) => setDropDetailId(id)}
+        />
 
-            <BrandsGrid onBrand={handleBrand} />
+        <BrandsGrid onBrand={handleBrand} />
 
-            <Catalog
-              onViewProduct={(id) => setProductOpen(id)}
-              brandFilter={brandFilter}
-              setBrandFilter={setBrandFilter}
-            />
+        <Catalog
+          onViewProduct={(id) => setProductOpen(id)}
+          brandFilter={brandFilter}
+          setBrandFilter={setBrandFilter}
+        />
 
-            <AboutSection />
+        <AboutSection />
 
-            <Testimonials />
-          </>
-        )}
+        <Testimonials />
       </main>
       <Footer />
 
@@ -189,6 +187,17 @@ const App = () => {
         open={notifyOpen}
         onClose={() => setNotifyOpen(false)}
       />
+      <AllDropsView
+        open={allDropsOpen}
+        onClose={() => setAllDropsOpen(false)}
+        onOpenDrop={(id) => setDropDetailId(id)}
+      />
+      {dropDetailId && (
+        <DropDetail
+          dropId={dropDetailId}
+          onClose={() => setDropDetailId(null)}
+        />
+      )}
 
       {tweaksOpen && (
         <TweaksPanel tweaks={tweaks} setTweaks={setTweaks} onClose={() => setTweaksOpen(false)} />
