@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Botines Alta Gama CBA — F50 Tunit</title>
+<title>Botines Alta Gama CBA — Lanzamientos & Catálogo Premium</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;0,6..96,800;0,6..96,900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
   :root {
-    /* Paleta blanco y negro puro */
     --bg: #000000;
     --bg-2: #0a0a0a;
     --bg-3: #141414;
@@ -20,11 +19,6 @@
     --text-dim: rgba(255,255,255,0.62);
     --text-muted: rgba(255,255,255,0.42);
     --accent: #ffffff;
-    --accent-bright: #ffffff;
-    --accent-deep: #cccccc;
-    --electric: #ffffff;
-    --electric-deep: #888888;
-    --cream: #ffffff;
     --display: 'Playfair Display', serif;
     --body: 'Inter', sans-serif;
     --mono: 'JetBrains Mono', monospace;
@@ -32,57 +26,26 @@
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { background: var(--bg); color: var(--text); font-family: var(--body); -webkit-font-smoothing: antialiased; }
-  body { overflow-x: hidden; }
+  body { overflow-x: hidden; min-height: 100vh; }
   a { color: inherit; text-decoration: none; }
   button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
   img { display: block; max-width: 100%; }
 
-  ::selection { background: #ffffff; color: #000000; }
+  ::selection { background: #fff; color: #000; }
 
   ::-webkit-scrollbar { width: 10px; height: 10px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); }
   ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
   .__boot {
     position: fixed; inset: 0; background: var(--bg);
     display: flex; align-items: center; justify-content: center;
-    font-family: var(--display); font-size: 28px; letter-spacing: 0.3em;
+    font-family: var(--display); font-size: 22px; letter-spacing: 0.3em;
     color: var(--accent); z-index: 9999;
-    animation: bootPulse 2s ease-in-out infinite;
+    animation: bootPulse 1.6s ease-in-out infinite;
   }
   @keyframes bootPulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
-
-  @keyframes marquee {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-  }
-  .marquee-track {
-    display: flex; gap: 60px; width: max-content;
-    animation: marquee 40s linear infinite;
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .fade-up { animation: fadeUp 0.8s ease-out both; }
-
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  .fade-in { animation: fadeIn 0.5s ease-out both; }
-
-  @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-  }
-  .shimmer {
-    background: linear-gradient(90deg, transparent 0%, rgba(200,152,83,0.15) 50%, transparent 100%);
-    background-size: 200% 100%;
-    animation: shimmer 3s linear infinite;
-  }
-
-  .h-scroll::-webkit-scrollbar { display: none; }
-  .h-scroll { scrollbar-width: none; }
 
   .container { max-width: 1440px; margin: 0 auto; padding: 0 32px; }
   @media (max-width: 768px) { .container { padding: 0 20px; } }
@@ -94,31 +57,25 @@
     text-transform: uppercase;
     color: var(--accent);
     font-weight: 500;
-  }
-
-  .divider {
-    height: 1px;
-    background: var(--line);
-    width: 100%;
+    display: inline-block;
   }
 
   .btn {
     display: inline-flex; align-items: center; justify-content: center;
-    padding: 16px 28px;
+    padding: 16px 26px;
     font-family: var(--body);
     font-size: 12px; font-weight: 600;
     letter-spacing: 0.2em; text-transform: uppercase;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
     border: 1px solid transparent;
     gap: 10px;
   }
   .btn-primary {
     background: var(--accent);
-    color: #000000;
+    color: #000;
   }
-  .btn-primary:hover {
-    background: var(--accent-bright);
+  .btn-primary:hover:not(:disabled) {
     transform: translateY(-1px);
     box-shadow: 0 10px 30px rgba(255,255,255,0.18);
   }
@@ -131,121 +88,6 @@
     border-color: var(--accent);
     color: var(--accent);
   }
-  .btn-electric {
-    background: var(--electric);
-    color: var(--text);
-  }
-  .btn-electric:hover {
-    background: #3a82ff;
-    transform: translateY(-1px);
-  }
-
-  /* Glow effect */
-  @keyframes voltPulse {
-    0%, 100% { opacity: 0.4; }
-    50% { opacity: 1; }
-  }
-  .volt-dot {
-    display: inline-block;
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 12px var(--accent);
-    animation: voltPulse 2s ease-in-out infinite;
-  }
-
-  .img-placeholder {
-    background-color: var(--bg-3);
-    background-image: repeating-linear-gradient(
-      45deg,
-      rgba(255,255,255,0.04) 0,
-      rgba(255,255,255,0.04) 1px,
-      transparent 1px,
-      transparent 12px
-    );
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .img-placeholder::after {
-    content: attr(data-label);
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-muted);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-  }
-
-  .tweaks-panel {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    width: 320px;
-    background: rgba(10,22,36,0.95);
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--line-strong);
-    padding: 24px;
-    z-index: 100;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text);
-    max-height: calc(100vh - 48px);
-    overflow-y: auto;
-  }
-  .tweaks-panel h3 {
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--line);
-  }
-  .tweak-row {
-    margin-bottom: 18px;
-  }
-  .tweak-row label {
-    display: block;
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-bottom: 8px;
-  }
-  .tweak-swatches { display: flex; gap: 6px; flex-wrap: wrap; }
-  .tweak-swatch {
-    width: 28px; height: 28px;
-    border: 1px solid var(--line);
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
-  .tweak-swatch:hover { transform: scale(1.1); }
-  .tweak-swatch.active { border-color: var(--text); transform: scale(1.1); }
-  .tweak-options {
-    display: flex; gap: 0; flex-wrap: wrap;
-    border: 1px solid var(--line);
-  }
-  .tweak-options button {
-    flex: 1;
-    padding: 8px 10px;
-    font-family: var(--mono);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--text-dim);
-    background: transparent;
-    border-right: 1px solid var(--line);
-    cursor: pointer;
-    min-width: 0;
-  }
-  .tweak-options button:last-child { border-right: none; }
-  .tweak-options button.active {
-    background: var(--accent);
-    color: #000000;
-  }
 </style>
 </head>
 <body>
@@ -255,21 +97,14 @@
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 
-<script type="text/babel" src="src/data.jsx"></script>
-<script type="text/babel" src="src/icons.jsx"></script>
-<script type="text/babel" src="src/components.jsx"></script>
-<script type="text/babel" src="src/nav.jsx"></script>
-<script type="text/babel" src="src/hero.jsx"></script>
-<script type="text/babel" src="src/sections.jsx"></script>
-<script type="text/babel" src="src/catalog.jsx"></script>
-<script type="text/babel" src="src/drops.jsx"></script>
-<script type="text/babel" src="src/drop-detail.jsx"></script>
-<script type="text/babel" src="src/all-drops.jsx"></script>
-<script type="text/babel" src="src/product.jsx"></script>
-<script type="text/babel" src="src/overlays.jsx"></script>
-<script type="text/babel" src="src/footer.jsx"></script>
-<script type="text/babel" src="src/tweaks.jsx"></script>
-<script type="text/babel" src="src/secondary.jsx"></script>
+<script type="text/babel" src="src/articles-data.jsx"></script>
+<script type="text/babel" src="src/router.jsx"></script>
+<script type="text/babel" src="src/nav-footer.jsx"></script>
+<script type="text/babel" src="src/home.jsx"></script>
+<script type="text/babel" src="src/article.jsx"></script>
+<script type="text/babel" src="src/brands.jsx"></script>
+<script type="text/babel" src="src/static-pages.jsx"></script>
+<script type="text/babel" src="src/cart.jsx"></script>
 <script type="text/babel" src="src/app.jsx"></script>
 
 </body>
