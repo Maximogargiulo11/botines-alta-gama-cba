@@ -4,6 +4,12 @@
 
 function App() {
   const path = useRoute();
+  const [, forceUpdate] = useState(0);
+  useEffect(() => {
+    const h = () => forceUpdate(n => n + 1);
+    window.addEventListener('sanity-loaded', h);
+    return () => window.removeEventListener('sanity-loaded', h);
+  }, []);
 
   let page;
   if (path === '/' || path === '') {
