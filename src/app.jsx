@@ -8,7 +8,11 @@ function App() {
   useEffect(() => {
     const h = () => forceUpdate(n => n + 1);
     window.addEventListener('sanity-loaded', h);
-    return () => window.removeEventListener('sanity-loaded', h);
+    window.addEventListener('data-loaded', h);
+    return () => {
+      window.removeEventListener('sanity-loaded', h);
+      window.removeEventListener('data-loaded', h);
+    };
   }, []);
 
   let page;
