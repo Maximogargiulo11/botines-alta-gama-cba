@@ -4,91 +4,155 @@
 
 function ArticlePage({ slug }) {
   const a = findArticle(slug);
+  const [portrait, setPortrait] = useState(null); // null=detecting, true=portrait, false=landscape
 
   useEffect(() => {
     if (!a) navigate('/');
   }, [a]);
 
+  const heroImg = a ? (a.galeria?.[0] || a.imagen) : null;
+
+  // Detect orientation before first render to avoid layout shift
+  useEffect(() => {
+    if (!heroImg) { setPortrait(false); return; }
+    const img = new Image();
+    const detect = () => setPortrait(img.naturalHeight > img.naturalWidth);
+    img.onload = detect;
+    img.onerror = () => setPortrait(false);
+    img.src = heroImg;
+    // If already cached, naturalWidth/Height are available immediately
+    if (img.complete && img.naturalWidth > 0) detect();
+  }, [heroImg]);
+
   if (!a) return null;
 
-  // Distribute gallery images between paragraphs
   const paras = a.contenido;
   const gallery = a.galeria || [];
-  const inlineImages = gallery.slice(1); // first image goes in hero
-  const heroImg = gallery[0] || a.imagen;
+  const inlineImages = gallery.slice(1);
+
+  // ── Shared hero metadata ──────────────────────────────────
+  const heroBadges = (
+    <div style={{ display: 'inline-flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', marginBottom: 18 }}>
+      <span className="eyebrow" style={{ background: '#fff', color: '#000', padding: '6px 12px' }}>{a.marca}</span>
+      <span className="eyebrow">{a.categoria} · {a.fecha}</span>
+    </div>
+  );
 
   return (
     <article>
-      {/* HERO */}
-      <section style={{ position: 'relative', height: 'min(86vh, 720px)', minHeight: 480, overflow: 'hidden' }}>
-        <img src={heroImg} alt={a.titulo} style={{
-          width: '100%', height: '100%', objectFit: 'cover'
-        }} onError={(e) => { e.target.style.display = 'none'; }} />
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0.85) 100%)'
-        }}></div>
 
-        <div className="container" style={{
-          position: 'absolute', left: 0, right: 0, bottom: 0, paddingBottom: 56
-        }}>
-          <BackLink to="/" label="Volver a Lanzamientos" />
-          <div style={{ marginTop: 24, display: 'inline-flex', gap: 12, alignItems: 'center', marginBottom: 18 }}>
-            <span className="eyebrow" style={{ background: '#fff', color: '#000', padding: '6px 12px' }}>{a.marca}</span>
-            <span className="eyebrow">{a.categoria} · {a.fecha}</span>
+      {/* ── HERO: skeleton while detecting orientation ─────── */}
+      {portrait === null && (
+        <div style={{ height: 'min(86vh, 720px)', minHeight: 480, background: 'var(--bg-3)' }} />
+      )}
+
+      {/* ── HERO: landscape — full-width cover (original) ──── */}
+      {portrait === false && (
+        <section style={{ position: 'relative', height: 'min(86vh, 720px)', minHeight: 480, overflow: 'hidden' }}>
+          <img src={heroImg} alt={a.titulo}
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            onError={e => { e.target.style.display = 'none'; }} />
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0.85) 100%)'
+          }} />
+          <div className="container" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, paddingBottom: 56 }}>
+            <BackLink to="/" label="Volver a Lanzamientos" />
+            <div style={{ marginTop: 24 }}>{heroBadges}</div>
+            <h1 style={{
+              fontFamily: 'var(--display)',
+              fontSize: 'clamp(38px, 5.4vw, 84px)',
+              fontWeight: 600, lineHeight: 1.05,
+              letterSpacing: '-0.015em',
+              maxWidth: 1100, textWrap: 'pretty'
+            }}>{a.titulo}</h1>
           </div>
-          <h1 style={{
-            fontFamily: 'var(--display)',
-            fontSize: 'clamp(38px, 5.4vw, 84px)',
-            fontWeight: 600, lineHeight: 1.05,
-            letterSpacing: '-0.015em',
-            maxWidth: 1100,
-            textWrap: 'pretty'
-          }}>{a.titulo}</h1>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* BODY */}
+      {/* ── HERO: portrait — two-column layout ─────────────── */}
+      {portrait === true && (
+        <section className="hero-portrait" style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          minHeight: 'min(90vh, 780px)',
+        }}>
+          {/* Left: article text */}
+          <div className="hero-portrait-text" style={{
+            display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
+            padding: '48px max(24px, 4vw) 60px',
+            background: 'var(--bg)',
+            borderRight: '1px solid var(--line)',
+          }}>
+            <BackLink to="/" label="Volver a Lanzamientos" />
+            <div style={{ marginTop: 28 }}>{heroBadges}</div>
+            <h1 style={{
+              fontFamily: 'var(--display)',
+              fontSize: 'clamp(30px, 3.4vw, 62px)',
+              fontWeight: 600, lineHeight: 1.05,
+              letterSpacing: '-0.015em', textWrap: 'pretty',
+              marginBottom: 24,
+            }}>{a.titulo}</h1>
+            {a.descripcionCorta && (
+              <p style={{
+                fontFamily: 'var(--display)', fontStyle: 'italic',
+                fontSize: 'clamp(15px, 1.3vw, 20px)',
+                lineHeight: 1.6, color: 'var(--text-dim)',
+                maxWidth: 520, textWrap: 'pretty',
+              }}>{a.descripcionCorta}</p>
+            )}
+          </div>
+
+          {/* Right: full image, no crop */}
+          <div className="hero-portrait-img" style={{
+            background: 'var(--bg-3)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            overflow: 'hidden',
+          }}>
+            <img src={heroImg} alt={a.titulo}
+              style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+              onError={e => { e.target.style.display = 'none'; }} />
+          </div>
+        </section>
+      )}
+
+      {/* ── BODY ───────────────────────────────────────────── */}
       <div className="container" style={{ paddingTop: 72, paddingBottom: 40 }}>
         <div className="article-grid" style={{
           display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 280px',
           gap: 64, alignItems: 'start'
         }}>
           <div>
-            <p style={{
-              fontFamily: 'var(--display)', fontStyle: 'italic',
-              fontSize: 'clamp(20px, 2vw, 26px)',
-              lineHeight: 1.5, color: 'var(--text-dim)',
-              marginBottom: 48,
-              textWrap: 'pretty',
-              maxWidth: 760
-            }}>{a.descripcionCorta}</p>
+            {/* Lead: only show if not already in portrait hero */}
+            {portrait !== true && a.descripcionCorta && (
+              <p style={{
+                fontFamily: 'var(--display)', fontStyle: 'italic',
+                fontSize: 'clamp(20px, 2vw, 26px)',
+                lineHeight: 1.5, color: 'var(--text-dim)',
+                marginBottom: 48, textWrap: 'pretty', maxWidth: 760
+              }}>{a.descripcionCorta}</p>
+            )}
 
             {paras.map((p, i) => (
               <React.Fragment key={i}>
                 <p style={{
                   fontSize: 'clamp(16px, 1.2vw, 18px)',
-                  lineHeight: 1.8,
-                  marginBottom: 28,
-                  color: '#e6e6e6',
-                  maxWidth: 760,
-                  textWrap: 'pretty'
+                  lineHeight: 1.8, marginBottom: 28,
+                  color: '#e6e6e6', maxWidth: 760, textWrap: 'pretty'
                 }}>{p}</p>
 
-                {/* Insert image after paragraphs 0 and 2 */}
                 {(i === 0 || i === 2) && inlineImages[i === 0 ? 0 : 1] && (
                   <figure style={{ margin: '40px 0 48px', marginLeft: 'calc(-1 * min(80px, 6vw))', marginRight: 'calc(-1 * min(80px, 6vw))' }}>
                     <div style={{ aspectRatio: '16 / 9', overflow: 'hidden', background: 'var(--bg-3)' }}>
                       <img src={inlineImages[i === 0 ? 0 : 1]} alt={`${a.titulo} — imagen`}
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        onError={(e) => { e.target.style.display = 'none'; }} />
+                        onError={e => { e.target.style.display = 'none'; }} />
                     </div>
                   </figure>
                 )}
               </React.Fragment>
             ))}
 
-            {/* Extra gallery row at bottom */}
             {inlineImages.length > 2 && (
               <div style={{
                 display: 'grid',
@@ -98,7 +162,7 @@ function ArticlePage({ slug }) {
                 {inlineImages.slice(2, 5).map((src, i) => (
                   <div key={i} style={{ aspectRatio: '3 / 4', overflow: 'hidden', background: 'var(--bg-3)' }}>
                     <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      onError={(e) => { e.target.style.display = 'none'; }} />
+                      onError={e => { e.target.style.display = 'none'; }} />
                   </div>
                 ))}
               </div>
@@ -107,15 +171,12 @@ function ArticlePage({ slug }) {
 
           <aside style={{ position: 'sticky', top: 96 }}>
             <div className="eyebrow" style={{ marginBottom: 16 }}>Datos técnicos</div>
-            <table style={{
-              width: '100%', borderCollapse: 'collapse',
-              fontSize: 13, color: 'var(--text-dim)'
-            }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, color: 'var(--text-dim)' }}>
               <tbody>
                 {[
-                  ['Suela', a.detallesTecnicos.suela],
-                  ['Terreno', a.detallesTecnicos.terreno],
-                  ['Peso', a.detallesTecnicos.peso],
+                  ['Suela',     a.detallesTecnicos.suela],
+                  ['Terreno',   a.detallesTecnicos.terreno],
+                  ['Peso',      a.detallesTecnicos.peso],
                   ['Colorways', a.detallesTecnicos.colorways.join(' · ')]
                 ].map(([k, v]) => (
                   <tr key={k} style={{ borderTop: '1px solid var(--line)' }}>
@@ -123,8 +184,7 @@ function ArticlePage({ slug }) {
                       textAlign: 'left', padding: '14px 0', width: '40%',
                       fontFamily: 'var(--mono)', fontSize: 10,
                       letterSpacing: '0.18em', textTransform: 'uppercase',
-                      color: 'var(--text-muted)', fontWeight: 500,
-                      verticalAlign: 'top'
+                      color: 'var(--text-muted)', fontWeight: 500, verticalAlign: 'top'
                     }}>{k}</th>
                     <td style={{ padding: '14px 0', color: '#fff', fontSize: 14, verticalAlign: 'top', lineHeight: 1.5 }}>{v}</td>
                   </tr>
@@ -134,8 +194,7 @@ function ArticlePage({ slug }) {
                     textAlign: 'left', padding: '14px 0',
                     fontFamily: 'var(--mono)', fontSize: 10,
                     letterSpacing: '0.18em', textTransform: 'uppercase',
-                    color: 'var(--text-muted)', fontWeight: 500,
-                    verticalAlign: 'top'
+                    color: 'var(--text-muted)', fontWeight: 500, verticalAlign: 'top'
                   }}>Colección</th>
                   <td style={{ padding: '14px 0', color: '#fff', fontSize: 14, fontStyle: 'italic' }}>{a.coleccion}</td>
                 </tr>
@@ -146,10 +205,8 @@ function ArticlePage({ slug }) {
 
         {/* CTA STOCK */}
         <div style={{
-          marginTop: 80,
-          padding: '64px 48px',
-          background: 'var(--bg-2)',
-          border: '1px solid var(--line)',
+          marginTop: 80, padding: '64px 48px',
+          background: 'var(--bg-2)', border: '1px solid var(--line)',
           display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between',
           gap: 32
         }}>
@@ -158,9 +215,7 @@ function ArticlePage({ slug }) {
             <h3 style={{
               fontFamily: 'var(--display)',
               fontSize: 'clamp(26px, 3vw, 38px)',
-              fontWeight: 600, lineHeight: 1.15,
-              letterSpacing: '-0.01em',
-              textWrap: 'pretty'
+              fontWeight: 600, lineHeight: 1.15, letterSpacing: '-0.01em', textWrap: 'pretty'
             }}>¿Querés este par? Consultá el stock disponible.</h3>
             <p style={{ marginTop: 12, color: 'var(--text-dim)', fontSize: 15, lineHeight: 1.6 }}>
               Tenemos unidades en stock con retiro inmediato en Córdoba. Ver talles, colorways y precios actualizados.
@@ -181,6 +236,22 @@ function ArticlePage({ slug }) {
           .article-grid {
             grid-template-columns: 1fr !important;
             gap: 40px !important;
+          }
+        }
+        /* Portrait hero: mobile stacks image on top, text below */
+        @media (max-width: 768px) {
+          .hero-portrait {
+            grid-template-columns: 1fr !important;
+          }
+          .hero-portrait-img {
+            order: -1;
+            min-height: 52vw !important;
+            max-height: 70vh;
+          }
+          .hero-portrait-text {
+            border-right: none !important;
+            border-top: 1px solid var(--line);
+            padding: 32px 20px 40px !important;
           }
         }
       `}</style>
