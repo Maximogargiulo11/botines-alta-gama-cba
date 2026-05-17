@@ -238,7 +238,7 @@ function LatestNews({ items }) {
       }}>
         {items.map(a => (
           <L to={`/lanzamientos/${a.slug}`} key={a.slug} className="news-card">
-            <div style={{ aspectRatio: '4 / 5', overflow: 'hidden', background: 'var(--bg-3)' }}>
+            <div style={{ aspectRatio: '4 / 3', overflow: 'hidden', background: 'var(--bg-3)' }}>
               <img src={a.imagen} alt={a.titulo} className="zoom-img" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; }} />
             </div>
             <div style={{ paddingTop: 16 }}>

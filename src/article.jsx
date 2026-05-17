@@ -12,7 +12,6 @@ function ArticlePage({ slug }) {
 
   const heroImg = a ? (a.galeria?.[0] || a.imagen) : null;
 
-  // Detect orientation before first render to avoid layout shift
   useEffect(() => {
     if (!heroImg) { setPortrait(false); return; }
     const img = new Image();
@@ -20,7 +19,6 @@ function ArticlePage({ slug }) {
     img.onload = detect;
     img.onerror = () => setPortrait(false);
     img.src = heroImg;
-    // If already cached, naturalWidth/Height are available immediately
     if (img.complete && img.naturalWidth > 0) detect();
   }, [heroImg]);
 
@@ -30,7 +28,6 @@ function ArticlePage({ slug }) {
   const gallery = a.galeria || [];
   const inlineImages = gallery.slice(1);
 
-  // ── Shared hero metadata ──────────────────────────────────
   const heroBadges = (
     <div style={{ display: 'inline-flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', marginBottom: 18 }}>
       <span className="eyebrow" style={{ background: '#fff', color: '#000', padding: '6px 12px' }}>{a.marca}</span>
@@ -41,16 +38,47 @@ function ArticlePage({ slug }) {
   return (
     <article>
 
-      {/* ── HERO: skeleton while detecting orientation ─────── */}
+      {/* ── Skeleton while detecting orientation ─────────── */}
       {portrait === null && (
         <div style={{ height: 'min(86vh, 720px)', minHeight: 480, background: 'var(--bg-3)' }} />
       )}
 
-      {/* ── HERO: landscape — full-width cover (original) ──── */}
+      {/* ── HERO: portrait — full-width contain, black bg ── */}
+      {portrait === true && (
+        <section style={{ position: 'relative', background: '#000' }}>
+          <img src={heroImg} alt={a.titulo}
+            style={{ display: 'block', width: '100%', height: 'auto', maxHeight: '90vh', objectFit: 'contain' }}
+            onError={e => { e.target.style.display = 'none'; }} />
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0) 48%)'
+          }} />
+          <div className="container" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, paddingBottom: 52 }}>
+            <BackLink to="/" label="Volver a Lanzamientos" />
+            <div style={{ marginTop: 24 }}>{heroBadges}</div>
+            <h1 style={{
+              fontFamily: 'var(--display)',
+              fontSize: 'clamp(34px, 4.6vw, 78px)',
+              fontWeight: 600, lineHeight: 1.05,
+              letterSpacing: '-0.015em', maxWidth: 1100, textWrap: 'pretty'
+            }}>{a.titulo}</h1>
+            {a.descripcionCorta && (
+              <p style={{
+                fontFamily: 'var(--display)', fontStyle: 'italic',
+                fontSize: 'clamp(15px, 1.5vw, 19px)',
+                lineHeight: 1.55, color: 'rgba(255,255,255,0.8)',
+                marginTop: 14, maxWidth: 640, textWrap: 'pretty'
+              }}>{a.descripcionCorta}</p>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* ── HERO: landscape — full-width cover, top-aligned ─ */}
       {portrait === false && (
         <section style={{ position: 'relative', height: 'min(86vh, 720px)', minHeight: 480, overflow: 'hidden' }}>
           <img src={heroImg} alt={a.titulo}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }}
             onError={e => { e.target.style.display = 'none'; }} />
           <div style={{
             position: 'absolute', inset: 0,
@@ -63,55 +91,8 @@ function ArticlePage({ slug }) {
               fontFamily: 'var(--display)',
               fontSize: 'clamp(38px, 5.4vw, 84px)',
               fontWeight: 600, lineHeight: 1.05,
-              letterSpacing: '-0.015em',
-              maxWidth: 1100, textWrap: 'pretty'
+              letterSpacing: '-0.015em', maxWidth: 1100, textWrap: 'pretty'
             }}>{a.titulo}</h1>
-          </div>
-        </section>
-      )}
-
-      {/* ── HERO: portrait — two-column layout ─────────────── */}
-      {portrait === true && (
-        <section className="hero-portrait" style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          minHeight: 'min(90vh, 780px)',
-        }}>
-          {/* Left: article text */}
-          <div className="hero-portrait-text" style={{
-            display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
-            padding: '48px max(24px, 4vw) 60px',
-            background: 'var(--bg)',
-            borderRight: '1px solid var(--line)',
-          }}>
-            <BackLink to="/" label="Volver a Lanzamientos" />
-            <div style={{ marginTop: 28 }}>{heroBadges}</div>
-            <h1 style={{
-              fontFamily: 'var(--display)',
-              fontSize: 'clamp(30px, 3.4vw, 62px)',
-              fontWeight: 600, lineHeight: 1.05,
-              letterSpacing: '-0.015em', textWrap: 'pretty',
-              marginBottom: 24,
-            }}>{a.titulo}</h1>
-            {a.descripcionCorta && (
-              <p style={{
-                fontFamily: 'var(--display)', fontStyle: 'italic',
-                fontSize: 'clamp(15px, 1.3vw, 20px)',
-                lineHeight: 1.6, color: 'var(--text-dim)',
-                maxWidth: 520, textWrap: 'pretty',
-              }}>{a.descripcionCorta}</p>
-            )}
-          </div>
-
-          {/* Right: full image, no crop */}
-          <div className="hero-portrait-img" style={{
-            background: 'var(--bg-3)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            overflow: 'hidden',
-          }}>
-            <img src={heroImg} alt={a.titulo}
-              style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
-              onError={e => { e.target.style.display = 'none'; }} />
           </div>
         </section>
       )}
@@ -123,7 +104,7 @@ function ArticlePage({ slug }) {
           gap: 64, alignItems: 'start'
         }}>
           <div>
-            {/* Lead: only show if not already in portrait hero */}
+            {/* Lead: only if not already shown in portrait hero overlay */}
             {portrait !== true && a.descripcionCorta && (
               <p style={{
                 fontFamily: 'var(--display)', fontStyle: 'italic',
@@ -141,11 +122,12 @@ function ArticlePage({ slug }) {
                   color: '#e6e6e6', maxWidth: 760, textWrap: 'pretty'
                 }}>{p}</p>
 
+                {/* Gallery images between paragraphs — contain, no crop */}
                 {(i === 0 || i === 2) && inlineImages[i === 0 ? 0 : 1] && (
                   <figure style={{ margin: '40px 0 48px', marginLeft: 'calc(-1 * min(80px, 6vw))', marginRight: 'calc(-1 * min(80px, 6vw))' }}>
-                    <div style={{ aspectRatio: '16 / 9', overflow: 'hidden', background: 'var(--bg-3)' }}>
+                    <div style={{ background: 'var(--bg-3)', overflow: 'hidden' }}>
                       <img src={inlineImages[i === 0 ? 0 : 1]} alt={`${a.titulo} — imagen`}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        style={{ width: '100%', height: 'auto', maxHeight: '80vh', objectFit: 'contain', display: 'block' }}
                         onError={e => { e.target.style.display = 'none'; }} />
                     </div>
                   </figure>
@@ -153,6 +135,7 @@ function ArticlePage({ slug }) {
               </React.Fragment>
             ))}
 
+            {/* Bottom gallery grid — fixed ratio, contain to avoid crop */}
             {inlineImages.length > 2 && (
               <div style={{
                 display: 'grid',
@@ -160,8 +143,8 @@ function ArticlePage({ slug }) {
                 gap: 14, margin: '28px 0 48px'
               }}>
                 {inlineImages.slice(2, 5).map((src, i) => (
-                  <div key={i} style={{ aspectRatio: '3 / 4', overflow: 'hidden', background: 'var(--bg-3)' }}>
-                    <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  <div key={i} style={{ aspectRatio: '3 / 4', overflow: 'hidden', background: 'var(--bg-3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
                       onError={e => { e.target.style.display = 'none'; }} />
                   </div>
                 ))}
@@ -236,22 +219,6 @@ function ArticlePage({ slug }) {
           .article-grid {
             grid-template-columns: 1fr !important;
             gap: 40px !important;
-          }
-        }
-        /* Portrait hero: mobile stacks image on top, text below */
-        @media (max-width: 768px) {
-          .hero-portrait {
-            grid-template-columns: 1fr !important;
-          }
-          .hero-portrait-img {
-            order: -1;
-            min-height: 52vw !important;
-            max-height: 70vh;
-          }
-          .hero-portrait-text {
-            border-right: none !important;
-            border-top: 1px solid var(--line);
-            padding: 32px 20px 40px !important;
           }
         }
       `}</style>

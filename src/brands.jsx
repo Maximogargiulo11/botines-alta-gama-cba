@@ -202,9 +202,9 @@ function ProductCard({ product }) {
       border: '1px solid var(--line)',
       padding: 28
     }} className="product-row">
-      <div style={{ aspectRatio: '1 / 1', overflow: 'hidden', background: 'var(--bg-3)' }}>
+      <div style={{ aspectRatio: '1 / 1', overflow: 'hidden', background: 'var(--bg-3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <img src={product.imagen} alt={product.modelo}
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          style={{ width: '100%', height: '100%', objectFit: 'contain' }}
           onError={(e) => { e.target.style.display = 'none'; }} />
       </div>
 
