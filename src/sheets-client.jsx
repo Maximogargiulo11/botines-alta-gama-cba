@@ -125,6 +125,7 @@ function mapProducto(row) {
 
 async function loadSheetsData() {
   if (!isSheetsConfigured()) return;
+  if (window.BACKEND_ACTIVE) return;
 
   try {
     const [lanzRows, stockRows] = await Promise.all([

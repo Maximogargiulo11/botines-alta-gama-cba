@@ -87,6 +87,7 @@ function mapProducto(doc) {
 
 async function loadSanityData() {
   if (!isSanityConfigured()) return;
+  if (window.BACKEND_ACTIVE) return;
 
   try {
     const [lanzamientos, productos] = await Promise.all([

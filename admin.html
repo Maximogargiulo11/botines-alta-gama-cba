@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin — Botines Alta Gama CBA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg:    #000;
+    --bg-2:  #0a0a0a;
+    --bg-3:  #141414;
+    --bg-4:  #1a1a1a;
+    --line:  rgba(255,255,255,0.08);
+    --line2: rgba(255,255,255,0.18);
+    --text:  #fff;
+    --dim:   rgba(255,255,255,0.55);
+    --muted: rgba(255,255,255,0.35);
+    --accent: #fff;
+    --green:  #4ade80;
+    --red:    #f87171;
+    --yellow: #fbbf24;
+    --body: 'Inter', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--text); font-family: var(--body); -webkit-font-smoothing: antialiased; min-height: 100vh; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; }
+  input, textarea, select { font-family: inherit; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--line2); border-radius: 3px; }
+
+  /* ── Login ─────────────────────────────────────────────── */
+  .login-wrap {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .login-card {
+    width: 100%; max-width: 400px;
+    background: var(--bg-3);
+    border: 1px solid var(--line2);
+    padding: 48px 40px;
+  }
+  .login-logo {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 32px;
+  }
+  .login-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+  .login-sub { font-size: 13px; color: var(--dim); margin-bottom: 32px; }
+
+  /* ── Form elements ─────────────────────────────────────── */
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field + .field { margin-top: 16px; }
+  .field label { font-size: 11px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--dim); }
+  .field input, .field textarea, .field select {
+    background: var(--bg-2);
+    border: 1px solid var(--line2);
+    color: var(--text);
+    padding: 10px 14px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--accent); }
+  .field textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+  .field select option { background: var(--bg-3); }
+  .field .hint { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .field-row { display: grid; gap: 16px; }
+  .field-row.col2 { grid-template-columns: 1fr 1fr; }
+  .field-row.col3 { grid-template-columns: 1fr 1fr 1fr; }
+
+  .checkbox-row { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  .checkbox-row input[type=checkbox] {
+    width: 16px; height: 16px; cursor: pointer;
+    accent-color: var(--accent);
+  }
+  .checkbox-row span { font-size: 14px; }
+
+  /* ── Buttons ───────────────────────────────────────────── */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 10px 20px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
+    border: 1px solid transparent;
+    cursor: pointer; transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .btn-primary { background: var(--text); color: #000; border-color: var(--text); }
+  .btn-primary:hover { background: rgba(255,255,255,0.85); }
+  .btn-ghost { background: transparent; color: var(--text); border-color: var(--line2); }
+  .btn-ghost:hover { border-color: var(--text); }
+  .btn-danger { background: transparent; color: var(--red); border-color: rgba(248,113,113,0.3); }
+  .btn-danger:hover { background: rgba(248,113,113,0.08); border-color: var(--red); }
+  .btn-sm { padding: 6px 14px; font-size: 11px; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-full { width: 100%; }
+
+  /* ── Layout ────────────────────────────────────────────── */
+  .layout { display: flex; min-height: 100vh; }
+  .sidebar {
+    width: 220px; flex-shrink: 0;
+    background: var(--bg-2);
+    border-right: 1px solid var(--line);
+    display: flex; flex-direction: column;
+    padding: 0;
+  }
+  .sidebar-logo {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .sidebar-logo-label {
+    font-family: var(--mono);
+    font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 4px;
+  }
+  .sidebar-logo-name { font-size: 13px; font-weight: 700; }
+  .sidebar-nav { flex: 1; padding: 16px 0; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 20px;
+    font-size: 13px; font-weight: 500;
+    color: var(--dim); cursor: pointer;
+    transition: all 0.15s;
+    border: none; background: none; width: 100%; text-align: left;
+  }
+  .nav-item:hover { color: var(--text); background: var(--line); }
+  .nav-item.active { color: var(--text); background: var(--bg-4); border-left: 2px solid var(--accent); padding-left: 18px; }
+  .nav-icon { width: 16px; text-align: center; }
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--line);
+  }
+  .sidebar-user { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+
+  .main { flex: 1; overflow-y: auto; }
+  .main-header {
+    padding: 28px 36px 20px;
+    border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .main-title { font-size: 20px; font-weight: 700; }
+  .main-sub { font-size: 13px; color: var(--dim); margin-top: 2px; }
+  .main-body { padding: 28px 36px; }
+
+  /* ── Table ─────────────────────────────────────────────── */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    padding: 10px 16px;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--line2);
+    text-align: left; white-space: nowrap;
+  }
+  td {
+    padding: 12px 16px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: middle;
+  }
+  tr:hover td { background: var(--bg-2); }
+  .td-slug { font-family: var(--mono); font-size: 11px; color: var(--dim); }
+  .td-featured {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+    border: 1px solid;
+  }
+  .td-featured.yes { color: var(--green); border-color: rgba(74,222,128,0.3); }
+  .td-featured.no  { color: var(--muted); border-color: var(--line); }
+  .td-actions { display: flex; gap: 8px; align-items: center; }
+  .table-empty { padding: 48px; text-align: center; color: var(--muted); font-size: 14px; }
+
+  /* ── Modal ─────────────────────────────────────────────── */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 100;
+    display: flex; align-items: flex-start; justify-content: center;
+    padding: 40px 20px;
+    overflow-y: auto;
+  }
+  .modal {
+    background: var(--bg-3);
+    border: 1px solid var(--line2);
+    width: 100%; max-width: 760px;
+    padding: 36px;
+    position: relative;
+  }
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  .modal-title { font-size: 18px; font-weight: 700; }
+  .modal-close {
+    background: none; border: none; cursor: pointer;
+    font-size: 20px; color: var(--dim); line-height: 1;
+    padding: 4px 8px;
+  }
+  .modal-close:hover { color: var(--text); }
+  .modal-section { margin-bottom: 24px; }
+  .modal-section-title {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 14px;
+    padding-bottom: 8px; border-bottom: 1px solid var(--line);
+  }
+  .modal-footer { display: flex; justify-content: flex-end; gap: 12px; margin-top: 28px; }
+
+  /* ── Stock tab ─────────────────────────────────────────── */
+  .upload-zone {
+    border: 2px dashed var(--line2);
+    padding: 48px 32px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .upload-zone:hover { border-color: var(--dim); }
+  .upload-zone.drag { border-color: var(--accent); }
+  .upload-icon { font-size: 32px; margin-bottom: 12px; }
+  .upload-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .upload-sub { font-size: 13px; color: var(--dim); }
+  .upload-hint { font-size: 11px; color: var(--muted); margin-top: 8px; }
+
+  .stock-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 16px; margin-top: 24px; }
+  .stock-card {
+    background: var(--bg-2); border: 1px solid var(--line);
+    padding: 16px;
+  }
+  .stock-card-brand { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .stock-card-model { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+  .stock-card-count { font-family: var(--mono); font-size: 22px; font-weight: 600; }
+  .stock-card-label { font-size: 11px; color: var(--dim); }
+
+  /* ── Alert ─────────────────────────────────────────────── */
+  .alert {
+    padding: 12px 16px;
+    font-size: 13px;
+    margin-bottom: 20px;
+    border: 1px solid;
+  }
+  .alert-error   { background: rgba(248,113,113,0.08); border-color: rgba(248,113,113,0.3); color: var(--red); }
+  .alert-success { background: rgba(74,222,128,0.08);  border-color: rgba(74,222,128,0.3);  color: var(--green); }
+
+  /* ── Loading spinner ───────────────────────────────────── */
+  .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid var(--line2); border-top-color: var(--text); border-radius: 50%; animation: spin 0.6s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 768px) {
+    .sidebar { width: 60px; }
+    .nav-item span, .sidebar-logo-name, .sidebar-user { display: none; }
+    .main-header { padding: 20px; }
+    .main-body { padding: 20px; }
+    .field-row.col2, .field-row.col3 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
+
+const API = 'http://localhost:3001';
+
+// ── API helper ────────────────────────────────────────────────
+async function apiFetch(path, { token, method = 'GET', body } = {}) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers['x-admin-token'] = token;
+  const res = await fetch(`${API}${path}`, {
+    method,
+    headers,
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+  return data;
+}
+
+// ── Token storage ─────────────────────────────────────────────
+function useToken() {
+  const [token, setToken] = useState(() => localStorage.getItem('admin_token') || null);
+  const save = useCallback(t => { setToken(t); if (t) localStorage.setItem('admin_token', t); else localStorage.removeItem('admin_token'); }, []);
+  return [token, save];
+}
+
+// ── Form helpers ──────────────────────────────────────────────
+function slugify(str) {
+  return str.toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim().replace(/\s+/g, '-');
+}
+
+function itemToForm(item) {
+  if (!item) return {
+    slug: '', titulo: '', marca: '', marcaSlug: 'adidas', modeloSlug: '',
+    fecha: '', fechaISO: '', categoria: 'Lanzamiento', descripcionCorta: '',
+    imagen: '', destacado: false,
+    contenido: '', galeria: '', coleccion: '',
+    suela: '', terreno: '', peso: '', colorways: '',
+  };
+  return {
+    slug: item.slug || '',
+    titulo: item.titulo || '',
+    marca: item.marca || '',
+    marcaSlug: item.marcaSlug || 'adidas',
+    modeloSlug: item.modeloSlug || '',
+    fecha: item.fecha || '',
+    fechaISO: item.fechaISO || '',
+    categoria: item.categoria || 'Lanzamiento',
+    descripcionCorta: item.descripcionCorta || '',
+    imagen: item.imagen || '',
+    destacado: Boolean(item.destacado),
+    contenido: Array.isArray(item.contenido) ? item.contenido.join('|||') : (item.contenido || ''),
+    galeria: Array.isArray(item.galeria) ? item.galeria.join('|') : (item.galeria || ''),
+    coleccion: item.coleccion || '',
+    suela: item.detallesTecnicos?.suela || '',
+    terreno: item.detallesTecnicos?.terreno || '',
+    peso: item.detallesTecnicos?.peso || '',
+    colorways: Array.isArray(item.detallesTecnicos?.colorways)
+      ? item.detallesTecnicos.colorways.join('|')
+      : (item.detallesTecnicos?.colorways || ''),
+  };
+}
+
+function formToPayload(form) {
+  return {
+    slug: form.slug,
+    titulo: form.titulo,
+    marca: form.marca,
+    marcaSlug: form.marcaSlug,
+    modeloSlug: form.modeloSlug,
+    fecha: form.fecha,
+    fechaISO: form.fechaISO,
+    categoria: form.categoria,
+    descripcionCorta: form.descripcionCorta,
+    imagen: form.imagen,
+    destacado: form.destacado,
+    contenido: form.contenido,  // server normalizes |||
+    galeria: form.galeria,
+    coleccion: form.coleccion,
+    detallesTecnicos: {
+      suela: form.suela,
+      terreno: form.terreno,
+      peso: form.peso,
+      colorways: form.colorways,
+    },
+  };
+}
+
+// ── Components ────────────────────────────────────────────────
+
+function Alert({ type, children }) {
+  if (!children) return null;
+  return <div className={`alert alert-${type}`}>{children}</div>;
+}
+
+function LoginPage({ onLogin }) {
+  const [form, setForm] = useState({ usuario: '', contrasena: '' });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  async function submit(e) {
+    e.preventDefault();
+    setLoading(true); setError('');
+    try {
+      const data = await apiFetch('/api/login', { method: 'POST', body: form });
+      onLogin(data.token);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="login-wrap">
+      <div className="login-card">
+        <div className="login-logo">Botines Alta Gama CBA</div>
+        <h1 className="login-title">Panel de administración</h1>
+        <p className="login-sub">Ingresá con tus credenciales de admin.</p>
+        <Alert type="error">{error}</Alert>
+        <form onSubmit={submit}>
+          <div className="field">
+            <label>Usuario</label>
+            <input
+              type="text" value={form.usuario} autoComplete="username"
+              onChange={e => setForm(f => ({ ...f, usuario: e.target.value }))}
+              required
+            />
+          </div>
+          <div className="field">
+            <label>Contraseña</label>
+            <input
+              type="password" value={form.contrasena} autoComplete="current-password"
+              onChange={e => setForm(f => ({ ...f, contrasena: e.target.value }))}
+              required
+            />
+          </div>
+          <div className="field" style={{ marginTop: 24 }}>
+            <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
+              {loading ? <span className="spinner" /> : 'Ingresar'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// ── Lanzamiento Modal ─────────────────────────────────────────
+
+function LanzamientoModal({ item, token, onSaved, onClose }) {
+  const isEdit = Boolean(item?.slug);
+  const [form, setForm] = useState(() => itemToForm(item));
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  function set(field, val) {
+    setForm(f => ({ ...f, [field]: val }));
+  }
+
+  function handleTituloChange(val) {
+    set('titulo', val);
+    if (!isEdit) set('slug', slugify(val));
+  }
+
+  async function submit(e) {
+    e.preventDefault();
+    if (!form.slug || !form.titulo) { setError('Slug y título son requeridos.'); return; }
+    setLoading(true); setError('');
+    try {
+      const payload = formToPayload(form);
+      if (isEdit) {
+        await apiFetch(`/api/lanzamientos/${item.slug}`, { token, method: 'PUT', body: payload });
+      } else {
+        await apiFetch('/api/lanzamientos', { token, method: 'POST', body: payload });
+      }
+      onSaved();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="modal">
+        <div className="modal-header">
+          <h2 className="modal-title">{isEdit ? 'Editar lanzamiento' : 'Nuevo lanzamiento'}</h2>
+          <button className="modal-close" onClick={onClose}>×</button>
+        </div>
+
+        <Alert type="error">{error}</Alert>
+
+        <form onSubmit={submit}>
+          {/* Básico */}
+          <div className="modal-section">
+            <div className="modal-section-title">Información básica</div>
+            <div className="field">
+              <label>Título *</label>
+              <input type="text" value={form.titulo} onChange={e => handleTituloChange(e.target.value)} required />
+            </div>
+            <div className="field-row col2" style={{ marginTop: 16 }}>
+              <div className="field">
+                <label>Slug *</label>
+                <input type="text" value={form.slug} onChange={e => set('slug', e.target.value)} required />
+                <span className="hint">URL: /lanzamientos/{form.slug || '...'}</span>
+              </div>
+              <div className="field">
+                <label>Categoría</label>
+                <select value={form.categoria} onChange={e => set('categoria', e.target.value)}>
+                  {['Lanzamiento','Signature','Pack','Colección'].map(c => <option key={c}>{c}</option>)}
+                </select>
+              </div>
+            </div>
+            <div className="field" style={{ marginTop: 16 }}>
+              <label>Descripción corta</label>
+              <textarea value={form.descripcionCorta} onChange={e => set('descripcionCorta', e.target.value)} style={{ minHeight: 60 }} maxLength={220} />
+              <span className="hint">{form.descripcionCorta.length}/220 caracteres</span>
+            </div>
+          </div>
+
+          {/* Marca */}
+          <div className="modal-section">
+            <div className="modal-section-title">Marca</div>
+            <div className="field-row col3">
+              <div className="field">
+                <label>Nombre de marca</label>
+                <input type="text" value={form.marca} onChange={e => set('marca', e.target.value)} placeholder="adidas" />
+              </div>
+              <div className="field">
+                <label>marcaSlug</label>
+                <select value={form.marcaSlug} onChange={e => set('marcaSlug', e.target.value)}>
+                  {['adidas','nike','puma','new-balance'].map(s => <option key={s}>{s}</option>)}
+                </select>
+              </div>
+              <div className="field">
+                <label>modeloSlug</label>
+                <input type="text" value={form.modeloSlug} onChange={e => set('modeloSlug', e.target.value)} placeholder="f50" />
+              </div>
+            </div>
+          </div>
+
+          {/* Fecha e imagen */}
+          <div className="modal-section">
+            <div className="modal-section-title">Fecha e imagen</div>
+            <div className="field-row col3">
+              <div className="field">
+                <label>Fecha visible</label>
+                <input type="text" value={form.fecha} onChange={e => set('fecha', e.target.value)} placeholder="23 ABR 2026" />
+              </div>
+              <div className="field">
+                <label>Fecha ISO</label>
+                <input type="date" value={form.fechaISO} onChange={e => set('fechaISO', e.target.value)} />
+              </div>
+              <div className="field">
+                <label htmlFor="dest" className="checkbox-row" style={{ alignSelf: 'flex-end', marginBottom: 6 }}>
+                  <input id="dest" type="checkbox" checked={form.destacado} onChange={e => set('destacado', e.target.checked)} />
+                  <span>Destacado en home</span>
+                </label>
+              </div>
+            </div>
+            <div className="field" style={{ marginTop: 16 }}>
+              <label>URL imagen principal</label>
+              <input type="url" value={form.imagen} onChange={e => set('imagen', e.target.value)} placeholder="https://i.imgur.com/..." />
+            </div>
+            {form.imagen && (
+              <img src={form.imagen} alt="" style={{ marginTop: 10, maxHeight: 120, objectFit: 'cover', borderRadius: 2 }} onError={e => e.target.style.display='none'} />
+            )}
+            <div className="field" style={{ marginTop: 16 }}>
+              <label>Galería (URLs separadas por |)</label>
+              <input type="text" value={form.galeria} onChange={e => set('galeria', e.target.value)} placeholder="https://.../foto1.jpg|https://.../foto2.jpg" />
+            </div>
+          </div>
+
+          {/* Contenido */}
+          <div className="modal-section">
+            <div className="modal-section-title">Contenido del artículo</div>
+            <div className="field">
+              <label>Párrafos (separados por |||)</label>
+              <textarea value={form.contenido} onChange={e => set('contenido', e.target.value)} style={{ minHeight: 120 }} placeholder="Primer párrafo del artículo.|||Segundo párrafo.|||Tercer párrafo." />
+              <span className="hint">Separar cada párrafo con |||</span>
+            </div>
+            <div className="field" style={{ marginTop: 16 }}>
+              <label>Colección</label>
+              <input type="text" value={form.coleccion} onChange={e => set('coleccion', e.target.value)} placeholder="F50 Archive Collection" />
+            </div>
+          </div>
+
+          {/* Detalles técnicos */}
+          <div className="modal-section">
+            <div className="modal-section-title">Detalles técnicos</div>
+            <div className="field-row col2">
+              <div className="field">
+                <label>Suela</label>
+                <input type="text" value={form.suela} onChange={e => set('suela', e.target.value)} placeholder="Sprintframe con carbono" />
+              </div>
+              <div className="field">
+                <label>Terreno</label>
+                <input type="text" value={form.terreno} onChange={e => set('terreno', e.target.value)} placeholder="Firm Ground (FG)" />
+              </div>
+            </div>
+            <div className="field-row col2" style={{ marginTop: 16 }}>
+              <div className="field">
+                <label>Peso</label>
+                <input type="text" value={form.peso} onChange={e => set('peso', e.target.value)} placeholder="195g (talle 8.5 US)" />
+              </div>
+              <div className="field">
+                <label>Colorways (separados por |)</label>
+                <input type="text" value={form.colorways} onChange={e => set('colorways', e.target.value)} placeholder="Solar Yellow / Black|Electric Blue" />
+              </div>
+            </div>
+          </div>
+
+          <div className="modal-footer">
+            <button type="button" className="btn btn-ghost" onClick={onClose}>Cancelar</button>
+            <button type="submit" className="btn btn-primary" disabled={loading}>
+              {loading ? <span className="spinner" /> : (isEdit ? 'Guardar cambios' : 'Crear lanzamiento')}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// ── Lanzamientos Tab ──────────────────────────────────────────
+
+function LanzamientosTab({ token }) {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [modal, setModal] = useState(null); // null | {mode: 'create'|'edit', item?}
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  async function load() {
+    setLoading(true);
+    try { setItems(await apiFetch('/api/lanzamientos')); }
+    catch (err) { setError(err.message); }
+    finally { setLoading(false); }
+  }
+
+  useEffect(() => { load(); }, []);
+
+  async function del(slug) {
+    if (!confirm(`¿Eliminar el lanzamiento "${slug}"? Esta acción no se puede deshacer.`)) return;
+    try {
+      await apiFetch(`/api/lanzamientos/${slug}`, { token, method: 'DELETE' });
+      setSuccess('Lanzamiento eliminado.');
+      load();
+    } catch (err) { setError(err.message); }
+  }
+
+  function onSaved() {
+    setModal(null);
+    setSuccess('Lanzamiento guardado correctamente.');
+    load();
+  }
+
+  return (
+    <div>
+      <div className="main-header">
+        <div>
+          <h1 className="main-title">Lanzamientos</h1>
+          <p className="main-sub">{items.length} artículo{items.length !== 1 ? 's' : ''} publicado{items.length !== 1 ? 's' : ''}</p>
+        </div>
+        <button className="btn btn-primary" onClick={() => setModal({ mode: 'create' })}>
+          + Nuevo lanzamiento
+        </button>
+      </div>
+
+      <div className="main-body">
+        <Alert type="error">{error}</Alert>
+        <Alert type="success">{success}</Alert>
+
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: 48, color: 'var(--muted)' }}>
+            <span className="spinner" style={{ width: 24, height: 24, borderWidth: 3 }} />
+          </div>
+        ) : (
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Título</th>
+                  <th>Slug</th>
+                  <th>Marca</th>
+                  <th>Fecha</th>
+                  <th>Destacado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {items.length === 0 && (
+                  <tr><td colSpan="6" className="table-empty">No hay lanzamientos. ¡Creá el primero!</td></tr>
+                )}
+                {items.map(item => (
+                  <tr key={item.slug}>
+                    <td style={{ maxWidth: 260 }}>
+                      <div style={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.titulo}</div>
+                      {item.descripcionCorta && (
+                        <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 240 }}>
+                          {item.descripcionCorta}
+                        </div>
+                      )}
+                    </td>
+                    <td className="td-slug">{item.slug}</td>
+                    <td style={{ textTransform: 'capitalize' }}>{item.marcaSlug}</td>
+                    <td style={{ whiteSpace: 'nowrap', color: 'var(--dim)' }}>{item.fecha || item.fechaISO || '—'}</td>
+                    <td>
+                      <span className={`td-featured ${item.destacado ? 'yes' : 'no'}`}>
+                        {item.destacado ? 'Sí' : 'No'}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="td-actions">
+                        <button className="btn btn-ghost btn-sm" onClick={() => setModal({ mode: 'edit', item })}>
+                          Editar
+                        </button>
+                        <button className="btn btn-danger btn-sm" onClick={() => del(item.slug)}>
+                          Eliminar
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {modal && (
+        <LanzamientoModal
+          item={modal.item}
+          token={token}
+          onSaved={onSaved}
+          onClose={() => setModal(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+// ── Stock Tab ─────────────────────────────────────────────────
+
+function StockTab({ token }) {
+  const [stock, setStock] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
+  const [drag, setDrag] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const inputRef = useRef(null);
+
+  async function loadStock() {
+    setLoading(true);
+    try { setStock(await apiFetch('/api/stock')); }
+    catch (err) { setError(err.message); }
+    finally { setLoading(false); }
+  }
+
+  useEffect(() => { loadStock(); }, []);
+
+  async function uploadFile(file) {
+    if (!file) return;
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (!['xlsx','xls','csv'].includes(ext)) {
+      setError('Formato no soportado. Usá .xlsx, .xls o .csv');
+      return;
+    }
+    setUploading(true); setError(''); setSuccess('');
+    try {
+      const fd = new FormData();
+      fd.append('archivo', file);
+      const res = await fetch(`${API}/api/stock/upload`, {
+        method: 'POST',
+        headers: { 'x-admin-token': token },
+        body: fd,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error en la subida');
+      setSuccess(`Stock actualizado: ${data.productos} producto${data.productos !== 1 ? 's' : ''} en ${data.modelos} modelo${data.modelos !== 1 ? 's' : ''}.`);
+      loadStock();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  async function clearStock() {
+    if (!confirm('¿Limpiar todo el stock? No se puede deshacer.')) return;
+    try {
+      await apiFetch('/api/stock', { token, method: 'DELETE' });
+      setSuccess('Stock limpiado.');
+      setStock({});
+    } catch (err) { setError(err.message); }
+  }
+
+  const totalProductos = Object.values(stock).reduce((s, arr) => s + arr.length, 0);
+  const totalModelos = Object.keys(stock).length;
+
+  return (
+    <div>
+      <div className="main-header">
+        <div>
+          <h1 className="main-title">Stock</h1>
+          <p className="main-sub">{totalProductos} producto{totalProductos !== 1 ? 's' : ''} en {totalModelos} modelo{totalModelos !== 1 ? 's' : ''}</p>
+        </div>
+        {totalProductos > 0 && (
+          <button className="btn btn-danger" onClick={clearStock}>Limpiar stock</button>
+        )}
+      </div>
+
+      <div className="main-body">
+        <Alert type="error">{error}</Alert>
+        <Alert type="success">{success}</Alert>
+
+        {/* Upload zone */}
+        <div
+          className={`upload-zone ${drag ? 'drag' : ''}`}
+          onClick={() => inputRef.current?.click()}
+          onDragOver={e => { e.preventDefault(); setDrag(true); }}
+          onDragLeave={() => setDrag(false)}
+          onDrop={e => { e.preventDefault(); setDrag(false); uploadFile(e.dataTransfer.files[0]); }}
+        >
+          {uploading ? (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+              <span className="spinner" style={{ width: 28, height: 28, borderWidth: 3 }} />
+              <span style={{ fontSize: 14, color: 'var(--dim)' }}>Procesando archivo…</span>
+            </div>
+          ) : (
+            <>
+              <div className="upload-icon">📊</div>
+              <div className="upload-title">Subir Excel de stock</div>
+              <div className="upload-sub">Arrastrá el archivo acá o hacé clic para seleccionar</div>
+              <div className="upload-hint">Formatos: .xlsx · .xls · .csv</div>
+            </>
+          )}
+        </div>
+        <input
+          ref={inputRef} type="file" accept=".xlsx,.xls,.csv"
+          style={{ display: 'none' }}
+          onChange={e => uploadFile(e.target.files[0])}
+        />
+
+        {/* Columns reference */}
+        <div style={{ marginTop: 20, padding: '14px 16px', background: 'var(--bg-2)', border: '1px solid var(--line)', fontSize: 12 }}>
+          <span style={{ color: 'var(--muted)', fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase' }}>Columnas requeridas en el Excel: </span>
+          <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--dim)' }}>
+            id · modelo · marcaSlug · modeloSlug · colorway · precio · imagen · euTalles
+          </span>
+        </div>
+
+        {/* Stock grid */}
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: 48 }}>
+            <span className="spinner" style={{ width: 24, height: 24, borderWidth: 3 }} />
+          </div>
+        ) : totalModelos > 0 ? (
+          <div className="stock-grid">
+            {Object.entries(stock).map(([key, productos]) => {
+              const [brand, model] = key.split('/');
+              return (
+                <div key={key} className="stock-card">
+                  <div className="stock-card-brand">{brand}</div>
+                  <div className="stock-card-model">{model}</div>
+                  <div className="stock-card-count">{productos.length}</div>
+                  <div className="stock-card-label">producto{productos.length !== 1 ? 's' : ''}</div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--muted)', fontSize: 14 }}>
+            No hay stock cargado. Subí un Excel para comenzar.
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── Dashboard ─────────────────────────────────────────────────
+
+function Dashboard({ token, onLogout }) {
+  const [tab, setTab] = useState('lanzamientos');
+
+  async function logout() {
+    try { await apiFetch('/api/logout', { token, method: 'POST' }); } catch {}
+    onLogout();
+  }
+
+  const NAV = [
+    { id: 'lanzamientos', icon: '📰', label: 'Lanzamientos' },
+    { id: 'stock',        icon: '📦', label: 'Stock' },
+  ];
+
+  return (
+    <div className="layout">
+      <aside className="sidebar">
+        <div className="sidebar-logo">
+          <div className="sidebar-logo-label">Admin</div>
+          <div className="sidebar-logo-name">Botines Alta Gama</div>
+        </div>
+        <nav className="sidebar-nav">
+          {NAV.map(n => (
+            <button
+              key={n.id}
+              className={`nav-item ${tab === n.id ? 'active' : ''}`}
+              onClick={() => setTab(n.id)}
+            >
+              <span className="nav-icon">{n.icon}</span>
+              <span>{n.label}</span>
+            </button>
+          ))}
+          <a href="/index.html" target="_blank" className="nav-item" style={{ display: 'flex', color: 'var(--muted)' }}>
+            <span className="nav-icon">↗</span>
+            <span>Ver sitio</span>
+          </a>
+        </nav>
+        <div className="sidebar-footer">
+          <div className="sidebar-user">admin</div>
+          <button className="btn btn-ghost btn-sm btn-full" onClick={logout}>Cerrar sesión</button>
+        </div>
+      </aside>
+
+      <main className="main">
+        {tab === 'lanzamientos' && <LanzamientosTab token={token} />}
+        {tab === 'stock'        && <StockTab token={token} />}
+      </main>
+    </div>
+  );
+}
+
+// ── Root ──────────────────────────────────────────────────────
+
+function AdminApp() {
+  const [token, setToken] = useToken();
+  const [checking, setChecking] = useState(true);
+
+  useEffect(() => {
+    if (!token) { setChecking(false); return; }
+    apiFetch('/api/me', { token })
+      .then(() => setChecking(false))
+      .catch(() => { setToken(null); setChecking(false); });
+  }, []);
+
+  if (checking) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <span className="spinner" style={{ width: 28, height: 28, borderWidth: 3 }} />
+      </div>
+    );
+  }
+
+  if (!token) return <LoginPage onLogin={setToken} />;
+  return <Dashboard token={token} onLogout={() => setToken(null)} />;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<AdminApp />);
+</script>
+</body>
+</html>
