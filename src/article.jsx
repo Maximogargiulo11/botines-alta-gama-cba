@@ -10,7 +10,7 @@ function ArticlePage({ slug }) {
     if (!a) navigate('/');
   }, [a]);
 
-  const heroImg = a ? (a.galeria?.[0] || a.imagen) : null;
+  const heroImg = a ? a.imagen : null;
 
   useEffect(() => {
     if (!heroImg) { setPortrait(false); return; }
@@ -26,7 +26,7 @@ function ArticlePage({ slug }) {
 
   const paras = a.contenido;
   const gallery = a.galeria || [];
-  const inlineImages = gallery.slice(1);
+  const inlineImages = gallery;
 
   const heroBadges = (
     <div style={{ display: 'inline-flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', marginBottom: 18 }}>
@@ -134,12 +134,12 @@ function ArticlePage({ slug }) {
                   color: '#e6e6e6', maxWidth: 760, textWrap: 'pretty'
                 }}>{p}</p>
 
-                {/* Gallery images between paragraphs — contain, no crop */}
+                {/* Gallery images between paragraphs — full image, no crop */}
                 {(i === 0 || i === 2) && inlineImages[i === 0 ? 0 : 1] && (
                   <figure style={{ margin: '40px 0 48px', marginLeft: 'calc(-1 * min(80px, 6vw))', marginRight: 'calc(-1 * min(80px, 6vw))' }}>
-                    <div style={{ background: 'var(--bg-3)', overflow: 'hidden' }}>
+                    <div style={{ background: 'var(--bg-3)' }}>
                       <img src={inlineImages[i === 0 ? 0 : 1]} alt={`${a.titulo} — imagen`}
-                        style={{ width: '100%', height: 'auto', maxHeight: '80vh', objectFit: 'contain', display: 'block' }}
+                        style={{ width: '100%', height: 'auto', display: 'block' }}
                         onError={e => { e.target.style.display = 'none'; }} />
                     </div>
                   </figure>
@@ -147,7 +147,7 @@ function ArticlePage({ slug }) {
               </React.Fragment>
             ))}
 
-            {/* Bottom gallery grid — fixed ratio, contain to avoid crop */}
+            {/* Bottom gallery grid — free height, no crop */}
             {inlineImages.length > 2 && (
               <div style={{
                 display: 'grid',
@@ -155,8 +155,8 @@ function ArticlePage({ slug }) {
                 gap: 14, margin: '28px 0 48px'
               }}>
                 {inlineImages.slice(2, 5).map((src, i) => (
-                  <div key={i} style={{ aspectRatio: '3 / 4', overflow: 'hidden', background: 'var(--bg-3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+                  <div key={i} style={{ background: 'var(--bg-3)' }}>
+                    <img src={src} alt="" style={{ width: '100%', height: 'auto', display: 'block' }}
                       onError={e => { e.target.style.display = 'none'; }} />
                   </div>
                 ))}
