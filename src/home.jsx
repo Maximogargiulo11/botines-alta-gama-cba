@@ -132,7 +132,7 @@ function HeroCarousel({ articles }) {
             <button onClick={(e) => { e.preventDefault(); go(1); }} aria-label="Siguiente" style={arrowBtn('right')}>›</button>
             <div style={{
               position: 'absolute', bottom: 22, left: 0, right: 0,
-              display: 'flex', justifyContent: 'center', gap: 8
+              display: 'flex', justifyContent: 'center', gap: 8, zIndex: 10
             }}>
               {articles.map((_, i) => (
                 <button key={i}
@@ -156,6 +156,7 @@ const arrowBtn = (side) => ({
   position: 'absolute',
   top: '50%', transform: 'translateY(-50%)',
   [side]: 16,
+  zIndex: 10,
   width: 50, height: 50,
   background: 'rgba(0,0,0,0.45)',
   border: '1px solid rgba(255,255,255,0.4)',
