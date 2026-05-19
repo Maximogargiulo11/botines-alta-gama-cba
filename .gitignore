@@ -6,5 +6,6 @@ Thumbs.db
 # Local Netlify folder
 .netlify
 
-# Claude Code internal
-.claude/
+# Claude Code internal (excepto skills del proyecto)
+.claude/*
+!.claude/skills/
