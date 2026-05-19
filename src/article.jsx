@@ -43,34 +43,31 @@ function ArticlePage({ slug }) {
         <div style={{ height: 'min(86vh, 720px)', minHeight: 480, background: 'var(--bg-3)' }} />
       )}
 
-      {/* ── HERO: portrait — blurred bg + centered contain image ── */}
+      {/* ── HERO: portrait — blurred bg + centered contain image, fixed height ── */}
       {portrait === true && (
-        <section style={{ position: 'relative', overflow: 'hidden' }}>
-          <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: 0 }}>
-            <img src={heroImg} alt="" style={{
-              width: '100%', height: '100%', objectFit: 'cover',
-              filter: 'blur(20px) brightness(0.4)', transform: 'scale(1.1)'
-            }} />
-          </div>
+        <section style={{ position: 'relative', height: 'min(86vh, 720px)', minHeight: 480, overflow: 'hidden' }}>
+          <img src={heroImg} alt="" style={{
+            position: 'absolute', inset: 0, width: '100%', height: '100%',
+            objectFit: 'cover', filter: 'blur(20px) brightness(0.4)', transform: 'scale(1.1)'
+          }} />
           <img src={heroImg} alt={a.titulo}
             style={{
-              display: 'block', margin: '0 auto',
-              position: 'relative', zIndex: 1,
-              width: 'auto', maxWidth: '100%',
-              height: 'auto', maxHeight: '85vh',
-              objectFit: 'contain'
+              position: 'absolute', top: 0, left: '50%',
+              transform: 'translateX(-50%)',
+              height: '100%', width: 'auto', maxWidth: '100%',
+              objectFit: 'contain', zIndex: 1
             }}
             onError={e => { e.target.style.display = 'none'; }} />
           <div style={{
             position: 'absolute', inset: 0, zIndex: 2,
-            background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0) 50%)'
+            background: 'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0.85) 100%)'
           }} />
-          <div className="container" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, paddingBottom: 52, zIndex: 3 }}>
+          <div className="container" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, paddingBottom: 56, zIndex: 3 }}>
             <BackLink to="/" label="Volver a Lanzamientos" />
             <div style={{ marginTop: 24 }}>{heroBadges}</div>
             <h1 style={{
               fontFamily: 'var(--display)',
-              fontSize: 'clamp(34px, 4.6vw, 78px)',
+              fontSize: 'clamp(38px, 5.4vw, 84px)',
               fontWeight: 600, lineHeight: 1.05,
               letterSpacing: '-0.015em', maxWidth: 1100, textWrap: 'pretty'
             }}>{a.titulo}</h1>
