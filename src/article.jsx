@@ -131,12 +131,12 @@ function ArticlePage({ slug }) {
                   color: '#e6e6e6', maxWidth: 760, textWrap: 'pretty'
                 }}>{p}</p>
 
-                {/* Gallery images between paragraphs — full image, no crop */}
+                {/* Gallery images between paragraphs — full image, capped height */}
                 {(i === 0 || i === 2) && inlineImages[i === 0 ? 0 : 1] && (
                   <figure style={{ margin: '40px 0 48px', marginLeft: 'calc(-1 * min(80px, 6vw))', marginRight: 'calc(-1 * min(80px, 6vw))' }}>
-                    <div style={{ background: 'var(--bg-3)' }}>
+                    <div style={{ background: 'var(--bg-3)', display: 'flex', justifyContent: 'center' }}>
                       <img src={inlineImages[i === 0 ? 0 : 1]} alt={`${a.titulo} — imagen`}
-                        style={{ width: '100%', height: 'auto', display: 'block' }}
+                        style={{ width: 'auto', height: 'auto', maxWidth: '100%', maxHeight: '65vh', display: 'block' }}
                         onError={e => { e.target.style.display = 'none'; }} />
                     </div>
                   </figure>
@@ -144,7 +144,7 @@ function ArticlePage({ slug }) {
               </React.Fragment>
             ))}
 
-            {/* Bottom gallery grid — free height, no crop */}
+            {/* Bottom gallery grid — capped height, no crop */}
             {inlineImages.length > 2 && (
               <div style={{
                 display: 'grid',
@@ -152,8 +152,8 @@ function ArticlePage({ slug }) {
                 gap: 14, margin: '28px 0 48px'
               }}>
                 {inlineImages.slice(2, 5).map((src, i) => (
-                  <div key={i} style={{ background: 'var(--bg-3)' }}>
-                    <img src={src} alt="" style={{ width: '100%', height: 'auto', display: 'block' }}
+                  <div key={i} style={{ background: 'var(--bg-3)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <img src={src} alt="" style={{ width: 'auto', height: 'auto', maxWidth: '100%', maxHeight: '340px', display: 'block' }}
                       onError={e => { e.target.style.display = 'none'; }} />
                   </div>
                 ))}
