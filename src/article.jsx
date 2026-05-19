@@ -43,17 +43,29 @@ function ArticlePage({ slug }) {
         <div style={{ height: 'min(86vh, 720px)', minHeight: 480, background: 'var(--bg-3)' }} />
       )}
 
-      {/* ── HERO: portrait — full-width contain, black bg ── */}
+      {/* ── HERO: portrait — blurred bg + centered contain image ── */}
       {portrait === true && (
-        <section style={{ position: 'relative', background: '#000' }}>
+        <section style={{ position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: 0 }}>
+            <img src={heroImg} alt="" style={{
+              width: '100%', height: '100%', objectFit: 'cover',
+              filter: 'blur(20px) brightness(0.4)', transform: 'scale(1.1)'
+            }} />
+          </div>
           <img src={heroImg} alt={a.titulo}
-            style={{ display: 'block', width: '100%', height: 'auto', maxHeight: '90vh', objectFit: 'contain' }}
+            style={{
+              display: 'block', margin: '0 auto',
+              position: 'relative', zIndex: 1,
+              width: 'auto', maxWidth: '100%',
+              height: 'auto', maxHeight: '85vh',
+              objectFit: 'contain'
+            }}
             onError={e => { e.target.style.display = 'none'; }} />
           <div style={{
-            position: 'absolute', inset: 0,
-            background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0) 48%)'
+            position: 'absolute', inset: 0, zIndex: 2,
+            background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0) 50%)'
           }} />
-          <div className="container" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, paddingBottom: 52 }}>
+          <div className="container" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, paddingBottom: 52, zIndex: 3 }}>
             <BackLink to="/" label="Volver a Lanzamientos" />
             <div style={{ marginTop: 24 }}>{heroBadges}</div>
             <h1 style={{

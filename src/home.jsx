@@ -27,7 +27,19 @@ function HomePage() {
 
 function HeroCarousel({ articles }) {
   const [idx, setIdx] = useState(0);
+  const [portraits, setPortraits] = useState({});
   const total = articles.length;
+
+  useEffect(() => {
+    articles.forEach(a => {
+      const img = new Image();
+      const detect = () => setPortraits(prev => ({ ...prev, [a.slug]: img.naturalHeight > img.naturalWidth }));
+      img.onload = detect;
+      img.onerror = () => setPortraits(prev => ({ ...prev, [a.slug]: false }));
+      img.src = a.imagen;
+      if (img.complete && img.naturalWidth > 0) detect();
+    });
+  }, []);
 
   useEffect(() => {
     if (total <= 1) return;
@@ -42,58 +54,77 @@ function HeroCarousel({ articles }) {
   return (
     <section style={{ position: 'relative', background: '#000', overflow: 'hidden' }}>
       <div style={{ position: 'relative', height: 'min(86vh, 760px)', minHeight: 520 }}>
-        {articles.map((a, i) => (
-          <L to={`/lanzamientos/${a.slug}`} key={a.slug}>
-            <div style={{
-              position: 'absolute', inset: 0,
-              opacity: i === idx ? 1 : 0,
-              transition: 'opacity 0.9s ease',
-              pointerEvents: i === idx ? 'auto' : 'none'
-            }}>
-              <img src={a.imagen} alt={a.titulo} style={{
-                width: '100%', height: '100%', objectFit: 'cover'
-              }} onError={(e) => { e.target.style.display = 'none'; }} />
+        {articles.map((a, i) => {
+          const isPortrait = portraits[a.slug] === true;
+          return (
+            <L to={`/lanzamientos/${a.slug}`} key={a.slug}>
               <div style={{
                 position: 'absolute', inset: 0,
-                background: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 35%, rgba(0,0,0,0.85) 100%)'
-              }}></div>
-              <div className="container" style={{
-                position: 'absolute', left: 0, right: 0, bottom: 0,
-                paddingBottom: 64
+                opacity: i === idx ? 1 : 0,
+                transition: 'opacity 0.9s ease',
+                pointerEvents: i === idx ? 'auto' : 'none'
               }}>
+                {isPortrait ? (
+                  <React.Fragment>
+                    <img src={a.imagen} alt="" style={{
+                      position: 'absolute', inset: 0, width: '100%', height: '100%',
+                      objectFit: 'cover', filter: 'blur(20px) brightness(0.35)',
+                      transform: 'scale(1.1)'
+                    }} />
+                    <img src={a.imagen} alt={a.titulo} style={{
+                      position: 'absolute', top: 0, left: '50%',
+                      transform: 'translateX(-50%)',
+                      height: '100%', width: 'auto',
+                      objectFit: 'contain', zIndex: 1
+                    }} onError={(e) => { e.target.style.display = 'none'; }} />
+                  </React.Fragment>
+                ) : (
+                  <img src={a.imagen} alt={a.titulo} style={{
+                    width: '100%', height: '100%', objectFit: 'cover'
+                  }} onError={(e) => { e.target.style.display = 'none'; }} />
+                )}
                 <div style={{
-                  display: 'inline-flex', gap: 14, alignItems: 'center',
-                  marginBottom: 18
+                  position: 'absolute', inset: 0, zIndex: 2,
+                  background: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 35%, rgba(0,0,0,0.85) 100%)'
+                }}></div>
+                <div className="container" style={{
+                  position: 'absolute', left: 0, right: 0, bottom: 0,
+                  paddingBottom: 64, zIndex: 3
                 }}>
-                  <span className="eyebrow" style={{ background: '#fff', color: '#000', padding: '6px 12px' }}>
-                    {a.marca}
-                  </span>
-                  <span className="eyebrow" style={{ color: '#fff' }}>{a.categoria} · {a.fecha}</span>
+                  <div style={{
+                    display: 'inline-flex', gap: 14, alignItems: 'center',
+                    marginBottom: 18
+                  }}>
+                    <span className="eyebrow" style={{ background: '#fff', color: '#000', padding: '6px 12px' }}>
+                      {a.marca}
+                    </span>
+                    <span className="eyebrow" style={{ color: '#fff' }}>{a.categoria} · {a.fecha}</span>
+                  </div>
+                  <h1 style={{
+                    fontFamily: 'var(--display)',
+                    fontSize: 'clamp(36px, 5.6vw, 80px)',
+                    fontWeight: 600,
+                    lineHeight: 1.05,
+                    maxWidth: 1000,
+                    letterSpacing: '-0.01em',
+                    textWrap: 'pretty'
+                  }}>
+                    {a.titulo}
+                  </h1>
+                  <p style={{
+                    fontFamily: 'var(--display)', fontStyle: 'italic',
+                    fontSize: 'clamp(15px, 1.6vw, 20px)',
+                    color: 'rgba(255,255,255,0.8)',
+                    marginTop: 18, maxWidth: 720, lineHeight: 1.5,
+                    textWrap: 'pretty'
+                  }}>
+                    {a.descripcionCorta}
+                  </p>
                 </div>
-                <h1 style={{
-                  fontFamily: 'var(--display)',
-                  fontSize: 'clamp(36px, 5.6vw, 80px)',
-                  fontWeight: 600,
-                  lineHeight: 1.05,
-                  maxWidth: 1000,
-                  letterSpacing: '-0.01em',
-                  textWrap: 'pretty'
-                }}>
-                  {a.titulo}
-                </h1>
-                <p style={{
-                  fontFamily: 'var(--display)', fontStyle: 'italic',
-                  fontSize: 'clamp(15px, 1.6vw, 20px)',
-                  color: 'rgba(255,255,255,0.8)',
-                  marginTop: 18, maxWidth: 720, lineHeight: 1.5,
-                  textWrap: 'pretty'
-                }}>
-                  {a.descripcionCorta}
-                </p>
               </div>
-            </div>
-          </L>
-        ))}
+            </L>
+          );
+        })}
 
         {total > 1 && (
           <React.Fragment>
