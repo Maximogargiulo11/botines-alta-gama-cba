@@ -4,26 +4,14 @@
 
 function ArticlePage({ slug }) {
   const a = findArticle(slug);
-  const [portrait, setPortrait] = useState(null); // null=detecting, true=portrait, false=landscape
 
   useEffect(() => {
     if (!a) navigate('/');
   }, [a]);
 
-  const heroImg = a ? a.imagen : null;
-
-  useEffect(() => {
-    if (!heroImg) { setPortrait(false); return; }
-    const img = new Image();
-    const detect = () => setPortrait(img.naturalHeight > img.naturalWidth);
-    img.onload = detect;
-    img.onerror = () => setPortrait(false);
-    img.src = heroImg;
-    if (img.complete && img.naturalWidth > 0) detect();
-  }, [heroImg]);
-
   if (!a) return null;
 
+  const heroImg = a.imagen;
   const paras = a.contenido;
   const gallery = (a.galeria || []).map(g =>
     typeof g === 'string'
@@ -41,73 +29,45 @@ function ArticlePage({ slug }) {
   return (
     <article>
 
-      {/* ── Skeleton while detecting orientation ─────────── */}
-      {portrait === null && (
-        <div style={{ height: 'min(86vh, 720px)', minHeight: 480, background: 'var(--bg-3)' }} />
-      )}
-
-      {/* ── HERO: portrait — blurred bg + centered contain image, fixed height ── */}
-      {portrait === true && (
-        <section style={{ position: 'relative', height: 'min(86vh, 720px)', minHeight: 480, overflow: 'hidden' }}>
-          <img src={heroImg} alt="" style={{
-            position: 'absolute', inset: 0, width: '100%', height: '100%',
-            objectFit: 'cover', filter: 'blur(20px) brightness(0.4)', transform: 'scale(1.1)'
-          }} />
-          <img src={heroImg} alt={a.titulo}
-            style={{
-              position: 'absolute', top: 0, left: '50%',
-              transform: 'translateX(-50%)',
-              height: '100%', width: 'auto', maxWidth: '100%',
-              objectFit: 'contain', zIndex: 1
-            }}
-            onError={e => { e.target.style.display = 'none'; }} />
-          <div style={{
-            position: 'absolute', inset: 0, zIndex: 2,
-            background: 'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0.85) 100%)'
-          }} />
-          <div className="container" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, paddingBottom: 56, zIndex: 3 }}>
-            <BackLink to="/" label="Volver a Lanzamientos" />
-            <div style={{ marginTop: 24 }}>{heroBadges}</div>
-            <h1 style={{
-              fontFamily: 'var(--display)',
-              fontSize: 'clamp(38px, 5.4vw, 84px)',
-              fontWeight: 600, lineHeight: 1.05,
-              letterSpacing: '-0.015em', maxWidth: 1100, textWrap: 'pretty'
-            }}>{a.titulo}</h1>
-            {a.descripcionCorta && (
-              <p style={{
-                fontFamily: 'var(--display)', fontStyle: 'italic',
-                fontSize: 'clamp(15px, 1.5vw, 19px)',
-                lineHeight: 1.55, color: 'rgba(255,255,255,0.8)',
-                marginTop: 14, maxWidth: 640, textWrap: 'pretty'
-              }}>{a.descripcionCorta}</p>
-            )}
-          </div>
-        </section>
-      )}
-
-      {/* ── HERO: landscape — full-width cover, top-aligned ─ */}
-      {portrait === false && (
-        <section style={{ position: 'relative', height: 'min(86vh, 720px)', minHeight: 480, overflow: 'hidden' }}>
-          <img src={heroImg} alt={a.titulo}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }}
-            onError={e => { e.target.style.display = 'none'; }} />
-          <div style={{
-            position: 'absolute', inset: 0,
-            background: 'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0.85) 100%)'
-          }} />
-          <div className="container" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, paddingBottom: 56 }}>
-            <BackLink to="/" label="Volver a Lanzamientos" />
-            <div style={{ marginTop: 24 }}>{heroBadges}</div>
-            <h1 style={{
-              fontFamily: 'var(--display)',
-              fontSize: 'clamp(38px, 5.4vw, 84px)',
-              fontWeight: 600, lineHeight: 1.05,
-              letterSpacing: '-0.015em', maxWidth: 1100, textWrap: 'pretty'
-            }}>{a.titulo}</h1>
-          </div>
-        </section>
-      )}
+      {/* ── HERO ─────────────────────────────────────────────── */}
+      <section style={{ position: 'relative', height: '85vh', minHeight: 480, overflow: 'hidden', background: '#000' }}>
+        {/* Blurred background */}
+        <img src={heroImg} alt="" style={{
+          position: 'absolute', inset: 0, width: '100%', height: '100%',
+          objectFit: 'cover', filter: 'blur(25px)', transform: 'scale(1.1)', opacity: 0.5
+        }} onError={e => { e.target.style.display = 'none'; }} />
+        {/* Centered full image */}
+        <img src={heroImg} alt={a.titulo} className="hero-img-contain" style={{
+          position: 'absolute', top: 0, left: '50%',
+          transform: 'translateX(-50%)',
+          height: '100%', width: 'auto',
+          objectFit: 'contain', zIndex: 1
+        }} onError={e => { e.target.style.display = 'none'; }} />
+        {/* Gradient */}
+        <div style={{
+          position: 'absolute', inset: 0, zIndex: 2,
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0) 50%, rgba(0,0,0,0.88) 100%)'
+        }} />
+        {/* Text */}
+        <div className="container" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, paddingBottom: 56, zIndex: 3 }}>
+          <BackLink to="/" label="Volver a Lanzamientos" />
+          <div style={{ marginTop: 24 }}>{heroBadges}</div>
+          <h1 style={{
+            fontFamily: 'var(--display)',
+            fontSize: 'clamp(38px, 5.4vw, 84px)',
+            fontWeight: 600, lineHeight: 1.05,
+            letterSpacing: '-0.015em', maxWidth: 1100, textWrap: 'pretty'
+          }}>{a.titulo}</h1>
+          {a.descripcionCorta && (
+            <p style={{
+              fontFamily: 'var(--display)', fontStyle: 'italic',
+              fontSize: 'clamp(15px, 1.5vw, 19px)',
+              lineHeight: 1.55, color: 'rgba(255,255,255,0.8)',
+              marginTop: 14, maxWidth: 640, textWrap: 'pretty'
+            }}>{a.descripcionCorta}</p>
+          )}
+        </div>
+      </section>
 
       {/* ── BODY ───────────────────────────────────────────── */}
       <div className="container" style={{ paddingTop: 72, paddingBottom: 40 }}>
@@ -116,16 +76,6 @@ function ArticlePage({ slug }) {
           gap: 64, alignItems: 'start'
         }}>
           <div>
-            {/* Lead: only if not already shown in portrait hero overlay */}
-            {portrait !== true && a.descripcionCorta && (
-              <p style={{
-                fontFamily: 'var(--display)', fontStyle: 'italic',
-                fontSize: 'clamp(20px, 2vw, 26px)',
-                lineHeight: 1.5, color: 'var(--text-dim)',
-                marginBottom: 48, textWrap: 'pretty', maxWidth: 760
-              }}>{a.descripcionCorta}</p>
-            )}
-
             {paras.map((p, i) => (
               <p key={i} style={{
                 fontSize: 'clamp(16px, 1.2vw, 18px)',
