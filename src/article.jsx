@@ -25,8 +25,11 @@ function ArticlePage({ slug }) {
   if (!a) return null;
 
   const paras = a.contenido;
-  const gallery = a.galeria || [];
-  const inlineImages = gallery;
+  const gallery = (a.galeria || []).map(g =>
+    typeof g === 'string'
+      ? { url: g, size: 'full', layout: 'solo' }
+      : { url: g.url || '', size: g.size || 'full', layout: g.layout || 'solo' }
+  ).filter(g => g.url);
 
   const heroBadges = (
     <div style={{ display: 'inline-flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', marginBottom: 18 }}>
@@ -124,41 +127,56 @@ function ArticlePage({ slug }) {
             )}
 
             {paras.map((p, i) => (
-              <React.Fragment key={i}>
-                <p style={{
-                  fontSize: 'clamp(16px, 1.2vw, 18px)',
-                  lineHeight: 1.8, marginBottom: 28,
-                  color: '#e6e6e6', maxWidth: 760, textWrap: 'pretty'
-                }}>{p}</p>
-
-                {/* Gallery images between paragraphs — full image, capped height */}
-                {(i === 0 || i === 2) && inlineImages[i === 0 ? 0 : 1] && (
-                  <figure style={{ margin: '40px 0 48px', marginLeft: 'calc(-1 * min(80px, 6vw))', marginRight: 'calc(-1 * min(80px, 6vw))' }}>
-                    <div style={{ background: 'var(--bg-3)', display: 'flex', justifyContent: 'center' }}>
-                      <img src={inlineImages[i === 0 ? 0 : 1]} alt={`${a.titulo} — imagen`}
-                        style={{ width: 'auto', height: 'auto', maxWidth: '100%', maxHeight: '65vh', display: 'block' }}
-                        onError={e => { e.target.style.display = 'none'; }} />
-                    </div>
-                  </figure>
-                )}
-              </React.Fragment>
+              <p key={i} style={{
+                fontSize: 'clamp(16px, 1.2vw, 18px)',
+                lineHeight: 1.8, marginBottom: 28,
+                color: '#e6e6e6', maxWidth: 760, textWrap: 'pretty'
+              }}>{p}</p>
             ))}
 
-            {/* Bottom gallery grid — capped height, no crop */}
-            {inlineImages.length > 2 && (
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: `repeat(${Math.min(inlineImages.length - 2, 3)}, 1fr)`,
-                gap: 14, margin: '28px 0 48px'
-              }}>
-                {inlineImages.slice(2, 5).map((src, i) => (
-                  <div key={i} style={{ background: 'var(--bg-3)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <img src={src} alt="" style={{ width: 'auto', height: 'auto', maxWidth: '100%', maxHeight: '340px', display: 'block' }}
-                      onError={e => { e.target.style.display = 'none'; }} />
-                  </div>
-                ))}
-              </div>
-            )}
+            {/* Gallery — size and layout configured per image */}
+            {gallery.length > 0 && (() => {
+              const rows = [];
+              let gi = 0;
+              while (gi < gallery.length) {
+                const cur = gallery[gi], nxt = gallery[gi + 1];
+                if (cur.layout === 'pair-left' && nxt && nxt.layout === 'pair-right') {
+                  rows.push({ type: 'pair', left: cur, right: nxt, key: gi });
+                  gi += 2;
+                } else {
+                  rows.push({ type: 'solo', item: cur, key: gi });
+                  gi++;
+                }
+              }
+              const sW = { full: '100%', medium: '70%', small: '50%' };
+              return (
+                <div style={{ margin: '40px 0 48px' }}>
+                  {rows.map(row => row.type === 'pair' ? (
+                    <div key={row.key} className="gallery-pair" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+                      <div style={{ background: 'var(--bg-3)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <img src={row.left.url} alt="" style={{ width: 'auto', height: 'auto', maxWidth: '100%', maxHeight: '50vh', display: 'block' }}
+                          onError={e => { e.target.style.display = 'none'; }} />
+                      </div>
+                      <div style={{ background: 'var(--bg-3)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <img src={row.right.url} alt="" style={{ width: 'auto', height: 'auto', maxWidth: '100%', maxHeight: '50vh', display: 'block' }}
+                          onError={e => { e.target.style.display = 'none'; }} />
+                      </div>
+                    </div>
+                  ) : (
+                    <div key={row.key} style={{
+                      marginBottom: 12, display: 'flex', justifyContent: 'center',
+                      marginLeft: row.item.size === 'full' ? 'calc(-1 * min(80px, 6vw))' : 0,
+                      marginRight: row.item.size === 'full' ? 'calc(-1 * min(80px, 6vw))' : 0
+                    }}>
+                      <div style={{ width: sW[row.item.size] || '100%', background: 'var(--bg-3)', display: 'flex', justifyContent: 'center' }}>
+                        <img src={row.item.url} alt="" style={{ width: 'auto', height: 'auto', maxWidth: '100%', maxHeight: '65vh', display: 'block' }}
+                          onError={e => { e.target.style.display = 'none'; }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              );
+            })()}
           </div>
 
           <aside style={{ position: 'sticky', top: 96 }}>
@@ -228,6 +246,11 @@ function ArticlePage({ slug }) {
           .article-grid {
             grid-template-columns: 1fr !important;
             gap: 40px !important;
+          }
+        }
+        @media (max-width: 600px) {
+          .gallery-pair {
+            grid-template-columns: 1fr !important;
           }
         }
       `}</style>
