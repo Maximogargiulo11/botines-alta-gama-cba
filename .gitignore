@@ -9,3 +9,4 @@ Thumbs.db
 # Claude Code internal (excepto skills del proyecto)
 .claude/*
 !.claude/skills/
+.vercel
