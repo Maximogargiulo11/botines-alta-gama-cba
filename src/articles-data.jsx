@@ -1,4 +1,4 @@
-// ============================================================
+﻿// ============================================================
 // Datos editoriales — Lanzamientos + Stock por modelo
 // ============================================================
 
@@ -73,7 +73,7 @@ const ARTICLES = [
   },
   {
     slug: 'nike-united-pack-chapter-3',
-    titulo: 'Nike ‘United’ Pack: Capítulo 3',
+    titulo: "Nike 'United' Pack: Capítulo 3",
     marca: 'Nike',
     marcaSlug: 'nike',
     modeloSlug: 'mercurial',
@@ -81,24 +81,24 @@ const ARTICLES = [
     fechaISO: '2026-04-30',
     categoria: 'Pack',
     descripcionCorta: 'Nike reúne a las mejores jugadoras del fútbol femenino para el tercer capítulo de la serie United Pack.',
-    imagen: ‘https://i.imgur.com/l80MPIc.jpeg’,
+    imagen: 'https://i.imgur.com/l80MPIc.jpeg',
     destacado: true,
     contenido: [
-      ‘@nikefootball reúne a algunas de las mejores jugadoras del fútbol femenino y embajadoras de la marca para lanzar el capítulo 3 de esta serie. Para aquellos que están en la cuenta, este concepto comenzó en 2023, uniendo lo mejor del juego femenino antes de la Copa del Mundo.’,
-      ‘Fue seguido más tarde ese mismo año con el paquete ‘United Golden’, de variaciones en el aspecto dorado. Luego, el año pasado se lanzaron más bajo la bandera de ‘United’ Pack, uno en febrero y otro en octubre. Ahora tenemos lo que se conoce oficialmente como capítulo 3.’,
-      ‘El pack incluye colorways de Mercurial Vapor 16, Phantom GX II y Tiempo Legend 10 con paleta blanca, pink blast y core black. La cápsula además trae camisetas de entrenamiento, pelotas oficiales y una guía editorial impresa con perfiles de cada una de las embajadoras del proyecto.’,
-      ‘¿Confundido? No te preocupes, nosotros también. Todo lo que realmente necesitás saber es que este es un nuevo aspecto para las mejores jugadoras de Nike en el juego femenino. ¿Entendido? Bien.’
+      '@nikefootball reúne a algunas de las mejores jugadoras del fútbol femenino y embajadoras de la marca para lanzar el capítulo 3 de esta serie. Para aquellos que están en la cuenta, este concepto comenzó en 2023, uniendo lo mejor del juego femenino antes de la Copa del Mundo.',
+      "Fue seguido más tarde ese mismo año con el paquete 'United Golden', de variaciones en el aspecto dorado. Luego, el año pasado se lanzaron más bajo la bandera de 'United' Pack, uno en febrero y otro en octubre. Ahora tenemos lo que se conoce oficialmente como capítulo 3.",
+      'El pack incluye colorways de Mercurial Vapor 16, Phantom GX II y Tiempo Legend 10 con paleta blanca, pink blast y core black. La cápsula además trae camisetas de entrenamiento, pelotas oficiales y una guía editorial impresa con perfiles de cada una de las embajadoras del proyecto.',
+      '¿Confundido? No te preocupes, nosotros también. Todo lo que realmente necesitás saber es que este es un nuevo aspecto para las mejores jugadoras de Nike en el juego femenino. ¿Entendido? Bien.'
     ],
-    galeria: [‘https://i.imgur.com/l80MPIc.jpeg’],
+    galeria: ['https://i.imgur.com/l80MPIc.jpeg'],
     detallesTecnicos: {
-      suela: ‘Variable según modelo (FG / AG)’,
-      terreno: ‘Firm Ground / Artificial Ground’,
-      peso: ‘186g (Mercurial 8.5 US)’,
-      colorways: [‘White / Pink Blast / Black’]
+      suela: 'Variable según modelo (FG / AG)',
+      terreno: 'Firm Ground / Artificial Ground',
+      peso: '186g (Mercurial 8.5 US)',
+      colorways: ['White / Pink Blast / Black']
     },
-    coleccion: ‘Nike Football · United Pack · Chapter 3’,
-    productoRelacionadoId: ‘merc-vapor-16’,
-    urlInstagram: ‘https://www.instagram.com/p/C6dpJq6OJtq/’
+    coleccion: 'Nike Football · United Pack · Chapter 3',
+    productoRelacionadoId: 'merc-vapor-16',
+    urlInstagram: 'https://www.instagram.com/p/C6dpJq6OJtq/'
   },
   {
     slug: 'puma-eclipse-pack',
