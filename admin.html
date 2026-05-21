@@ -104,6 +104,9 @@
   .btn-ghost:hover { border-color: var(--text); }
   .btn-danger { background: transparent; color: var(--red); border-color: rgba(248,113,113,0.3); }
   .btn-danger:hover { background: rgba(248,113,113,0.08); border-color: var(--red); }
+  .btn-green { background: var(--green); color: #000; border-color: var(--green); }
+  .btn-green:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(74,222,128,0.25); }
+  .btn-lg { padding: 16px 36px; font-size: 13px; }
   .btn-sm { padding: 6px 14px; font-size: 11px; }
   .btn:disabled { opacity: 0.4; cursor: not-allowed; }
   .btn-full { width: 100%; }
@@ -823,6 +826,148 @@ function LanzamientosTab({ token }) {
   );
 }
 
+// ── Publicar Tab ──────────────────────────────────────────────
+
+function PublicarTab({ token }) {
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null); // { ok, lanzamientos, modelos, timestamp } | { error }
+  const [stats, setStats] = useState(null);
+
+  useEffect(() => {
+    // Cargar stats iniciales
+    Promise.all([
+      apiFetch('/api/lanzamientos').catch(() => []),
+      apiFetch('/api/stock').catch(() => ({})),
+    ]).then(([lanz, stock]) => {
+      setStats({
+        lanzamientos: lanz.length,
+        modelos: Object.keys(stock).length,
+        productos: Object.values(stock).reduce((s, a) => s + a.length, 0),
+      });
+    });
+  }, []);
+
+  async function publish() {
+    if (!confirm('Esto va a generar el archivo de datos, hacer un commit a GitHub y desplegar en Vercel. ¿Continuar?')) return;
+    setLoading(true);
+    setResult(null);
+    try {
+      const data = await apiFetch('/api/publish', { token, method: 'POST' });
+      setResult({ ok: true, ...data });
+    } catch (err) {
+      setResult({ ok: false, error: err.message });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div>
+      <div className="main-header">
+        <div>
+          <h1 className="main-title">Publicar en vivo</h1>
+          <p className="main-sub">Genera el archivo de datos, commitea a GitHub y despliega en Vercel.</p>
+        </div>
+      </div>
+
+      <div className="main-body">
+
+        {/* Resumen del estado actual */}
+        {stats && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16, marginBottom: 32 }}>
+            {[
+              { label: 'Lanzamientos', val: stats.lanzamientos, icon: '📰' },
+              { label: 'Modelos con stock', val: stats.modelos, icon: '📦' },
+              { label: 'Productos en stock', val: stats.productos, icon: '👟' },
+            ].map(s => (
+              <div key={s.label} style={{ background: 'var(--bg-2)', border: '1px solid var(--line)', padding: '20px 24px' }}>
+                <div style={{ fontSize: 22, marginBottom: 8 }}>{s.icon}</div>
+                <div style={{ fontFamily: 'var(--mono)', fontSize: 28, fontWeight: 700 }}>{s.val}</div>
+                <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 4, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Cómo funciona */}
+        <div style={{ background: 'var(--bg-2)', border: '1px solid var(--line)', padding: '24px 28px', marginBottom: 28 }}>
+          <div style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 16 }}>
+            Qué hace al publicar
+          </div>
+          <ol style={{ paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {[
+              ['Genera', 'src/articles-data.jsx con los lanzamientos y stock actuales del servidor.'],
+              ['Commitea', 'El archivo generado en el repositorio de GitHub con timestamp.'],
+              ['Despliega', 'GitHub Actions detecta el push y Vercel hace el deploy automático (~1–2 min).'],
+            ].map(([strong, rest]) => (
+              <li key={strong} style={{ fontSize: 13, color: 'var(--dim)', lineHeight: 1.6 }}>
+                <strong style={{ color: 'var(--text)' }}>{strong}:</strong> {rest}
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        {/* Resultado anterior */}
+        {result && (
+          <div style={{ marginBottom: 24 }}>
+            {result.ok ? (
+              <div className="alert alert-success" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <strong>✅ Publicado correctamente</strong>
+                <span style={{ fontSize: 12, opacity: 0.85 }}>
+                  {result.lanzamientos} lanzamiento{result.lanzamientos !== 1 ? 's' : ''} · {result.modelos} modelo{result.modelos !== 1 ? 's' : ''} con stock · commit pusheado a GitHub
+                </span>
+                <span style={{ fontFamily: 'var(--mono)', fontSize: 11, opacity: 0.65 }}>
+                  Vercel desplegará en ~1–2 minutos. Verificá en{' '}
+                  <a href="https://vercel.com" target="_blank" rel="noopener" style={{ textDecoration: 'underline' }}>vercel.com</a>
+                </span>
+              </div>
+            ) : (
+              <div className="alert alert-error">
+                <strong>❌ Error al publicar:</strong> {result.error}
+                <div style={{ fontSize: 11, marginTop: 6, opacity: 0.8 }}>
+                  Verificá que el servidor tenga acceso a internet y git esté configurado correctamente.
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Botón principal */}
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '32px 0' }}>
+          <button
+            className="btn btn-green btn-lg"
+            onClick={publish}
+            disabled={loading}
+            style={{ gap: 12, minWidth: 260 }}
+          >
+            {loading ? (
+              <>
+                <span className="spinner" style={{ borderTopColor: '#000', borderColor: 'rgba(0,0,0,0.2)' }} />
+                Publicando…
+              </>
+            ) : (
+              <>
+                🚀 Publicar en vivo
+              </>
+            )}
+          </button>
+        </div>
+
+        {/* Nota de requerimientos */}
+        <div style={{ borderTop: '1px solid var(--line)', paddingTop: 20, marginTop: 8 }}>
+          <p style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.7 }}>
+            <strong style={{ color: 'var(--dim)' }}>Requisitos:</strong> git configurado localmente con acceso al repositorio, y el workflow de GitHub Actions activo con los secrets{' '}
+            <code style={{ fontFamily: 'var(--mono)', fontSize: 11 }}>VERCEL_TOKEN</code>,{' '}
+            <code style={{ fontFamily: 'var(--mono)', fontSize: 11 }}>VERCEL_ORG_ID</code>,{' '}
+            <code style={{ fontFamily: 'var(--mono)', fontSize: 11 }}>VERCEL_PROJECT_ID</code>.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
 // ── Stock Tab ─────────────────────────────────────────────────
 
 function StockTab({ token }) {
@@ -976,6 +1121,7 @@ function Dashboard({ token, onLogout }) {
   const NAV = [
     { id: 'lanzamientos', icon: '📰', label: 'Lanzamientos' },
     { id: 'stock',        icon: '📦', label: 'Stock' },
+    { id: 'publicar',     icon: '🚀', label: 'Publicar' },
   ];
 
   return (
@@ -1010,6 +1156,7 @@ function Dashboard({ token, onLogout }) {
       <main className="main">
         {tab === 'lanzamientos' && <LanzamientosTab token={token} />}
         {tab === 'stock'        && <StockTab token={token} />}
+        {tab === 'publicar'     && <PublicarTab token={token} />}
       </main>
     </div>
   );
