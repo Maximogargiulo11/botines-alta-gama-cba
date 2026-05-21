@@ -5,7 +5,9 @@
 // Tiene prioridad sobre Sanity y Google Sheets.
 // ============================================================
 
-const BACKEND_URL = 'http://localhost:3001';
+// Apunta al servidor en el mismo host, puerto 3001.
+// Funciona en localhost Y desde otros dispositivos en la red local.
+const BACKEND_URL = `${window.location.protocol}//${window.location.hostname}:3001`;
 
 async function checkBackend() {
   try {
@@ -33,7 +35,10 @@ function mapLanzamientoBackend(item) {
     imagen:           item.imagen           || '',
     destacado:        Boolean(item.destacado),
     contenido:        Array.isArray(item.contenido) ? item.contenido : [],
-    galeria:          Array.isArray(item.galeria)   ? item.galeria   : [],
+    // Normaliza galería a strings (el admin puede guardar objetos {url,size,layout})
+    galeria: Array.isArray(item.galeria)
+      ? item.galeria.map(g => typeof g === 'string' ? g : (g?.url || '')).filter(Boolean)
+      : [],
     detallesTecnicos: {
       suela:     item.detallesTecnicos?.suela     || '',
       terreno:   item.detallesTecnicos?.terreno   || '',

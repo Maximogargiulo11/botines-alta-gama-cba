@@ -12,7 +12,10 @@ function ArticlePage({ slug }) {
 
   if (!a) return null;
 
-  const gallery = a.galeria || (a.imagen ? [a.imagen] : []);
+  // Normaliza galería: puede ser strings o {url,size,layout} objects (del admin)
+  const gallery = (a.galeria || (a.imagen ? [a.imagen] : []))
+    .map(g => typeof g === 'string' ? g : (g?.url || ''))
+    .filter(Boolean);
   const heroImg = gallery[0] || a.imagen;
   const inlineImages = gallery.slice(1);
   const productoRelacionado = a.productoRelacionadoId ? findProductById(a.productoRelacionadoId) : null;

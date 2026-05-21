@@ -150,9 +150,13 @@ const BRANDS_INFO = [
 function generateArticlesDataJS(lanzamientos, stockRaw) {
   const ts = new Date().toISOString();
 
-  // Limpiar campos internos del servidor (_id, etc.)
+  // Limpiar campos internos y normalizar galería → array de strings
   const articles = lanzamientos.map(l => {
     const { _id, ...rest } = l;
+    // Galería: el admin guarda {url,size,layout}; el frontend espera strings
+    rest.galeria = Array.isArray(rest.galeria)
+      ? rest.galeria.map(g => typeof g === 'string' ? g : (g?.url || '')).filter(Boolean)
+      : [];
     return rest;
   });
 
@@ -359,6 +363,10 @@ app.post('/api/publish', requireAuth, (req, res) => {
     const jsContent = generateArticlesDataJS(lanzamientos, stock);
     fs.writeFileSync(ARTICLES_JSX, jsContent, 'utf8');
 
+    // Git: asegurar user config (necesario si git no está configurado globalmente)
+    try { execSync('git config user.email "admin@botinesaltagamacba.com"', { cwd: ROOT, stdio: 'pipe' }); } catch {}
+    try { execSync('git config user.name "Botines Alta Gama Admin"', { cwd: ROOT, stdio: 'pipe' }); } catch {}
+
     // Git: add → commit → push
     const ts = new Date().toISOString().slice(0, 16).replace('T', ' ');
     const msg = `Admin: publicar ${lanzamientos.length} lanzamientos — ${ts}`;
@@ -392,13 +400,32 @@ app.post('/api/publish', requireAuth, (req, res) => {
 });
 
 // ── Start ─────────────────────────────────────────────────────
-app.listen(PORT, () => {
+const os = require('os');
+
+function getLocalIP() {
+  const ifaces = os.networkInterfaces();
+  for (const name of Object.keys(ifaces)) {
+    for (const iface of ifaces[name]) {
+      if (iface.family === 'IPv4' && !iface.internal) return iface.address;
+    }
+  }
+  return 'localhost';
+}
+
+app.listen(PORT, '0.0.0.0', () => {
+  const localIP = getLocalIP();
   console.log(`
-  ✅  Servidor admin arriba en http://localhost:${PORT}
+  ✅  Servidor admin arriba
   ─────────────────────────────────────────────
-  📰  Panel admin  → http://localhost:${PORT}/admin.html
-  🌐  Sitio web    → http://localhost:${PORT}/index.html
-  🔑  Login        → admin / admin123
+  💻  Este equipo
+      📰  Admin  → http://localhost:${PORT}/admin.html
+      🌐  Sitio  → http://localhost:${PORT}/index.html
+
+  📱  Otros dispositivos (misma red Wi-Fi)
+      📰  Admin  → http://${localIP}:${PORT}/admin.html
+      🌐  Sitio  → http://${localIP}:${PORT}/index.html
+
+  🔑  Login  →  admin / admin123
   ─────────────────────────────────────────────
   `);
 });
