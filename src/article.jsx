@@ -49,7 +49,7 @@ function ArticlePage({ slug }) {
           background: 'linear-gradient(to bottom, rgba(0,0,0,0) 50%, rgba(0,0,0,0.88) 100%)'
         }} />
         {/* Text */}
-        <div className="container" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, paddingBottom: 56, zIndex: 3 }}>
+        <div className="container article-hero-text" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, paddingBottom: 56, zIndex: 3 }}>
           <BackLink to="/" label="Volver a Lanzamientos" />
           <div style={{ marginTop: 24 }}>{heroBadges}</div>
           <h1 style={{
@@ -70,7 +70,7 @@ function ArticlePage({ slug }) {
       </section>
 
       {/* ── BODY ───────────────────────────────────────────── */}
-      <div className="container" style={{ paddingTop: 72, paddingBottom: 40 }}>
+      <div className="container article-body" style={{ paddingTop: 72, paddingBottom: 40 }}>
         <div className="article-grid" style={{
           display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 280px',
           gap: 64, alignItems: 'start'
@@ -164,7 +164,7 @@ function ArticlePage({ slug }) {
         </div>
 
         {/* CTA STOCK */}
-        <div style={{
+        <div className="article-cta" style={{
           marginTop: 80, padding: '64px 48px',
           background: 'var(--bg-2)', border: '1px solid var(--line)',
           display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between',
@@ -202,6 +202,12 @@ function ArticlePage({ slug }) {
           .gallery-pair {
             grid-template-columns: 1fr !important;
           }
+          .article-body { padding-top: 40px !important; padding-bottom: 24px !important; }
+          .article-cta { padding: 36px 24px !important; }
+          .article-cta h3 { font-size: clamp(22px, 5vw, 32px) !important; }
+        }
+        @media (max-width: 480px) {
+          .article-hero-text { padding-bottom: 36px !important; }
         }
       `}</style>
     </article>

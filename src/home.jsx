@@ -2,6 +2,43 @@
 // HOME — Portada editorial estilo SoccerBible
 // ============================================================
 
+// SmartImage — portrait images get blur bg + centered contain, landscape gets cover
+function SmartImage({ src, alt, className }) {
+  const [orientation, setOrientation] = useState('landscape');
+  const onLoad = (e) => {
+    const w = e.target.naturalWidth;
+    const h = e.target.naturalHeight;
+    if (!w || !h) return;
+    setOrientation(h > w * 1.05 ? 'portrait' : 'landscape');
+  };
+  const isP = orientation === 'portrait';
+  return (
+    <div className={className} style={{
+      position: 'relative', width: '100%', height: '100%', overflow: 'hidden'
+    }}>
+      {isP && (
+        <img src={src} alt="" aria-hidden="true" style={{
+          position: 'absolute', inset: 0,
+          width: '100%', height: '100%',
+          objectFit: 'cover',
+          filter: 'blur(24px) brightness(0.45)',
+          transform: 'scale(1.1)'
+        }} onError={(e) => { e.target.style.display = 'none'; }} />
+      )}
+      <img src={src} alt={alt}
+        onLoad={onLoad}
+        style={isP ? {
+          position: 'absolute', left: '50%', top: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 'auto', height: 'auto',
+          maxWidth: '90%', maxHeight: '95%',
+          objectFit: 'contain'
+        } : { width: '100%', height: '100%', objectFit: 'cover' }}
+        onError={(e) => { e.target.style.display = 'none'; }} />
+    </div>
+  );
+}
+
 function HomePage() {
   const featured = ARTICLES.filter(a => a.destacado);
   const rest = ARTICLES.filter(a => !a.destacado);
@@ -157,7 +194,7 @@ function TodayEditorial({ main, side }) {
       }}>
         <L to={`/lanzamientos/${main.slug}`} className="article-card-lg">
           <div style={{ aspectRatio: '4 / 3', overflow: 'hidden', position: 'relative', background: 'var(--bg-3)' }}>
-            <img src={main.imagen} alt={main.titulo} className="zoom-img" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; }} />
+            <SmartImage src={main.imagen} alt={main.titulo} className="zoom-img" />
           </div>
           <div style={{ paddingTop: 22 }}>
             <div className="eyebrow" style={{ marginBottom: 14 }}>{main.marca} · {main.fecha}</div>
@@ -183,7 +220,7 @@ function TodayEditorial({ main, side }) {
             <L to={`/lanzamientos/${a.slug}`} key={a.slug} className="side-card">
               <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: 18, alignItems: 'start' }}>
                 <div style={{ aspectRatio: '1 / 1', overflow: 'hidden', background: 'var(--bg-3)' }}>
-                  <img src={a.imagen} alt={a.titulo} className="zoom-img" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; }} />
+                  <SmartImage src={a.imagen} alt={a.titulo} className="zoom-img" />
                 </div>
                 <div>
                   <div className="eyebrow" style={{ marginBottom: 8, fontSize: 10 }}>{a.marca} · {a.fecha}</div>
@@ -243,8 +280,8 @@ function LatestNews({ items }) {
       }}>
         {items.map(a => (
           <L to={`/lanzamientos/${a.slug}`} key={a.slug} className="news-card">
-            <div style={{ aspectRatio: '4 / 3', overflow: 'hidden', background: 'var(--bg-3)' }}>
-              <img src={a.imagen} alt={a.titulo} className="zoom-img" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; }} />
+            <div style={{ aspectRatio: '4 / 5', overflow: 'hidden', background: 'var(--bg-3)' }}>
+              <SmartImage src={a.imagen} alt={a.titulo} className="zoom-img" />
             </div>
             <div style={{ paddingTop: 16 }}>
               <div className="eyebrow" style={{ marginBottom: 8, fontSize: 10 }}>{a.categoria}</div>
@@ -318,4 +355,4 @@ function HomeFooterLinks() {
   );
 }
 
-Object.assign(window, { HomePage });
+Object.assign(window, { HomePage, SmartImage });

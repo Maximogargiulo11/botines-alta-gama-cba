@@ -50,6 +50,7 @@ function App() {
       </div>
       <Footer />
       <CartDrawer />
+      <TweaksController />
       <style>{`
         .page-fade { animation: pageIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
         @keyframes pageIn {
