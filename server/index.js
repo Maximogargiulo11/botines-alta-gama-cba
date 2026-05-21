@@ -5,27 +5,35 @@ const XLSX     = require('xlsx');
 const fs       = require('fs');
 const path     = require('path');
 const crypto   = require('crypto');
+const os       = require('os');
 const { execSync } = require('child_process');
 
 const app  = express();
-const PORT = 3001;
 
-// ── Credenciales (hardcodeadas) ────────────────────────────────
-const ADMIN_USER = 'admin';
-const ADMIN_PASS = 'admin123';
+// ── Puerto: Railway inyecta process.env.PORT, localmente usa 3001 ──
+const PORT = process.env.PORT || 3001;
 
-// ── Rutas de datos ─────────────────────────────────────────────
-const ROOT       = path.join(__dirname, '..');
-const DATA_DIR   = path.join(__dirname, 'data');
-const LANZ_FILE  = path.join(DATA_DIR, 'lanzamientos.json');
-const STOCK_FILE = path.join(DATA_DIR, 'stock.json');
+// ── Credenciales desde variables de entorno (o valores por defecto) ──
+const ADMIN_USER = process.env.ADMIN_USER || 'admin';
+const ADMIN_PASS = process.env.ADMIN_PASS || 'admin123';
+
+// ── GitHub: para publicar desde Railway sin git local ─────────────
+const GITHUB_TOKEN  = process.env.GITHUB_TOKEN  || '';
+const GITHUB_REPO   = process.env.GITHUB_REPO   || 'Maximogargiulo11/botines-alta-gama-cba';
+const GITHUB_BRANCH = process.env.GITHUB_BRANCH || 'main';
+
+// ── Rutas de datos ─────────────────────────────────────────────────
+const ROOT         = path.join(__dirname, '..');
+const DATA_DIR     = path.join(__dirname, 'data');
+const LANZ_FILE    = path.join(DATA_DIR, 'lanzamientos.json');
+const STOCK_FILE   = path.join(DATA_DIR, 'stock.json');
 const ARTICLES_JSX = path.join(ROOT, 'src', 'articles-data.jsx');
 
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 if (!fs.existsSync(LANZ_FILE))  fs.writeFileSync(LANZ_FILE,  '[]',  'utf8');
 if (!fs.existsSync(STOCK_FILE)) fs.writeFileSync(STOCK_FILE, '{}',  'utf8');
 
-// ── Sesiones en memoria ────────────────────────────────────────
+// ── Sesiones en memoria ────────────────────────────────────────────
 const sessions = new Map();
 
 function requireAuth(req, res, next) {
@@ -36,7 +44,7 @@ function requireAuth(req, res, next) {
   next();
 }
 
-// ── Helpers JSON ───────────────────────────────────────────────
+// ── Helpers JSON ───────────────────────────────────────────────────
 function readJSON(file, fallback) {
   try { return JSON.parse(fs.readFileSync(file, 'utf8')); }
   catch { return fallback; }
@@ -45,20 +53,22 @@ function writeJSON(file, data) {
   fs.writeFileSync(file, JSON.stringify(data, null, 2), 'utf8');
 }
 
-// ── Normalizar lanzamiento ─────────────────────────────────────
+// ── Normalizar lanzamiento ─────────────────────────────────────────
 function normalizeLanzamiento(raw) {
-  // contenido: "p1|||p2" → ["p1","p2"]
   const contenido = typeof raw.contenido === 'string'
     ? raw.contenido.split('|||').map(s => s.trim()).filter(Boolean)
     : (Array.isArray(raw.contenido) ? raw.contenido : []);
 
-  // colorways: "col1|col2" → ["col1","col2"]
   const colorways = typeof raw.detallesTecnicos?.colorways === 'string'
     ? raw.detallesTecnicos.colorways.split('|').map(s => s.trim()).filter(Boolean)
     : (Array.isArray(raw.detallesTecnicos?.colorways) ? raw.detallesTecnicos.colorways : []);
 
-  // galería
-  const galeria = Array.isArray(raw.galeria) ? raw.galeria : [];
+  // Galería: aceptar strings o {url,size,layout}; guardar como objetos internamente
+  const galeria = Array.isArray(raw.galeria)
+    ? raw.galeria.map(g => typeof g === 'string'
+        ? { url: g, size: 'full', layout: 'solo' }
+        : { url: g.url || '', size: g.size || 'full', layout: g.layout || 'solo' })
+    : [];
 
   return {
     slug:             raw.slug            || '',
@@ -84,7 +94,7 @@ function normalizeLanzamiento(raw) {
   };
 }
 
-// ── Tabla de talles (para convertir euTalles → tallesDisponibles) ─
+// ── Tabla de talles ────────────────────────────────────────────────
 const SIZE_TABLE = [
   { us: '7',    uk: '6',    eu: '40',   cm: '25.0' },
   { us: '7.5',  uk: '6.5',  eu: '40.5', cm: '25.5' },
@@ -108,7 +118,7 @@ function euTallesToDisponibles(euTalles) {
   });
 }
 
-// ── Marcas estáticas ───────────────────────────────────────────
+// ── Marcas estáticas ───────────────────────────────────────────────
 const BRANDS_INFO = [
   {
     slug: 'adidas', name: 'adidas', tagline: 'Three stripes. Three decades.',
@@ -146,14 +156,13 @@ const BRANDS_INFO = [
   },
 ];
 
-// ── Generar src/articles-data.jsx ─────────────────────────────
+// ── Generar src/articles-data.jsx ─────────────────────────────────
 function generateArticlesDataJS(lanzamientos, stockRaw) {
   const ts = new Date().toISOString();
 
-  // Limpiar campos internos y normalizar galería → array de strings
+  // Limpiar campos internos y normalizar galería → array de strings URLs
   const articles = lanzamientos.map(l => {
     const { _id, ...rest } = l;
-    // Galería: el admin guarda {url,size,layout}; el frontend espera strings
     rest.galeria = Array.isArray(rest.galeria)
       ? rest.galeria.map(g => typeof g === 'string' ? g : (g?.url || '')).filter(Boolean)
       : [];
@@ -173,10 +182,10 @@ function generateArticlesDataJS(lanzamientos, stockRaw) {
     }));
   }
 
-  const articlesJSON  = JSON.stringify(articles,   null, 2);
-  const brandsJSON    = JSON.stringify(BRANDS_INFO, null, 2);
-  const sizeJSON      = JSON.stringify(SIZE_TABLE,  null, 2);
-  const stockJSON     = JSON.stringify(stock,       null, 2);
+  const articlesJSON = JSON.stringify(articles,   null, 2);
+  const brandsJSON   = JSON.stringify(BRANDS_INFO, null, 2);
+  const sizeJSON     = JSON.stringify(SIZE_TABLE,  null, 2);
+  const stockJSON    = JSON.stringify(stock,       null, 2);
 
   return `// ============================================================
 // Datos editoriales — GENERADO AUTOMÁTICAMENTE
@@ -208,11 +217,107 @@ Object.assign(window, { ARTICLES, BRANDS_INFO, STOCK, SIZE_TABLE });
 `;
 }
 
-// ── Middleware ─────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════
+//  PUBLICAR VÍA GITHUB API (modo producción / Railway)
+//  Crea un commit atómico con los 3 archivos actualizados.
+// ══════════════════════════════════════════════════════════════════
+async function pushToGitHubAPI(lanzamientos, stock, jsContent) {
+  const apiBase = `https://api.github.com/repos/${GITHUB_REPO}`;
+  const headers = {
+    'Authorization': `token ${GITHUB_TOKEN}`,
+    'Accept':        'application/vnd.github.v3+json',
+    'Content-Type':  'application/json',
+    'User-Agent':    'botines-alta-gama-admin/1.0',
+  };
+
+  async function ghFetch(endpoint, options = {}) {
+    const res = await fetch(`${apiBase}${endpoint}`, {
+      ...options,
+      headers: { ...headers, ...(options.headers || {}) },
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(`GitHub API [${endpoint}]: ${err.message || res.status}`);
+    }
+    return res.json();
+  }
+
+  // 1. Obtener SHA del último commit en la rama
+  const refData    = await ghFetch(`/git/ref/heads/${GITHUB_BRANCH}`);
+  const parentSha  = refData.object.sha;
+
+  // 2. Obtener el árbol (tree) del commit padre
+  const commitData = await ghFetch(`/git/commits/${parentSha}`);
+  const treeSha    = commitData.tree.sha;
+
+  // 3. Preparar los archivos a commitear
+  const ts = new Date().toISOString().slice(0, 16).replace('T', ' ');
+  const filesToCommit = [
+    { path: 'src/articles-data.jsx',          content: jsContent },
+    { path: 'server/data/lanzamientos.json',   content: JSON.stringify(lanzamientos, null, 2) },
+    { path: 'server/data/stock.json',          content: JSON.stringify(stock, null, 2) },
+  ];
+
+  // 4. Crear blobs para cada archivo
+  const treeItems = await Promise.all(filesToCommit.map(async (f) => {
+    const blob = await ghFetch('/git/blobs', {
+      method: 'POST',
+      body: JSON.stringify({ content: f.content, encoding: 'utf-8' }),
+    });
+    return { path: f.path, mode: '100644', type: 'blob', sha: blob.sha };
+  }));
+
+  // 5. Crear nuevo tree
+  const newTree = await ghFetch('/git/trees', {
+    method: 'POST',
+    body: JSON.stringify({ base_tree: treeSha, tree: treeItems }),
+  });
+
+  // 6. Crear commit
+  const newCommit = await ghFetch('/git/commits', {
+    method: 'POST',
+    body: JSON.stringify({
+      message: `Admin: publicar ${lanzamientos.length} lanzamientos — ${ts}`,
+      tree:    newTree.sha,
+      parents: [parentSha],
+    }),
+  });
+
+  // 7. Avanzar la referencia de la rama
+  await ghFetch(`/git/refs/heads/${GITHUB_BRANCH}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ sha: newCommit.sha, force: false }),
+  });
+
+  return newCommit.sha;
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  PUBLICAR VÍA GIT LOCAL (modo desarrollo)
+// ══════════════════════════════════════════════════════════════════
+function pushViaLocalGit(lanzamientos, jsContent) {
+  // Asegurar configuración de usuario git
+  try { execSync('git config user.email "admin@botinesaltagamacba.com"', { cwd: ROOT, stdio: 'pipe' }); } catch {}
+  try { execSync('git config user.name "Botines Alta Gama Admin"',      { cwd: ROOT, stdio: 'pipe' }); } catch {}
+
+  const ts  = new Date().toISOString().slice(0, 16).replace('T', ' ');
+  const msg = `Admin: publicar ${lanzamientos.length} lanzamientos — ${ts}`;
+
+  execSync('git add src/articles-data.jsx', { cwd: ROOT, stdio: 'pipe' });
+
+  try {
+    execSync(`git commit -m "${msg}"`, { cwd: ROOT, stdio: 'pipe' });
+  } catch (e) {
+    const out = (e.stdout || '').toString() + (e.stderr || '').toString();
+    if (!out.includes('nothing to commit') && !out.includes('nothing added')) throw e;
+  }
+
+  execSync('git push origin main', { cwd: ROOT, stdio: 'pipe' });
+}
+
+// ── Middleware ─────────────────────────────────────────────────────
 app.use(cors({ origin: '*' }));
 app.use(express.json({ limit: '10mb' }));
-
-// Servir frontend y admin desde la raíz del proyecto
 app.use(express.static(ROOT));
 
 const upload = multer({
@@ -220,16 +325,21 @@ const upload = multer({
   limits: { fileSize: 20 * 1024 * 1024 },
 });
 
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════
 //  RUTAS
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════
 
-// ── Health ────────────────────────────────────────────────────
+// ── Health ─────────────────────────────────────────────────────────
 app.get('/api/health', (_req, res) => {
-  res.json({ ok: true, version: '2.0.0' });
+  res.json({
+    ok:      true,
+    version: '3.0.0',
+    mode:    GITHUB_TOKEN ? 'railway' : 'local',
+    env:     process.env.NODE_ENV || 'development',
+  });
 });
 
-// ── Auth ──────────────────────────────────────────────────────
+// ── Auth ────────────────────────────────────────────────────────────
 app.post('/api/login', (req, res) => {
   const { usuario, contrasena } = req.body || {};
   if (usuario !== ADMIN_USER || contrasena !== ADMIN_PASS) {
@@ -250,7 +360,7 @@ app.get('/api/me', requireAuth, (req, res) => {
   res.json({ usuario });
 });
 
-// ── Lanzamientos CRUD ─────────────────────────────────────────
+// ── Lanzamientos CRUD ───────────────────────────────────────────────
 app.get('/api/lanzamientos', (_req, res) => {
   res.json(readJSON(LANZ_FILE, []));
 });
@@ -258,7 +368,7 @@ app.get('/api/lanzamientos', (_req, res) => {
 app.post('/api/lanzamientos', requireAuth, (req, res) => {
   const items = readJSON(LANZ_FILE, []);
   const nuevo = normalizeLanzamiento(req.body);
-  nuevo._id = Date.now().toString();
+  nuevo._id   = Date.now().toString();
 
   if (!nuevo.slug || !nuevo.titulo) {
     return res.status(400).json({ error: 'slug y titulo son requeridos' });
@@ -274,18 +384,18 @@ app.post('/api/lanzamientos', requireAuth, (req, res) => {
 
 app.put('/api/lanzamientos/:slug', requireAuth, (req, res) => {
   const items = readJSON(LANZ_FILE, []);
-  const idx = items.findIndex(l => l.slug === req.params.slug);
+  const idx   = items.findIndex(l => l.slug === req.params.slug);
   if (idx === -1) return res.status(404).json({ error: 'Lanzamiento no encontrado' });
 
-  const updated = normalizeLanzamiento({ ...req.body, slug: req.params.slug });
-  updated._id = items[idx]._id || Date.now().toString();
-  items[idx] = updated;
+  const updated  = normalizeLanzamiento({ ...req.body, slug: req.params.slug });
+  updated._id    = items[idx]._id || Date.now().toString();
+  items[idx]     = updated;
   writeJSON(LANZ_FILE, items);
   res.json(updated);
 });
 
 app.delete('/api/lanzamientos/:slug', requireAuth, (req, res) => {
-  const items = readJSON(LANZ_FILE, []);
+  const items    = readJSON(LANZ_FILE, []);
   const filtered = items.filter(l => l.slug !== req.params.slug);
   if (filtered.length === items.length) {
     return res.status(404).json({ error: 'Lanzamiento no encontrado' });
@@ -294,7 +404,7 @@ app.delete('/api/lanzamientos/:slug', requireAuth, (req, res) => {
   res.json({ ok: true });
 });
 
-// ── Stock ─────────────────────────────────────────────────────
+// ── Stock ────────────────────────────────────────────────────────────
 app.get('/api/stock', (_req, res) => {
   res.json(readJSON(STOCK_FILE, {}));
 });
@@ -322,12 +432,11 @@ app.post('/api/stock/upload', requireAuth, upload.single('archivo'), (req, res) 
     const key = `${marcaSlug}/${modeloSlug}`;
     if (!stock[key]) stock[key] = [];
 
-    // euTalles: "40,41,42" o "40|41|42"
     const euTalles = String(row.euTalles || '')
       .split(/[,|;]/).map(s => s.trim()).filter(Boolean);
 
     const rawId = String(row.id || '').trim();
-    const id = rawId ||
+    const id    = rawId ||
       `${marcaSlug}-${modeloSlug}-${String(row.colorway || '').toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
 
     stock[key].push({
@@ -341,7 +450,6 @@ app.post('/api/stock/upload', requireAuth, upload.single('archivo'), (req, res) 
   }
 
   writeJSON(STOCK_FILE, stock);
-
   const totalProductos = Object.values(stock).reduce((s, a) => s + a.length, 0);
   res.json({ ok: true, modelos: Object.keys(stock).length, productos: totalProductos });
 });
@@ -351,57 +459,49 @@ app.delete('/api/stock', requireAuth, (_req, res) => {
   res.json({ ok: true });
 });
 
-// ── PUBLICAR EN VIVO ──────────────────────────────────────────
-// Genera articles-data.jsx, commitea y pushea a GitHub.
-// Vercel lo despliega automáticamente vía GitHub Actions.
-app.post('/api/publish', requireAuth, (req, res) => {
+// ── PUBLICAR EN VIVO ─────────────────────────────────────────────────
+// Modo Railway: GitHub API (commit atómico, sin git local)
+// Modo local:   git local commit + push
+app.post('/api/publish', requireAuth, async (req, res) => {
   try {
     const lanzamientos = readJSON(LANZ_FILE, []);
     const stock        = readJSON(STOCK_FILE, {});
+    const jsContent    = generateArticlesDataJS(lanzamientos, stock);
 
-    // Generar el JSX
-    const jsContent = generateArticlesDataJS(lanzamientos, stock);
-    fs.writeFileSync(ARTICLES_JSX, jsContent, 'utf8');
+    let commitSha = null;
+    let mode      = 'local';
 
-    // Git: asegurar user config (necesario si git no está configurado globalmente)
-    try { execSync('git config user.email "admin@botinesaltagamacba.com"', { cwd: ROOT, stdio: 'pipe' }); } catch {}
-    try { execSync('git config user.name "Botines Alta Gama Admin"', { cwd: ROOT, stdio: 'pipe' }); } catch {}
-
-    // Git: add → commit → push
-    const ts = new Date().toISOString().slice(0, 16).replace('T', ' ');
-    const msg = `Admin: publicar ${lanzamientos.length} lanzamientos — ${ts}`;
-
-    execSync('git add src/articles-data.jsx', { cwd: ROOT, stdio: 'pipe' });
-
-    // Si no hay cambios staged, no commitear
-    try {
-      execSync(`git commit -m "${msg}"`, { cwd: ROOT, stdio: 'pipe' });
-    } catch (e) {
-      const out = (e.stdout || '').toString() + (e.stderr || '').toString();
-      // "nothing to commit" es OK
-      if (!out.includes('nothing to commit') && !out.includes('nothing added')) throw e;
+    if (GITHUB_TOKEN) {
+      // ── Producción (Railway): GitHub API ──────────────────────────
+      commitSha = await pushToGitHubAPI(lanzamientos, stock, jsContent);
+      mode      = 'github-api';
+    } else {
+      // ── Desarrollo (local): git local ─────────────────────────────
+      fs.writeFileSync(ARTICLES_JSX, jsContent, 'utf8');
+      pushViaLocalGit(lanzamientos, jsContent);
+      mode = 'git-local';
     }
 
-    execSync('git push origin main', { cwd: ROOT, stdio: 'pipe' });
-
     res.json({
-      ok: true,
+      ok:           true,
       lanzamientos: lanzamientos.length,
       modelos:      Object.keys(stock).length,
       timestamp:    new Date().toISOString(),
+      mode,
+      commit:       commitSha,
     });
   } catch (err) {
     console.error('[publish]', err.message);
     res.status(500).json({
       error: err.message,
-      hint: 'Verificá que git esté configurado y tengas acceso a internet.',
+      hint: GITHUB_TOKEN
+        ? 'Verificá que GITHUB_TOKEN tenga permisos de escritura en el repositorio.'
+        : 'Verificá que git esté configurado y tengas acceso a internet.',
     });
   }
 });
 
-// ── Start ─────────────────────────────────────────────────────
-const os = require('os');
-
+// ── Start ─────────────────────────────────────────────────────────────
 function getLocalIP() {
   const ifaces = os.networkInterfaces();
   for (const name of Object.keys(ifaces)) {
@@ -413,9 +513,21 @@ function getLocalIP() {
 }
 
 app.listen(PORT, '0.0.0.0', () => {
-  const localIP = getLocalIP();
-  console.log(`
-  ✅  Servidor admin arriba
+  const isRailway = Boolean(process.env.RAILWAY_ENVIRONMENT || process.env.PORT);
+  const localIP   = getLocalIP();
+
+  if (isRailway) {
+    console.log(`
+  ✅  Servidor corriendo en Railway
+  ─────────────────────────────────────────────
+  📰  Panel admin  → https://<tu-dominio>.railway.app/admin.html
+  🔑  Login        → ${ADMIN_USER} / [ver env vars]
+  📦  Modo publish → GitHub API
+  ─────────────────────────────────────────────
+    `);
+  } else {
+    console.log(`
+  ✅  Servidor admin local — puerto ${PORT}
   ─────────────────────────────────────────────
   💻  Este equipo
       📰  Admin  → http://localhost:${PORT}/admin.html
@@ -425,7 +537,8 @@ app.listen(PORT, '0.0.0.0', () => {
       📰  Admin  → http://${localIP}:${PORT}/admin.html
       🌐  Sitio  → http://${localIP}:${PORT}/index.html
 
-  🔑  Login  →  admin / admin123
+  🔑  Login  →  ${ADMIN_USER} / ${ADMIN_PASS}
   ─────────────────────────────────────────────
-  `);
+    `);
+  }
 });

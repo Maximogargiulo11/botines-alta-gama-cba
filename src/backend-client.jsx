@@ -1,18 +1,46 @@
 // ============================================================
-// Backend local — cliente para el admin server (puerto 3001)
+// Backend local/Railway — cliente para el admin server
 //
-// Solo activo cuando node server/index.js está corriendo.
-// Tiene prioridad sobre Sanity y Google Sheets.
+// Prioridad de conexión:
+//   1. Localhost (desarrollo local, puerto 3001)
+//   2. Railway (producción, RAILWAY_BACKEND_URL)
+//   3. Fallback: datos estáticos de articles-data.jsx
 // ============================================================
 
-// Apunta al servidor en el mismo host, puerto 3001.
-// Funciona en localhost Y desde otros dispositivos en la red local.
-const BACKEND_URL = `${window.location.protocol}//${window.location.hostname}:3001`;
+// ── URL del backend en Railway ────────────────────────────────────
+// Se actualiza automáticamente con la URL de Railway al deployar.
+// En desarrollo local se usa localhost:3001.
+const RAILWAY_BACKEND_URL = window.RAILWAY_URL || '';
+
+// ── Detectar la URL correcta según el entorno ─────────────────────
+const BACKEND_URL = (() => {
+  const h = window.location.hostname;
+  const p = window.location.port;
+
+  // Desarrollo local: servidor Express en puerto 3001
+  if (h === 'localhost' || h === '127.0.0.1') {
+    return `http://${h}:3001`;
+  }
+
+  // Acceso por IP local (ej: 192.168.x.x:3001)
+  if (p === '3001') {
+    return `${window.location.protocol}//${h}:3001`;
+  }
+
+  // El admin está siendo servido por Railway mismo (mismo origen)
+  if (h.includes('railway.app') || h.includes('up.railway.app')) {
+    return window.location.origin;
+  }
+
+  // Vercel o cualquier otro CDN → usar Railway URL
+  return RAILWAY_BACKEND_URL;
+})();
 
 async function checkBackend() {
+  if (!BACKEND_URL) return false;
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 2000);
+    const timeout = setTimeout(() => controller.abort(), 3000);
     const res = await fetch(`${BACKEND_URL}/api/health`, { signal: controller.signal });
     clearTimeout(timeout);
     return res.ok;
@@ -35,7 +63,7 @@ function mapLanzamientoBackend(item) {
     imagen:           item.imagen           || '',
     destacado:        Boolean(item.destacado),
     contenido:        Array.isArray(item.contenido) ? item.contenido : [],
-    // Normaliza galería a strings (el admin puede guardar objetos {url,size,layout})
+    // Normaliza galería: acepta strings o {url,size,layout} (del admin)
     galeria: Array.isArray(item.galeria)
       ? item.galeria.map(g => typeof g === 'string' ? g : (g?.url || '')).filter(Boolean)
       : [],
@@ -70,7 +98,7 @@ async function loadBackendData() {
   if (!available) return;
 
   window.BACKEND_ACTIVE = true;
-  console.log('[Backend] Servidor local detectado, usando datos del admin.');
+  console.log('[Backend] Servidor detectado en', BACKEND_URL);
 
   try {
     const [lanzamientos, stock] = await Promise.all([
@@ -90,11 +118,14 @@ async function loadBackendData() {
     }
 
     window.dispatchEvent(new CustomEvent('data-loaded'));
-    console.log('[Backend] Datos cargados desde servidor local ✓');
+    console.log('[Backend] Datos cargados ✓', {
+      articulos: window.ARTICLES?.length,
+      modelos:   Object.keys(window.STOCK || {}).length,
+    });
   } catch (err) {
     console.warn('[Backend] Error al cargar datos:', err.message);
   }
 }
 
 loadBackendData();
-Object.assign(window, { loadBackendData, BACKEND_URL });
+Object.assign(window, { loadBackendData, BACKEND_URL, RAILWAY_BACKEND_URL });
