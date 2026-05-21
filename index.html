@@ -4,109 +4,354 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Botines Alta Gama CBA — Lanzamientos & Catálogo Premium</title>
+<meta name="description" content="Importadores oficiales de botines premium en Córdoba, Argentina. Lanzamientos exclusivos, stock limitado." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;1,6..96,400;1,6..96,500;1,6..96,600&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
+  /* ─────────────────────────────────────────────
+     TOKENS
+  ───────────────────────────────────────────── */
   :root {
-    --bg: #000000;
-    --bg-2: #0a0a0a;
-    --bg-3: #141414;
-    --line: rgba(255,255,255,0.1);
-    --line-strong: rgba(255,255,255,0.22);
-    --text: #ffffff;
-    --text-dim: rgba(255,255,255,0.62);
-    --text-muted: rgba(255,255,255,0.42);
-    --accent: #ffffff;
-    --display: 'Playfair Display', serif;
-    --body: 'Inter', sans-serif;
-    --mono: 'JetBrains Mono', monospace;
+    --bg:          #080808;
+    --bg-2:        #0e0e0e;
+    --bg-3:        #181818;
+    --bg-4:        #1f1f1f;
+    --line:        rgba(255,255,255,0.08);
+    --line-strong: rgba(255,255,255,0.18);
+    --text:        #f0ece4;
+    --text-dim:    rgba(240,236,228,0.60);
+    --text-muted:  rgba(240,236,228,0.35);
+    --accent:      #f0ece4;
+    --gold:        #c9a96e;
+    --gold-dim:    rgba(201,169,110,0.18);
+    --display:     'Cormorant Garamond', Georgia, serif;
+    --body:        'DM Sans', system-ui, sans-serif;
+    --mono:        'IBM Plex Mono', monospace;
+    --radius:      2px;
+    --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { background: var(--bg); color: var(--text); font-family: var(--body); -webkit-font-smoothing: antialiased; }
+  /* ─────────────────────────────────────────────
+     RESET
+  ───────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
   body { overflow-x: hidden; min-height: 100vh; }
   a { color: inherit; text-decoration: none; }
   button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
   img { display: block; max-width: 100%; }
 
-  ::selection { background: #fff; color: #000; }
+  ::selection { background: var(--gold); color: #080808; }
 
-  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  /* ─────────────────────────────────────────────
+     SCROLLBAR
+  ───────────────────────────────────────────── */
+  ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); }
-  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+  ::-webkit-scrollbar-thumb { background: rgba(201,169,110,0.3); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
 
+  /* ─────────────────────────────────────────────
+     GRAIN OVERLAY
+  ───────────────────────────────────────────── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    pointer-events: none;
+    opacity: 0.032;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 180px 180px;
+  }
+
+  /* ─────────────────────────────────────────────
+     BOOT SCREEN
+  ───────────────────────────────────────────── */
   .__boot {
-    position: fixed; inset: 0; background: var(--bg);
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--display); font-size: 22px; letter-spacing: 0.3em;
-    color: var(--accent); z-index: 9999;
-    animation: bootPulse 1.6s ease-in-out infinite;
-  }
-  @keyframes bootPulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
-
-  .container { max-width: 1440px; margin: 0 auto; padding: 0 32px; }
-  @media (max-width: 768px) { .container { padding: 0 20px; } }
-
-  .hero-img-contain { max-width: 60%; }
-  @media (max-width: 768px) { .hero-img-contain { max-width: 90%; } }
-  @media (max-width: 480px) { .hero-img-contain { max-width: 96% !important; } }
-
-  /* ── Global mobile improvements ── */
-  @media (max-width: 480px) {
-    .container { padding: 0 16px; }
-    .btn { padding: 12px 18px; font-size: 11px; letter-spacing: 0.12em; }
-    .eyebrow { font-size: 10px; letter-spacing: 0.18em; }
-  }
-  /* Touch-friendly tap targets */
-  @media (hover: none) {
-    .btn { min-height: 48px; }
+    position: fixed; inset: 0;
+    background: var(--bg);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 28px;
+    z-index: 9999;
+    animation: bootFadeOut 0.6s var(--ease-out) 1.8s both;
   }
 
+  .__boot-logo {
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    animation: bootReveal 0.9s var(--ease-out) 0.1s both;
+  }
+
+  .__boot-wordmark {
+    font-family: var(--display);
+    font-size: clamp(18px, 3vw, 28px);
+    font-weight: 300;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+
+  .__boot-sub {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    animation: bootReveal 0.9s var(--ease-out) 0.35s both;
+  }
+
+  .__boot-line {
+    width: 120px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    animation: bootLine 1.2s var(--ease-out) 0.2s both;
+  }
+
+  @keyframes bootReveal {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes bootLine {
+    from { opacity: 0; width: 0; }
+    to   { opacity: 1; width: 120px; }
+  }
+  @keyframes bootFadeOut {
+    to { opacity: 0; pointer-events: none; }
+  }
+
+  /* ─────────────────────────────────────────────
+     LAYOUT
+  ───────────────────────────────────────────── */
+  .container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 48px;
+  }
+  @media (max-width: 1024px) { .container { padding: 0 32px; } }
+  @media (max-width: 768px)  { .container { padding: 0 20px; } }
+  @media (max-width: 480px)  { .container { padding: 0 16px; } }
+
+  /* ─────────────────────────────────────────────
+     TYPOGRAPHY UTILITIES
+  ───────────────────────────────────────────── */
   .eyebrow {
     font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--accent);
+    font-size: 10px;
     font-weight: 500;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--gold);
     display: inline-block;
   }
 
+  /* ─────────────────────────────────────────────
+     BUTTONS
+  ───────────────────────────────────────────── */
   .btn {
-    display: inline-flex; align-items: center; justify-content: center;
-    padding: 16px 26px;
-    font-family: var(--body);
-    font-size: 12px; font-weight: 600;
-    letter-spacing: 0.2em; text-transform: uppercase;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 28px;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    transition: all 0.3s var(--ease-out);
     cursor: pointer;
     border: 1px solid transparent;
-    gap: 10px;
+    border-radius: var(--radius);
+    position: relative;
+    overflow: hidden;
   }
+
+  .btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.06);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .btn:hover::after { opacity: 1; }
+
   .btn-primary {
-    background: var(--accent);
-    color: #000;
+    background: var(--text);
+    color: #080808;
+    border-color: var(--text);
   }
   .btn-primary:hover:not(:disabled) {
+    background: var(--gold);
+    border-color: var(--gold);
     transform: translateY(-1px);
-    box-shadow: 0 10px 30px rgba(255,255,255,0.18);
+    box-shadow: 0 12px 32px rgba(201,169,110,0.22);
   }
+
   .btn-ghost {
     background: transparent;
-    color: var(--text);
+    color: var(--text-dim);
     border-color: var(--line-strong);
   }
   .btn-ghost:hover {
-    border-color: var(--accent);
-    color: var(--accent);
+    border-color: var(--gold);
+    color: var(--gold);
   }
+
+  .btn-gold {
+    background: var(--gold);
+    color: #080808;
+    border-color: var(--gold);
+  }
+  .btn-gold:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 32px rgba(201,169,110,0.30);
+    filter: brightness(1.08);
+  }
+
+  .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 480px) {
+    .btn { padding: 12px 20px; font-size: 9px; letter-spacing: 0.18em; }
+    .eyebrow { font-size: 9px; letter-spacing: 0.2em; }
+  }
+  @media (hover: none) { .btn { min-height: 48px; } }
+
+  /* ─────────────────────────────────────────────
+     HERO IMAGE RESPONSIVE
+  ───────────────────────────────────────────── */
+  .hero-img-contain { max-width: 60%; }
+  @media (max-width: 768px) { .hero-img-contain { max-width: 88%; } }
+  @media (max-width: 480px) { .hero-img-contain { max-width: 96% !important; } }
+
+  /* ─────────────────────────────────────────────
+     PAGE TRANSITION
+  ───────────────────────────────────────────── */
+  .page-fade {
+    animation: pageIn 0.55s var(--ease-out) both;
+  }
+  @keyframes pageIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─────────────────────────────────────────────
+     CARD HOVER EFFECTS (global)
+  ───────────────────────────────────────────── */
+  .zoom-img {
+    transition: transform 0.8s var(--ease-out);
+    will-change: transform;
+  }
+  .article-card-lg:hover .zoom-img,
+  .side-card:hover .zoom-img,
+  .news-card:hover .zoom-img {
+    transform: scale(1.05);
+  }
+
+  .article-card-lg h2,
+  .side-card h3,
+  .news-card h3 {
+    transition: color 0.3s;
+  }
+  .side-card:hover h3,
+  .news-card:hover h3 {
+    color: var(--gold);
+  }
+
+  /* ─────────────────────────────────────────────
+     NAV
+  ───────────────────────────────────────────── */
+  .navlink {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    font-weight: 500;
+    padding: 6px 0;
+    border-bottom: 1px solid transparent;
+    transition: all 0.25s;
+  }
+  .navlink:hover { color: var(--text); }
+  .navlink.active {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+  }
+
+  @media (min-width: 900px) {
+    .navlinks  { display: flex !important; }
+    .navtoggle { display: none !important; }
+    .mobilemenu { display: none !important; }
+  }
+  @media (max-width: 480px) {
+    .cart-icon-btn span:nth-of-type(1) { display: none; }
+  }
+
+  /* ─────────────────────────────────────────────
+     FOOTER LINKS
+  ───────────────────────────────────────────── */
+  .footerlink {
+    color: var(--text-muted);
+    font-size: 13px;
+    transition: color 0.25s;
+  }
+  .footerlink:hover { color: var(--gold); }
+
+  /* ─────────────────────────────────────────────
+     TODAY GRID
+  ───────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .today-grid { grid-template-columns: 1fr !important; }
+  }
+
+  /* ─────────────────────────────────────────────
+     GOLD ACCENT DIVIDER
+  ───────────────────────────────────────────── */
+  .gold-rule {
+    width: 48px; height: 1px;
+    background: var(--gold);
+    display: block;
+    margin: 0 auto 24px;
+  }
+
+  /* ─────────────────────────────────────────────
+     FOCUS STYLES (accessibility)
+  ───────────────────────────────────────────── */
+  :focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+    border-radius: var(--radius);
+  }
+
 </style>
 </head>
 <body>
-<div id="root"><div class="__boot">BOTINES ALTA GAMA</div></div>
+
+<div id="root">
+  <div class="__boot">
+    <div class="__boot-logo">
+      <div class="__boot-wordmark">Botines Alta Gama</div>
+      <div class="__boot-line"></div>
+      <div class="__boot-sub">Córdoba · Argentina · Est. 2024</div>
+    </div>
+  </div>
+</div>
 
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>

@@ -95,10 +95,10 @@ function Navbar() {
           border-bottom: 1px solid transparent;
           transition: all 0.25s ease;
         }
-        .navlink:hover { color: #fff; }
+        .navlink:hover { color: var(--text); }
         .navlink.active {
-          color: #fff;
-          border-bottom-color: #fff;
+          color: var(--gold);
+          border-bottom-color: var(--gold);
         }
         @media (min-width: 900px) {
           .navlinks { display: flex !important; }

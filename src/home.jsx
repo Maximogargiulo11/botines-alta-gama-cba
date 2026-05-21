@@ -292,7 +292,7 @@ function TodayEditorial({ main, side }) {
           transition: color 0.25s;
         }
         .side-card:hover h3 {
-          color: var(--text-dim);
+          color: var(--gold);
         }
         @media (max-width: 900px) {
           .today-grid {
@@ -347,8 +347,8 @@ function LatestNews({ items }) {
         .news-card:hover .zoom-img {
           transform: scale(1.05);
         }
-        .news-card h3 { transition: color 0.25s; }
-        .news-card:hover h3 { color: var(--text-dim); }
+        .news-card h3 { transition: color 0.3s; }
+        .news-card:hover h3 { color: var(--gold); }
       `}</style>
     </section>
   );
