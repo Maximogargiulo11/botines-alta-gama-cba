@@ -29,6 +29,8 @@ function App() {
       page = <BrandModelsPage brandSlug={parts[0]} />;
     } else if (parts.length === 2) {
       page = <ModelStockPage brandSlug={parts[0]} modelSlug={parts[1]} />;
+    } else if (parts.length === 3) {
+      page = <ProductDetailPage brandSlug={parts[0]} modelSlug={parts[1]} productoId={parts[2]} />;
     } else {
       page = <NotFoundPage />;
     }

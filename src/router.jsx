@@ -50,8 +50,15 @@ const findArticle = (slug) => ARTICLES.find(a => a.slug === slug);
 const findBrand = (slug) => BRANDS_INFO.find(b => b.slug === slug);
 const findModel = (brand, modelSlug) => brand && brand.modelos.find(m => m.slug === modelSlug);
 const getStock = (brandSlug, modelSlug) => STOCK[brandSlug + '/' + modelSlug] || [];
+const findProductById = (id) => {
+  for (const key in STOCK) {
+    const found = STOCK[key].find(p => p.id === id);
+    if (found) return found;
+  }
+  return null;
+};
 
 // Format price in ARS
 const fmtPrice = (n) => '$' + n.toLocaleString('es-AR');
 
-Object.assign(window, { useRoute, navigate, L, findArticle, findBrand, findModel, getStock, fmtPrice, parseHash });
+Object.assign(window, { useRoute, navigate, L, findArticle, findBrand, findModel, getStock, findProductById, fmtPrice, parseHash });

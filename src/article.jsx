@@ -1,5 +1,6 @@
 // ============================================================
-// Article detail — /lanzamientos/[slug]
+// Article detail — SoccerBible-style editorial layout
+// /lanzamientos/[slug]
 // ============================================================
 
 function ArticlePage({ slug }) {
@@ -11,206 +12,473 @@ function ArticlePage({ slug }) {
 
   if (!a) return null;
 
-  const heroImg = a.imagen;
-  const paras = a.contenido;
-  const gallery = (a.galeria || []).map(g =>
-    typeof g === 'string'
-      ? { url: g, size: 'full', layout: 'solo' }
-      : { url: g.url || '', size: g.size || 'full', layout: g.layout || 'solo' }
-  ).filter(g => g.url);
+  const gallery = a.galeria || (a.imagen ? [a.imagen] : []);
+  const heroImg = gallery[0] || a.imagen;
+  const inlineImages = gallery.slice(1);
+  const productoRelacionado = a.productoRelacionadoId ? findProductById(a.productoRelacionadoId) : null;
 
-  const heroBadges = (
-    <div style={{ display: 'inline-flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', marginBottom: 18 }}>
-      <span className="eyebrow" style={{ background: '#fff', color: '#000', padding: '6px 12px' }}>{a.marca}</span>
-      <span className="eyebrow">{a.categoria} · {a.fecha}</span>
-    </div>
-  );
+  const related = [...ARTICLES.filter((x) => x.slug !== a.slug)].sort((x, y) => {
+    const sameX = x.marcaSlug === a.marcaSlug ? 1 : 0;
+    const sameY = y.marcaSlug === a.marcaSlug ? 1 : 0;
+    return sameY - sameX || y.fechaISO.localeCompare(x.fechaISO);
+  }).slice(0, 3);
+
+  const paras = a.contenido;
 
   return (
     <article>
+      {/* ============ HERO ============ */}
+      <SBHero img={heroImg} title={a.titulo} />
 
-      {/* ── HERO ─────────────────────────────────────────────── */}
-      <section style={{ position: 'relative', height: '85vh', minHeight: 480, overflow: 'hidden', background: '#000' }}>
-        {/* Blurred background */}
-        <img src={heroImg} alt="" style={{
-          position: 'absolute', inset: 0, width: '100%', height: '100%',
-          objectFit: 'cover', filter: 'blur(25px)', transform: 'scale(1.1)', opacity: 0.5
-        }} onError={e => { e.target.style.display = 'none'; }} />
-        {/* Centered full image */}
-        <img src={heroImg} alt={a.titulo} className="hero-img-contain" style={{
-          position: 'absolute', top: 0, left: '50%',
-          transform: 'translateX(-50%)',
-          height: '100%', width: 'auto',
-          objectFit: 'contain', zIndex: 1
-        }} onError={e => { e.target.style.display = 'none'; }} />
-        {/* Gradient */}
-        <div style={{
-          position: 'absolute', inset: 0, zIndex: 2,
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0) 50%, rgba(0,0,0,0.88) 100%)'
-        }} />
-        {/* Text */}
-        <div className="container article-hero-text" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, paddingBottom: 56, zIndex: 3 }}>
-          <BackLink to="/" label="Volver a Lanzamientos" />
-          <div style={{ marginTop: 24 }}>{heroBadges}</div>
+      {/* ============ BREADCRUMB + TITLE + META + SHARE ============ */}
+      <section className="container" style={{ paddingTop: 40 }}>
+        <Breadcrumb crumbs={[
+          { label: 'Inicio', to: '/' },
+          { label: 'Lanzamientos', to: '/' },
+          { label: a.titulo }
+        ]} />
+
+        <div style={{ maxWidth: 880, margin: '24px auto 0' }}>
+          <div className="eyebrow" style={{ marginBottom: 18 }}>{a.categoria} · {a.marca}</div>
           <h1 style={{
             fontFamily: 'var(--display)',
-            fontSize: 'clamp(38px, 5.4vw, 84px)',
-            fontWeight: 600, lineHeight: 1.05,
-            letterSpacing: '-0.015em', maxWidth: 1100, textWrap: 'pretty'
+            fontSize: 'clamp(34px, 4.8vw, 60px)',
+            fontWeight: 600, lineHeight: 1.08,
+            letterSpacing: '-0.015em',
+            textWrap: 'pretty'
           }}>{a.titulo}</h1>
-          {a.descripcionCorta && (
-            <p style={{
-              fontFamily: 'var(--display)', fontStyle: 'italic',
-              fontSize: 'clamp(15px, 1.5vw, 19px)',
-              lineHeight: 1.55, color: 'rgba(255,255,255,0.8)',
-              marginTop: 14, maxWidth: 640, textWrap: 'pretty'
-            }}>{a.descripcionCorta}</p>
-          )}
+
+          <p style={{
+            fontFamily: 'var(--display)',
+            fontStyle: 'italic',
+            fontSize: 'clamp(17px, 1.6vw, 21px)',
+            color: 'var(--text-dim)',
+            marginTop: 18,
+            lineHeight: 1.5,
+            textWrap: 'pretty'
+          }}>{a.descripcionCorta}</p>
+
+          <div style={{
+            marginTop: 26,
+            paddingTop: 22,
+            borderTop: '1px solid var(--line)',
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            gap: 18, flexWrap: 'wrap'
+          }}>
+            <div style={{
+              fontFamily: 'var(--mono)', fontSize: 11,
+              letterSpacing: '0.18em', textTransform: 'uppercase',
+              color: 'var(--text-muted)'
+            }}>
+              Publicado · {a.fecha} · <span style={{ color: 'var(--text-dim)' }}>por Botines Alta Gama CBA</span>
+            </div>
+            <ShareRow title={a.titulo} slug={a.slug} />
+          </div>
         </div>
       </section>
 
-      {/* ── BODY ───────────────────────────────────────────── */}
-      <div className="container article-body" style={{ paddingTop: 72, paddingBottom: 40 }}>
-        <div className="article-grid" style={{
-          display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 280px',
-          gap: 64, alignItems: 'start'
-        }}>
-          <div>
-            {paras.map((p, i) => (
-              <p key={i} style={{
-                fontSize: 'clamp(16px, 1.2vw, 18px)',
-                lineHeight: 1.8, marginBottom: 28,
-                color: '#e6e6e6', maxWidth: 760, textWrap: 'pretty'
-              }}>{p}</p>
-            ))}
-
-            {/* Gallery — size and layout configured per image */}
-            {gallery.length > 0 && (() => {
-              const rows = [];
-              let gi = 0;
-              while (gi < gallery.length) {
-                const cur = gallery[gi], nxt = gallery[gi + 1];
-                if (cur.layout === 'pair-left' && nxt && nxt.layout === 'pair-right') {
-                  rows.push({ type: 'pair', left: cur, right: nxt, key: gi });
-                  gi += 2;
-                } else {
-                  rows.push({ type: 'solo', item: cur, key: gi });
-                  gi++;
-                }
+      {/* ============ BODY 720px ============ */}
+      <section className="container" style={{ paddingTop: 56, paddingBottom: 40 }}>
+        <div style={{ maxWidth: 720, margin: '0 auto' }}>
+          {paras.map((p, i) =>
+            <React.Fragment key={i}>
+              {i === 1 && productoRelacionado &&
+                <ProductAnnouncementBlock producto={productoRelacionado} brand={a.marca} />
               }
-              const sW = { full: '100%', medium: '70%', small: '50%' };
-              return (
-                <div style={{ margin: '40px 0 48px' }}>
-                  {rows.map(row => row.type === 'pair' ? (
-                    <div key={row.key} className="gallery-pair" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
-                      <div style={{ background: 'var(--bg-3)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <img src={row.left.url} alt="" style={{ width: 'auto', height: 'auto', maxWidth: '100%', maxHeight: '50vh', display: 'block' }}
-                          onError={e => { e.target.style.display = 'none'; }} />
-                      </div>
-                      <div style={{ background: 'var(--bg-3)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <img src={row.right.url} alt="" style={{ width: 'auto', height: 'auto', maxWidth: '100%', maxHeight: '50vh', display: 'block' }}
-                          onError={e => { e.target.style.display = 'none'; }} />
-                      </div>
-                    </div>
-                  ) : (
-                    <div key={row.key} style={{
-                      marginBottom: 12, display: 'flex', justifyContent: 'center',
-                      marginLeft: row.item.size === 'full' ? 'calc(-1 * min(80px, 6vw))' : 0,
-                      marginRight: row.item.size === 'full' ? 'calc(-1 * min(80px, 6vw))' : 0
-                    }}>
-                      <div style={{ width: sW[row.item.size] || '100%', background: 'var(--bg-3)', display: 'flex', justifyContent: 'center' }}>
-                        <img src={row.item.url} alt="" style={{ width: 'auto', height: 'auto', maxWidth: '100%', maxHeight: '65vh', display: 'block' }}
-                          onError={e => { e.target.style.display = 'none'; }} />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              );
-            })()}
+
+              <BodyParagraph isFirst={i === 0}>{p}</BodyParagraph>
+
+              {i === 0 && inlineImages[0] &&
+                <WideFigure src={inlineImages[0]} alt={`${a.titulo} — Fig. 01`} caption={a.coleccion} />
+              }
+
+              {i === 2 && inlineImages[1] &&
+                <WideFigure src={inlineImages[1]} alt={`${a.titulo} — Fig. 02`} caption={a.detallesTecnicos.colorways[0]} />
+              }
+            </React.Fragment>
+          )}
+
+          <div style={{ clear: 'both' }}></div>
+
+          {inlineImages.slice(2).map((src, i) =>
+            <WideFigure key={i} src={src} alt={`${a.titulo} — Fig. 0${i + 3}`} caption={`Detalle ${i + 3}`} />
+          )}
+
+          <div style={{
+            marginTop: 48, paddingTop: 24,
+            borderTop: '1px solid var(--line)',
+            display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 18
+          }}>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              <Tag>{a.marca}</Tag>
+              <Tag>{a.categoria}</Tag>
+              <Tag>{a.fecha}</Tag>
+            </div>
+            <ShareRow title={a.titulo} slug={a.slug} compact />
           </div>
-
-          <aside style={{ position: 'sticky', top: 96 }}>
-            <div className="eyebrow" style={{ marginBottom: 16 }}>Datos técnicos</div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, color: 'var(--text-dim)' }}>
-              <tbody>
-                {[
-                  ['Suela',     a.detallesTecnicos.suela],
-                  ['Terreno',   a.detallesTecnicos.terreno],
-                  ['Peso',      a.detallesTecnicos.peso],
-                  ['Colorways', a.detallesTecnicos.colorways.join(' · ')]
-                ].map(([k, v]) => (
-                  <tr key={k} style={{ borderTop: '1px solid var(--line)' }}>
-                    <th style={{
-                      textAlign: 'left', padding: '14px 0', width: '40%',
-                      fontFamily: 'var(--mono)', fontSize: 10,
-                      letterSpacing: '0.18em', textTransform: 'uppercase',
-                      color: 'var(--text-muted)', fontWeight: 500, verticalAlign: 'top'
-                    }}>{k}</th>
-                    <td style={{ padding: '14px 0', color: '#fff', fontSize: 14, verticalAlign: 'top', lineHeight: 1.5 }}>{v}</td>
-                  </tr>
-                ))}
-                <tr style={{ borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)' }}>
-                  <th style={{
-                    textAlign: 'left', padding: '14px 0',
-                    fontFamily: 'var(--mono)', fontSize: 10,
-                    letterSpacing: '0.18em', textTransform: 'uppercase',
-                    color: 'var(--text-muted)', fontWeight: 500, verticalAlign: 'top'
-                  }}>Colección</th>
-                  <td style={{ padding: '14px 0', color: '#fff', fontSize: 14, fontStyle: 'italic' }}>{a.coleccion}</td>
-                </tr>
-              </tbody>
-            </table>
-          </aside>
         </div>
+      </section>
 
-        {/* CTA STOCK */}
-        <div className="article-cta" style={{
-          marginTop: 80, padding: '64px 48px',
-          background: 'var(--bg-2)', border: '1px solid var(--line)',
-          display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between',
-          gap: 32
-        }}>
-          <div style={{ maxWidth: 600 }}>
-            <div className="eyebrow" style={{ marginBottom: 14 }}>Stock disponible</div>
-            <h3 style={{
-              fontFamily: 'var(--display)',
-              fontSize: 'clamp(26px, 3vw, 38px)',
-              fontWeight: 600, lineHeight: 1.15, letterSpacing: '-0.01em', textWrap: 'pretty'
-            }}>¿Querés este par? Consultá el stock disponible.</h3>
-            <p style={{ marginTop: 12, color: 'var(--text-dim)', fontSize: 15, lineHeight: 1.6 }}>
-              Tenemos unidades en stock con retiro inmediato en Córdoba. Ver talles, colorways y precios actualizados.
-            </p>
-          </div>
-          <L to={`/marcas/${a.marcaSlug}/${a.modeloSlug}`} className="btn btn-primary" style={{ fontSize: 13 }}>
-            Ver stock {a.marca} {a.modeloSlug.toUpperCase()} →
-          </L>
-        </div>
+      {/* ============ INSTAGRAM EMBED ============ */}
+      {a.urlInstagram && <InstagramSection url={a.urlInstagram} />}
 
-        <div style={{ marginTop: 56 }}>
-          <BackLink to="/" label="Volver a Lanzamientos" />
-        </div>
+      {/* ============ RELATED ARTICLES ============ */}
+      <RelatedArticles items={related} />
+    </article>
+  );
+}
+
+// =============================================================
+// HERO with blurred background extension
+// =============================================================
+function SBHero({ img, title }) {
+  return (
+    <section style={{ position: 'relative', width: '100%', overflow: 'hidden', background: '#000' }}>
+      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
+        <img src={img} alt="" aria-hidden="true" style={{
+          width: '110%', height: '110%',
+          marginLeft: '-5%', marginTop: '-5%',
+          objectFit: 'cover',
+          filter: 'blur(50px) brightness(0.35) saturate(1.4)',
+          transform: 'scale(1.1)'
+        }} onError={(e) => { e.target.style.display = 'none'; }} />
       </div>
+      <div style={{
+        position: 'relative',
+        height: '70vh', minHeight: 420, maxHeight: 820,
+        display: 'flex', alignItems: 'center', justifyContent: 'center'
+      }}>
+        <img src={img} alt={title} style={{
+          maxWidth: '100%', maxHeight: '100%',
+          width: 'auto', height: '100%',
+          display: 'block', objectFit: 'cover'
+        }} onError={(e) => { e.target.style.display = 'none'; }} />
+      </div>
+    </section>
+  );
+}
 
+// =============================================================
+// Breadcrumb
+// =============================================================
+function Breadcrumb({ crumbs }) {
+  return (
+    <nav aria-label="Breadcrumb" style={{
+      fontFamily: 'var(--mono)', fontSize: 11,
+      letterSpacing: '0.16em', textTransform: 'uppercase',
+      color: 'var(--text-muted)',
+      display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8
+    }}>
+      {crumbs.map((c, i) =>
+        <React.Fragment key={i}>
+          {c.to ?
+            <L to={c.to} style={{ color: 'var(--text-dim)' }} className="bc-link">{c.label}</L> :
+            <span style={{ color: '#fff', textWrap: 'pretty', maxWidth: '70vw', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.label}</span>
+          }
+          {i < crumbs.length - 1 && <span style={{ color: 'var(--text-muted)' }}>›</span>}
+        </React.Fragment>
+      )}
+      <style>{`.bc-link:hover { color: #fff !important; }`}</style>
+    </nav>
+  );
+}
+
+// =============================================================
+// Share row
+// =============================================================
+function ShareRow({ title, slug, compact }) {
+  const [copied, setCopied] = useState(false);
+  const url = typeof window !== 'undefined' ? `${window.location.origin}${window.location.pathname}#/lanzamientos/${slug}` : '';
+  const text = encodeURIComponent(title);
+  const enc = encodeURIComponent(url);
+
+  const shares = [
+    { id: 'fb', label: 'Facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${enc}`,
+      svg: <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H8V12h2.44V9.9c0-2.4 1.43-3.73 3.62-3.73 1.05 0 2.15.19 2.15.19v2.36h-1.21c-1.19 0-1.56.74-1.56 1.5V12h2.66l-.43 2.89h-2.23v6.99A10 10 0 0 0 22 12z" /></svg> },
+    { id: 'x', label: 'Twitter/X', href: `https://twitter.com/intent/tweet?text=${text}&url=${enc}`,
+      svg: <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg> },
+    { id: 'wa', label: 'WhatsApp', href: `https://api.whatsapp.com/send?text=${text}%20${enc}`,
+      svg: <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.51 5.26L3.5 18.59l3.154-1.398zm10.413-7.137c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.149-.174.198-.298.297-.497.099-.198.05-.371-.025-.521-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.298-1.04 1.017-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.711.306 1.265.489 1.697.625.713.227 1.362.195 1.875.118.572-.085 1.759-.719 2.007-1.413.247-.694.247-1.289.173-1.413z" /></svg> }
+  ];
+
+  const onCopy = () => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    }
+  };
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      {!compact &&
+        <span style={{
+          fontFamily: 'var(--mono)', fontSize: 10,
+          letterSpacing: '0.22em', textTransform: 'uppercase',
+          color: 'var(--text-muted)', marginRight: 4
+        }}>Compartir</span>
+      }
+      {shares.map((s) =>
+        <a key={s.id} href={s.href} target="_blank" rel="noopener noreferrer"
+          aria-label={`Compartir en ${s.label}`}
+          className="share-btn">
+          {s.svg}
+        </a>
+      )}
+      <button onClick={onCopy} aria-label="Copiar link" className="share-btn">
+        {copied ?
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M5 12l4 4 10-11" /></svg> :
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M10 14l-1 1a4 4 0 1 1-5.66-5.66l3-3A4 4 0 0 1 11 7" /><path d="M14 10l1-1a4 4 0 1 1 5.66 5.66l-3 3A4 4 0 0 1 13 17" /></svg>
+        }
+      </button>
       <style>{`
-        @media (max-width: 900px) {
-          .article-grid {
-            grid-template-columns: 1fr !important;
-            gap: 40px !important;
-          }
+        .share-btn {
+          width: 34px; height: 34px;
+          display: inline-flex; align-items: center; justify-content: center;
+          border: 1px solid var(--line-strong);
+          color: var(--text-dim);
+          transition: all 0.2s;
+          background: transparent;
         }
-        @media (max-width: 600px) {
-          .gallery-pair {
-            grid-template-columns: 1fr !important;
+        .share-btn:hover { border-color: #fff; color: #fff; }
+      `}</style>
+    </div>
+  );
+}
+
+// =============================================================
+// Body components
+// =============================================================
+function BodyParagraph({ children, isFirst }) {
+  return (
+    <p style={{
+      fontFamily: 'var(--body)',
+      fontSize: 'clamp(16px, 1.18vw, 18px)',
+      lineHeight: 1.8,
+      color: '#dcdcdc',
+      marginBottom: 28,
+      textWrap: 'pretty',
+      fontWeight: isFirst ? 500 : 400
+    }}>{children}</p>
+  );
+}
+
+function WideFigure({ src, alt, caption }) {
+  return (
+    <figure style={{
+      margin: '40px calc(-1 * min(80px, 7vw)) 48px',
+      maxWidth: 'calc(100% + 2 * min(80px, 7vw))'
+    }} className="wide-figure">
+      <img src={src} alt={alt} style={{
+        width: '100%', height: 'auto',
+        display: 'block',
+        background: 'var(--bg-3)', objectFit: 'cover'
+      }} onError={(e) => { e.target.style.display = 'none'; }} />
+      {caption &&
+        <figcaption style={{
+          marginTop: 14,
+          fontFamily: 'var(--mono)', fontSize: 11,
+          letterSpacing: '0.15em', textTransform: 'uppercase',
+          color: 'var(--text-muted)',
+          textAlign: 'center'
+        }}>{caption}</figcaption>
+      }
+      <style>{`
+        @media (max-width: 720px) { .wide-figure { margin-left: 0 !important; margin-right: 0 !important; } }
+      `}</style>
+    </figure>
+  );
+}
+
+function ProductAnnouncementBlock({ producto, brand }) {
+  return (
+    <aside style={{
+      float: 'right',
+      width: 240,
+      maxWidth: '50%',
+      marginLeft: 24,
+      marginBottom: 20,
+      marginRight: 'calc(-1 * min(80px, 7vw))',
+      padding: 16,
+      background: 'var(--bg-2)',
+      border: '1px solid var(--line-strong)',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 12
+    }} className="prod-announce">
+      <div style={{ aspectRatio: '1 / 1', overflow: 'hidden', background: 'var(--bg-3)' }}>
+        <img src={producto.imagen} alt={producto.modelo}
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          onError={(e) => { e.target.style.display = 'none'; }} />
+      </div>
+      <div>
+        <div className="eyebrow" style={{ marginBottom: 8, fontSize: 9 }}>{brand} · En catálogo</div>
+        <h3 style={{
+          fontFamily: 'var(--display)',
+          fontSize: 17,
+          fontWeight: 600, lineHeight: 1.2,
+          letterSpacing: '-0.005em',
+          marginBottom: 4,
+          textWrap: 'pretty'
+        }}>{producto.modelo}</h3>
+        <div style={{
+          fontFamily: 'var(--display)', fontStyle: 'italic',
+          color: 'var(--text-dim)', fontSize: 13, marginBottom: 10,
+          lineHeight: 1.3
+        }}>{producto.colorway}</div>
+        <div style={{ fontFamily: 'var(--display)', fontSize: 19, fontWeight: 600, marginBottom: 12 }}>
+          {fmtPrice(producto.precio)}
+        </div>
+        <L to={`/marcas/${producto.brandSlug || brand.toLowerCase()}/${producto.modeloSlug || producto.modelo.split(' ')[0].toLowerCase()}`}
+          className="btn btn-primary"
+          style={{ fontSize: 10, padding: '10px 14px', width: '100%' }}>
+          Ver en catálogo →
+        </L>
+      </div>
+      <style>{`
+        @media (max-width: 720px) {
+          .prod-announce {
+            float: none !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 24px 0 24px 0 !important;
           }
-          .article-body { padding-top: 40px !important; padding-bottom: 24px !important; }
-          .article-cta { padding: 36px 24px !important; }
-          .article-cta h3 { font-size: clamp(22px, 5vw, 32px) !important; }
-        }
-        @media (max-width: 480px) {
-          .article-hero-text { padding-bottom: 36px !important; }
         }
       `}</style>
-    </article>
+    </aside>
+  );
+}
+
+function Tag({ children }) {
+  return (
+    <span style={{
+      fontFamily: 'var(--mono)', fontSize: 10,
+      letterSpacing: '0.2em', textTransform: 'uppercase',
+      color: 'var(--text-dim)',
+      padding: '6px 12px',
+      border: '1px solid var(--line)',
+      display: 'inline-block'
+    }}>{children}</span>
+  );
+}
+
+// =============================================================
+// Instagram embed section
+// =============================================================
+function InstagramSection({ url }) {
+  const m = url.match(/instagram\.com\/(?:p|reel)\/([A-Za-z0-9_-]+)/);
+  const code = m ? m[1] : null;
+  const embedSrc = code ? `https://www.instagram.com/p/${code}/embed/captioned/?cr=1&theme=dark` : null;
+
+  return (
+    <section style={{
+      background: 'var(--bg-2)',
+      borderTop: '1px solid var(--line)',
+      borderBottom: '1px solid var(--line)',
+      padding: '80px 0'
+    }}>
+      <div className="container" style={{ maxWidth: 880 }}>
+        <div style={{
+          display: 'flex', alignItems: 'baseline', justifyContent: 'space-between',
+          gap: 16, marginBottom: 32, flexWrap: 'wrap'
+        }}>
+          <div>
+            <div className="eyebrow" style={{ marginBottom: 12 }}>Comunidad</div>
+            <h2 style={{
+              fontFamily: 'var(--display)',
+              fontSize: 'clamp(28px, 3.4vw, 42px)',
+              fontWeight: 600, letterSpacing: '-0.01em', lineHeight: 1.1
+            }}>Seguinos en Instagram</h2>
+          </div>
+          <a href="https://www.instagram.com/botinesaltagamacba/"
+            target="_blank" rel="noopener noreferrer"
+            className="btn btn-ghost">
+            Ver en Instagram →
+          </a>
+        </div>
+
+        <div style={{
+          background: '#000',
+          border: '1px solid var(--line)',
+          maxWidth: 540, margin: '0 auto',
+          minHeight: 600
+        }}>
+          {embedSrc ?
+            <iframe
+              src={embedSrc}
+              width="100%"
+              height="780"
+              frameBorder="0"
+              scrolling="no"
+              allowTransparency="true"
+              style={{ display: 'block', border: 'none', background: '#000', maxWidth: '100%' }}
+              title="Instagram post">
+            </iframe> :
+            <div style={{ padding: 60, textAlign: 'center', color: 'var(--text-dim)' }}>
+              No se pudo cargar el post de Instagram.
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// =============================================================
+// Related articles
+// =============================================================
+function RelatedArticles({ items }) {
+  return (
+    <section className="container" style={{ paddingTop: 80, paddingBottom: 40 }}>
+      <div style={{
+        display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
+        gap: 16, marginBottom: 32, paddingBottom: 18, borderBottom: '1px solid var(--line)', flexWrap: 'wrap'
+      }}>
+        <h2 style={{
+          fontFamily: 'var(--display)',
+          fontSize: 'clamp(28px, 3vw, 38px)',
+          fontWeight: 600, letterSpacing: '-0.01em', lineHeight: 1
+        }}>Más lanzamientos</h2>
+        <L to="/" style={{
+          fontFamily: 'var(--mono)', fontSize: 11,
+          letterSpacing: '0.2em', textTransform: 'uppercase',
+          color: 'var(--text-dim)',
+          paddingBottom: 4, borderBottom: '1px solid var(--line-strong)'
+        }}>Ver todos →</L>
+      </div>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))',
+        gap: 28
+      }}>
+        {items.map((a) =>
+          <L to={`/lanzamientos/${a.slug}`} key={a.slug} className="rel-card">
+            <div style={{ aspectRatio: '4 / 5', overflow: 'hidden', background: 'var(--bg-3)' }}>
+              <SmartImage src={a.imagen} alt={a.titulo} className="zoom-img" />
+            </div>
+            <div style={{ paddingTop: 16 }}>
+              <div className="eyebrow" style={{ marginBottom: 8, fontSize: 10 }}>{a.marca} · {a.fecha}</div>
+              <h3 style={{
+                fontFamily: 'var(--display)',
+                fontSize: 19, fontWeight: 600,
+                lineHeight: 1.25, marginBottom: 4,
+                letterSpacing: '-0.005em',
+                textWrap: 'pretty'
+              }}>{a.titulo}</h3>
+              <div style={{ color: 'var(--text-muted)', fontSize: 13, fontStyle: 'italic', fontFamily: 'var(--display)' }}>
+                {a.categoria}
+              </div>
+            </div>
+          </L>
+        )}
+      </div>
+      <style>{`
+        .rel-card .zoom-img { transition: transform 0.7s cubic-bezier(0.2,0.8,0.2,1); }
+        .rel-card:hover .zoom-img { transform: scale(1.05); }
+        .rel-card h3 { transition: color 0.25s; }
+        .rel-card:hover h3 { color: var(--text-dim); }
+      `}</style>
+    </section>
   );
 }
 
@@ -222,9 +490,7 @@ function BackLink({ to, label }) {
       color: 'var(--text-dim)',
       display: 'inline-flex', alignItems: 'center', gap: 8,
       paddingBottom: 4, borderBottom: '1px solid var(--line)'
-    }}>
-      ← {label}
-    </L>
+    }}>← {label}</L>
   );
 }
 

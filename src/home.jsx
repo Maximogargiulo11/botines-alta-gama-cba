@@ -78,62 +78,9 @@ function HeroCarousel({ articles }) {
 
   return (
     <section style={{ position: 'relative', background: '#000', overflow: 'hidden' }}>
-      <div style={{ position: 'relative', height: '85vh', minHeight: 480 }}>
+      <div style={{ position: 'relative', height: 'min(58vh, 520px)', minHeight: 380 }}>
         {articles.map((a, i) => (
-          <L to={`/lanzamientos/${a.slug}`} key={a.slug}>
-            <div style={{
-              position: 'absolute', inset: 0,
-              opacity: i === idx ? 1 : 0,
-              transition: 'opacity 0.9s ease',
-              pointerEvents: i === idx ? 'auto' : 'none'
-            }}>
-              {/* Blurred background */}
-              <img src={a.imagen} alt="" style={{
-                position: 'absolute', inset: 0, width: '100%', height: '100%',
-                objectFit: 'cover', filter: 'blur(25px)', transform: 'scale(1.1)', opacity: 0.5
-              }} onError={e => { e.target.style.display = 'none'; }} />
-              {/* Centered full image */}
-              <img src={a.imagen} alt={a.titulo} className="hero-img-contain" style={{
-                position: 'absolute', top: 0, left: '50%',
-                transform: 'translateX(-50%)',
-                height: '100%', width: 'auto',
-                objectFit: 'contain', zIndex: 1
-              }} onError={e => { e.target.style.display = 'none'; }} />
-              {/* Gradient */}
-              <div style={{
-                position: 'absolute', inset: 0, zIndex: 2,
-                background: 'linear-gradient(to bottom, rgba(0,0,0,0) 50%, rgba(0,0,0,0.88) 100%)'
-              }} />
-              {/* Text */}
-              <div className="container" style={{
-                position: 'absolute', left: 0, right: 0, bottom: 0,
-                paddingBottom: 64, zIndex: 3
-              }}>
-                <div style={{ display: 'inline-flex', gap: 14, alignItems: 'center', marginBottom: 18 }}>
-                  <span className="eyebrow" style={{ background: '#fff', color: '#000', padding: '6px 12px' }}>
-                    {a.marca}
-                  </span>
-                  <span className="eyebrow" style={{ color: '#fff' }}>{a.categoria} · {a.fecha}</span>
-                </div>
-                <h1 style={{
-                  fontFamily: 'var(--display)',
-                  fontSize: 'clamp(36px, 5.6vw, 80px)',
-                  fontWeight: 600, lineHeight: 1.05,
-                  maxWidth: 1000, letterSpacing: '-0.01em', textWrap: 'pretty'
-                }}>
-                  {a.titulo}
-                </h1>
-                <p style={{
-                  fontFamily: 'var(--display)', fontStyle: 'italic',
-                  fontSize: 'clamp(15px, 1.6vw, 20px)',
-                  color: 'rgba(255,255,255,0.8)',
-                  marginTop: 18, maxWidth: 720, lineHeight: 1.5, textWrap: 'pretty'
-                }}>
-                  {a.descripcionCorta}
-                </p>
-              </div>
-            </div>
-          </L>
+          <HeroSlide key={a.slug} article={a} active={i === idx} />
         ))}
 
         {total > 1 && (
@@ -142,7 +89,7 @@ function HeroCarousel({ articles }) {
             <button onClick={(e) => { e.preventDefault(); go(1); }} aria-label="Siguiente" style={arrowBtn('right')}>›</button>
             <div style={{
               position: 'absolute', bottom: 22, left: 0, right: 0,
-              display: 'flex', justifyContent: 'center', gap: 8, zIndex: 10
+              display: 'flex', justifyContent: 'center', gap: 8
             }}>
               {articles.map((_, i) => (
                 <button key={i}
@@ -159,6 +106,99 @@ function HeroCarousel({ articles }) {
         )}
       </div>
     </section>
+  );
+}
+
+function HeroSlide({ article, active }) {
+  const a = article;
+  const [orientation, setOrientation] = useState('landscape');
+  const [loaded, setLoaded] = useState(false);
+
+  const onLoad = (e) => {
+    const w = e.target.naturalWidth;
+    const h = e.target.naturalHeight;
+    if (h > w * 1.05) setOrientation('portrait');
+    else setOrientation('landscape');
+    setLoaded(true);
+  };
+
+  const isPortrait = orientation === 'portrait';
+
+  return (
+    <L to={`/lanzamientos/${a.slug}`}>
+      <div style={{
+        position: 'absolute', inset: 0,
+        opacity: active ? 1 : 0,
+        transition: 'opacity 0.9s ease',
+        pointerEvents: active ? 'auto' : 'none',
+        background: '#000',
+        overflow: 'hidden'
+      }}>
+        {isPortrait ? (
+          <>
+            <img src={a.imagen} alt="" aria-hidden="true"
+              style={{
+                position: 'absolute', inset: 0,
+                width: '100%', height: '100%',
+                objectFit: 'cover',
+                filter: 'blur(28px) brightness(0.4)',
+                transform: 'scale(1.1)'
+              }} />
+            <img src={a.imagen} alt={a.titulo}
+              onLoad={onLoad}
+              style={{
+                position: 'absolute', left: '50%', top: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'auto',
+                maxWidth: '60%',
+                maxHeight: '85vh',
+                height: 'auto',
+                objectFit: 'contain',
+                opacity: loaded ? 1 : 0,
+                transition: 'opacity 0.4s ease',
+                zIndex: 1
+              }}
+              onError={(e) => { e.target.style.display = 'none'; }} />
+          </>
+        ) : (
+          <img src={a.imagen} alt={a.titulo}
+            onLoad={onLoad}
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            onError={(e) => { e.target.style.display = 'none'; }} />
+        )}
+
+        <div style={{
+          position: 'absolute', inset: 0, zIndex: 2,
+          background: isPortrait
+            ? 'linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 35%, rgba(0,0,0,0.92) 100%)'
+            : 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 35%, rgba(0,0,0,0.85) 100%)'
+        }}></div>
+
+        <div className="container" style={{
+          position: 'absolute', left: 0, right: 0, bottom: 0,
+          paddingBottom: 44, zIndex: 3
+        }}>
+          <div style={{ display: 'inline-flex', gap: 14, alignItems: 'center', marginBottom: 18 }}>
+            <span className="eyebrow" style={{ background: '#fff', color: '#000', padding: '6px 12px' }}>
+              {a.marca}
+            </span>
+            <span className="eyebrow" style={{ color: '#fff' }}>{a.categoria} · {a.fecha}</span>
+          </div>
+          <h1 style={{
+            fontFamily: 'var(--display)',
+            fontSize: 'clamp(28px, 4.2vw, 56px)',
+            fontWeight: 600, lineHeight: 1.05,
+            maxWidth: 1000, letterSpacing: '-0.01em', textWrap: 'pretty'
+          }}>{a.titulo}</h1>
+          <p style={{
+            fontFamily: 'var(--display)', fontStyle: 'italic',
+            fontSize: 'clamp(15px, 1.6vw, 20px)',
+            color: 'rgba(255,255,255,0.8)',
+            marginTop: 18, maxWidth: 720, lineHeight: 1.5, textWrap: 'pretty'
+          }}>{a.descripcionCorta}</p>
+        </div>
+      </div>
+    </L>
   );
 }
 

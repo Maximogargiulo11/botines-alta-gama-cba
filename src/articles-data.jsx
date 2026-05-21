@@ -13,7 +13,7 @@ const ARTICLES = [
     fechaISO: '2026-04-23',
     categoria: 'Lanzamiento',
     descripcionCorta: 'adidas reedita el botín que partió la historia en dos. Upper desmontable, placa de carbono y bolsa de transporte original.',
-    imagen: 'assets/tunit-card-hero.jpg',
+    imagen: 'https://i.imgur.com/26MatDw.jpeg',
     destacado: true,
     contenido: [
       'Hay botines, y hay momentos. El F50 Tunit fue las dos cosas a la vez. Cuando adidas lo presentó por primera vez en 2010, no estaba simplemente lanzando otro botín de élite — estaba reescribiendo lo que un botín podía ser. Modular, customizable, pieza por pieza. Y ahora, en 2026, vuelve al archivo.',
@@ -22,11 +22,9 @@ const ARTICLES = [
       'La pregunta no es si vas a querer un par. La pregunta es cuál de los dos uppers vas a usar primero.'
     ],
     galeria: [
-      'assets/tunit-card-hero.jpg',
-      'assets/tunit-closeup.jpg',
-      'assets/tunit-sole.jpg',
-      'assets/tunit-detail.jpg',
-      'assets/tunit-player-holding.jpg'
+      'https://i.imgur.com/26MatDw.jpeg',
+      'assets/tunit-player-holding.jpg',
+      'assets/tunit-sole.jpg'
     ],
     detallesTecnicos: {
       suela: 'Sprintframe con placa de carbono completa',
@@ -34,7 +32,9 @@ const ARTICLES = [
       peso: '195g (talle 8.5 US)',
       colorways: ['Solar Yellow / Core Black', 'Electric Blue / White', 'Triple Black']
     },
-    coleccion: 'F50 Archive Collection · 14 Years Edition'
+    coleccion: 'F50 Archive Collection · 14 Years Edition',
+    productoRelacionadoId: 'f50-tunit-solar',
+    urlInstagram: 'https://www.instagram.com/p/C6dpJq6OJtq/'
   },
   {
     slug: 'f50-hora-dorada',
@@ -67,7 +67,9 @@ const ARTICLES = [
       peso: '202g (talle 8.5 US)',
       colorways: ['Solar Gold / Wonder Clay']
     },
-    coleccion: 'adidas x Messi · Signature Series 2026'
+    coleccion: 'adidas x Messi · Signature Series 2026',
+    productoRelacionadoId: 'f50-hora-dorada',
+    urlInstagram: 'https://www.instagram.com/p/C6FlBSyOXJa/'
   },
   {
     slug: 'nike-united-pack-chapter-3',
@@ -79,22 +81,24 @@ const ARTICLES = [
     fechaISO: '2026-04-30',
     categoria: 'Pack',
     descripcionCorta: 'Nike reúne a las mejores jugadoras del fútbol femenino para el tercer capítulo de la serie United Pack.',
-    imagen: 'assets/drop-nike-united.jpg',
+    imagen: ‘https://i.imgur.com/l80MPIc.jpeg’,
     destacado: true,
     contenido: [
-      '@nikefootball reúne a algunas de las mejores jugadoras del fútbol femenino y embajadoras de la marca para lanzar el capítulo 3 de esta serie. Para aquellos que están en la cuenta, este concepto comenzó en 2023, uniendo lo mejor del juego femenino antes de la Copa del Mundo.',
-      'Fue seguido más tarde ese mismo año con el paquete ‘United Golden’, de variaciones en el aspecto dorado. Luego, el año pasado se lanzaron más bajo la bandera de ‘United’ Pack, uno en febrero y otro en octubre. Ahora tenemos lo que se conoce oficialmente como capítulo 3.',
-      'El pack incluye colorways de Mercurial Vapor 16, Phantom GX II y Tiempo Legend 10 con paleta blanca, pink blast y core black. La cápsula además trae camisetas de entrenamiento, pelotas oficiales y una guía editorial impresa con perfiles de cada una de las embajadoras del proyecto.',
-      '¿Confundido? No te preocupes, nosotros también. Todo lo que realmente necesitás saber es que este es un nuevo aspecto para las mejores jugadoras de Nike en el juego femenino. ¿Entendido? Bien.'
+      ‘@nikefootball reúne a algunas de las mejores jugadoras del fútbol femenino y embajadoras de la marca para lanzar el capítulo 3 de esta serie. Para aquellos que están en la cuenta, este concepto comenzó en 2023, uniendo lo mejor del juego femenino antes de la Copa del Mundo.’,
+      ‘Fue seguido más tarde ese mismo año con el paquete ‘United Golden’, de variaciones en el aspecto dorado. Luego, el año pasado se lanzaron más bajo la bandera de ‘United’ Pack, uno en febrero y otro en octubre. Ahora tenemos lo que se conoce oficialmente como capítulo 3.’,
+      ‘El pack incluye colorways de Mercurial Vapor 16, Phantom GX II y Tiempo Legend 10 con paleta blanca, pink blast y core black. La cápsula además trae camisetas de entrenamiento, pelotas oficiales y una guía editorial impresa con perfiles de cada una de las embajadoras del proyecto.’,
+      ‘¿Confundido? No te preocupes, nosotros también. Todo lo que realmente necesitás saber es que este es un nuevo aspecto para las mejores jugadoras de Nike en el juego femenino. ¿Entendido? Bien.’
     ],
-    galeria: ['assets/drop-nike-united.jpg'],
+    galeria: [‘https://i.imgur.com/l80MPIc.jpeg’],
     detallesTecnicos: {
-      suela: 'Variable según modelo (FG / AG)',
-      terreno: 'Firm Ground / Artificial Ground',
-      peso: '186g (Mercurial 8.5 US)',
-      colorways: ['White / Pink Blast / Black']
+      suela: ‘Variable según modelo (FG / AG)’,
+      terreno: ‘Firm Ground / Artificial Ground’,
+      peso: ‘186g (Mercurial 8.5 US)’,
+      colorways: [‘White / Pink Blast / Black’]
     },
-    coleccion: 'Nike Football · United Pack · Chapter 3'
+    coleccion: ‘Nike Football · United Pack · Chapter 3’,
+    productoRelacionadoId: ‘merc-vapor-16’,
+    urlInstagram: ‘https://www.instagram.com/p/C6dpJq6OJtq/’
   },
   {
     slug: 'puma-eclipse-pack',
@@ -121,7 +125,9 @@ const ARTICLES = [
       peso: '180g – 195g según modelo',
       colorways: ['Puma Black / Glowing Pink']
     },
-    coleccion: 'Puma Football · Eclipse Pack SS26'
+    coleccion: 'Puma Football · Eclipse Pack SS26',
+    productoRelacionadoId: 'future-7-ult',
+    urlInstagram: 'https://www.instagram.com/p/C6FlBSyOXJa/'
   },
   {
     slug: 'nb-furon-sterling',
@@ -148,7 +154,9 @@ const ARTICLES = [
       peso: '210g (talle 9 US)',
       colorways: ['Pastel Cream / Dust Blue / Coral Red']
     },
-    coleccion: 'New Balance Football · Sterling Signature'
+    coleccion: 'New Balance Football · Sterling Signature',
+    productoRelacionadoId: 'furon-v7-pro',
+    urlInstagram: 'https://www.instagram.com/p/C6dpJq6OJtq/'
   },
   {
     slug: 'mercurial-vapor-16-blueprint',
@@ -175,7 +183,9 @@ const ARTICLES = [
       peso: '186g (talle 8.5 US)',
       colorways: ['Prussian Blue / Cyan / White']
     },
-    coleccion: 'Nike Football · Blueprint Pack SS26'
+    coleccion: 'Nike Football · Blueprint Pack SS26',
+    productoRelacionadoId: 'merc-vapor-16',
+    urlInstagram: 'https://www.instagram.com/p/C6FlBSyOXJa/'
   }
 ];
 
@@ -188,42 +198,42 @@ const BRANDS_INFO = [
     slug: 'adidas',
     name: 'adidas',
     tagline: 'Three stripes. Three decades.',
-    cover: 'assets/hora-dorada-boot.jpg',
+    cover: 'assets/brand-adidas.jpg',
     modelos: [
-      { slug: 'f50', name: 'F50', tagline: 'Speed reimagined', cover: 'assets/tunit-card-hero.jpg' },
-      { slug: 'predator', name: 'Predator', tagline: 'Control absoluto', cover: 'assets/botin-suela.jpg' },
-      { slug: 'copa', name: 'Copa', tagline: 'Heritage en cuero', cover: 'assets/botin-dorado-rock.jpg' }
+      { slug: 'f50', name: 'F50', tagline: 'Speed reimagined', cover: 'assets/model-adidas-f50.avif' },
+      { slug: 'predator', name: 'Predator', tagline: 'Control absoluto', cover: 'assets/model-adidas-predator.avif' },
+      { slug: 'copa', name: 'Copa', tagline: 'Heritage en cuero', cover: 'assets/model-adidas-copa.avif' }
     ]
   },
   {
     slug: 'nike',
     name: 'Nike',
     tagline: 'Just do it.',
-    cover: 'assets/drop-nike-united.jpg',
+    cover: 'assets/brand-nike.jpg',
     modelos: [
-      { slug: 'mercurial', name: 'Mercurial', tagline: 'Velocidad pura', cover: 'assets/hero-f50-tunit.jpg' },
-      { slug: 'phantom', name: 'Phantom', tagline: 'Toque y precisión', cover: 'assets/drop-nike-united.jpg' },
-      { slug: 'tiempo', name: 'Tiempo', tagline: 'Cuero clásico', cover: 'assets/messi-sitting.jpg' }
+      { slug: 'mercurial', name: 'Mercurial', tagline: 'Velocidad pura', cover: 'assets/model-nike-mercurial.webp' },
+      { slug: 'phantom', name: 'Phantom', tagline: 'Toque y precisión', cover: 'assets/model-nike-phantom.webp' },
+      { slug: 'tiempo', name: 'Tiempo', tagline: 'Cuero clásico', cover: 'assets/model-nike-tiempo.avif' }
     ]
   },
   {
     slug: 'puma',
     name: 'Puma',
     tagline: 'Forever faster.',
-    cover: 'assets/botin-suela.jpg',
+    cover: 'assets/brand-puma.jpg',
     modelos: [
-      { slug: 'future', name: 'Future', tagline: 'Adaptive fit', cover: 'assets/botin-suela.jpg' },
-      { slug: 'ultra', name: 'Ultra', tagline: 'Lightweight speed', cover: 'assets/botin-dorado-rock.jpg' }
+      { slug: 'future', name: 'Future', tagline: 'Adaptive fit', cover: 'assets/model-puma-future.avif' },
+      { slug: 'ultra', name: 'Ultra', tagline: 'Lightweight speed', cover: 'assets/model-puma-ultra.jpg' }
     ]
   },
   {
     slug: 'new-balance',
     name: 'New Balance',
     tagline: 'Fearlessly independent.',
-    cover: 'assets/messi-sitting-rock.jpg',
+    cover: 'assets/brand-newbalance.jpg',
     modelos: [
-      { slug: 'furon', name: 'Furon', tagline: 'Strike precision', cover: 'assets/messi-sitting.jpg' },
-      { slug: 'tekela', name: 'Tekela', tagline: 'Creative play', cover: 'assets/messi-sitting-rock.jpg' }
+      { slug: 'furon', name: 'Furon', tagline: 'Strike precision', cover: 'assets/model-nb-furon.webp' },
+      { slug: 'tekela', name: 'Tekela', tagline: 'Creative play', cover: 'assets/model-nb-tekela.webp' }
     ]
   }
 ];
