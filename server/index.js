@@ -33,12 +33,44 @@ if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 if (!fs.existsSync(LANZ_FILE))  fs.writeFileSync(LANZ_FILE,  '[]',  'utf8');
 if (!fs.existsSync(STOCK_FILE)) fs.writeFileSync(STOCK_FILE, '{}',  'utf8');
 
-// ── Sesiones en memoria ────────────────────────────────────────────
-const sessions = new Map();
+// ── Auth: tokens firmados con HMAC (sin estado en servidor) ───────
+// Secret derivado de ADMIN_PASS → estable entre reinicios de Railway.
+// Se puede sobreescribir con la variable de entorno SESSION_SECRET.
+const SESSION_SECRET = process.env.SESSION_SECRET ||
+  crypto.createHash('sha256').update('botines-alta-gama-cba-' + ADMIN_PASS).digest('hex');
+
+const TOKEN_TTL = 30 * 24 * 60 * 60 * 1000; // 30 días
+
+function createToken(usuario) {
+  const expires = Date.now() + TOKEN_TTL;
+  const payload = `${usuario}:${expires}`;
+  const sig = crypto.createHmac('sha256', SESSION_SECRET).update(payload).digest('hex');
+  return Buffer.from(`${payload}:${sig}`).toString('base64url');
+}
+
+function verifyToken(rawToken) {
+  try {
+    const decoded  = Buffer.from(rawToken, 'base64url').toString('utf8');
+    const lastColon = decoded.lastIndexOf(':');
+    const payload  = decoded.slice(0, lastColon);
+    const sig      = decoded.slice(lastColon + 1);
+    const expected = crypto.createHmac('sha256', SESSION_SECRET).update(payload).digest('hex');
+    // comparación en tiempo constante para evitar timing attacks
+    if (sig.length !== expected.length) return null;
+    if (!crypto.timingSafeEqual(Buffer.from(sig, 'hex'), Buffer.from(expected, 'hex'))) return null;
+    const colonIdx = payload.indexOf(':');
+    const usuario  = payload.slice(0, colonIdx);
+    const expires  = Number(payload.slice(colonIdx + 1));
+    if (!usuario || isNaN(expires) || Date.now() > expires) return null;
+    return { usuario };
+  } catch {
+    return null;
+  }
+}
 
 function requireAuth(req, res, next) {
   const token = req.headers['x-admin-token'];
-  if (!token || !sessions.has(token)) {
+  if (!token || !verifyToken(token)) {
     return res.status(401).json({ error: 'No autorizado' });
   }
   next();
@@ -350,18 +382,17 @@ app.post('/api/login', (req, res) => {
   if (usuario !== ADMIN_USER || contrasena !== ADMIN_PASS) {
     return res.status(401).json({ error: 'Credenciales incorrectas' });
   }
-  const token = crypto.randomBytes(32).toString('hex');
-  sessions.set(token, { usuario, loginAt: Date.now() });
+  const token = createToken(usuario);
   res.json({ ok: true, token });
 });
 
-app.post('/api/logout', requireAuth, (req, res) => {
-  sessions.delete(req.headers['x-admin-token']);
+app.post('/api/logout', requireAuth, (_req, res) => {
+  // Con tokens firmados no hay estado en servidor; el cliente solo borra el token local.
   res.json({ ok: true });
 });
 
 app.get('/api/me', requireAuth, (req, res) => {
-  const { usuario } = sessions.get(req.headers['x-admin-token']);
+  const { usuario } = verifyToken(req.headers['x-admin-token']);
   res.json({ usuario });
 });
 
