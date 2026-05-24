@@ -3,6 +3,16 @@
 // /lanzamientos/[slug]
 // ============================================================
 
+// ── Helpers de video ──────────────────────────────────────────
+function getYoutubeId(url) {
+  if (!url) return null;
+  const m = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+function isDirectVideo(url) {
+  return url && /\.(mp4|webm|ogg|mov)(\?|$)/i.test(url);
+}
+
 function ArticlePage({ slug }) {
   const a = findArticle(slug);
 
@@ -12,12 +22,16 @@ function ArticlePage({ slug }) {
 
   if (!a) return null;
 
-  // Normaliza galería: puede ser strings o {url,size,layout} objects (del admin)
-  const gallery = (a.galeria || (a.imagen ? [a.imagen] : []))
-    .map(g => typeof g === 'string' ? g : (g?.url || ''))
-    .filter(Boolean);
-  const heroImg = gallery[0] || a.imagen;
-  const inlineImages = gallery.slice(1);
+  // Normaliza galería: preserva {type, url, size, layout} para soporte de video
+  const galleryItems = (a.galeria && a.galeria.length > 0 ? a.galeria : (a.imagen ? [a.imagen] : []))
+    .map(g => {
+      if (typeof g === 'string') return { type: 'image', url: g, size: 'full', layout: 'solo' };
+      return { type: g.type || 'image', url: g.url || '', size: g.size || 'full', layout: g.layout || 'solo' };
+    })
+    .filter(item => item.url);
+
+  const heroImg = galleryItems[0]?.url || a.imagen;
+  const inlineItems = galleryItems.slice(1);
   const productoRelacionado = a.productoRelacionadoId ? findProductById(a.productoRelacionadoId) : null;
 
   const related = [...ARTICLES.filter((x) => x.slug !== a.slug)].sort((x, y) => {
@@ -31,7 +45,7 @@ function ArticlePage({ slug }) {
   return (
     <article>
       {/* ============ HERO ============ */}
-      <SBHero img={heroImg} title={a.titulo} />
+      <SBHero img={heroImg} title={a.titulo} videoPortada={a.videoPortada} />
 
       {/* ============ BREADCRUMB + TITLE + META + SHARE ============ */}
       <section className="container" style={{ paddingTop: 40 }}>
@@ -91,20 +105,20 @@ function ArticlePage({ slug }) {
 
               <BodyParagraph isFirst={i === 0}>{p}</BodyParagraph>
 
-              {i === 0 && inlineImages[0] &&
-                <WideFigure src={inlineImages[0]} alt={`${a.titulo} — Fig. 01`} caption={a.coleccion} />
+              {i === 0 && inlineItems[0] &&
+                <WideMedia item={inlineItems[0]} alt={`${a.titulo} — Fig. 01`} caption={a.coleccion} />
               }
 
-              {i === 2 && inlineImages[1] &&
-                <WideFigure src={inlineImages[1]} alt={`${a.titulo} — Fig. 02`} caption={a.detallesTecnicos.colorways[0]} />
+              {i === 2 && inlineItems[1] &&
+                <WideMedia item={inlineItems[1]} alt={`${a.titulo} — Fig. 02`} caption={a.detallesTecnicos.colorways[0]} />
               }
             </React.Fragment>
           )}
 
           <div style={{ clear: 'both' }}></div>
 
-          {inlineImages.slice(2).map((src, i) =>
-            <WideFigure key={i} src={src} alt={`${a.titulo} — Fig. 0${i + 3}`} caption={`Detalle ${i + 3}`} />
+          {inlineItems.slice(2).map((item, i) =>
+            <WideMedia key={i} item={item} alt={`${a.titulo} — Fig. 0${i + 3}`} caption={`Detalle ${i + 3}`} />
           )}
 
           <div style={{
@@ -132,13 +146,19 @@ function ArticlePage({ slug }) {
 }
 
 // =============================================================
-// HERO with blurred background extension
+// HERO with blurred background — soporta imagen y video de portada
 // =============================================================
-function SBHero({ img, title }) {
+function SBHero({ img, title, videoPortada }) {
+  const ytId    = getYoutubeId(videoPortada);
+  const isDirect = isDirectVideo(videoPortada);
+  // Fondo desenfocado: thumbnail de YouTube si es video, imagen original si no
+  const bgSrc = ytId ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg` : img;
+
   return (
     <section style={{ position: 'relative', width: '100%', overflow: 'hidden', background: '#000' }}>
+      {/* Fondo desenfocado */}
       <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
-        <img src={img} alt="" aria-hidden="true" style={{
+        <img src={bgSrc || img} alt="" aria-hidden="true" style={{
           width: '110%', height: '110%',
           marginLeft: '-5%', marginTop: '-5%',
           objectFit: 'cover',
@@ -146,16 +166,36 @@ function SBHero({ img, title }) {
           transform: 'scale(1.1)'
         }} onError={(e) => { e.target.style.display = 'none'; }} />
       </div>
+
       <div style={{
         position: 'relative',
         height: '70vh', minHeight: 420, maxHeight: 820,
         display: 'flex', alignItems: 'center', justifyContent: 'center'
       }}>
-        <img src={img} alt={title} style={{
-          maxWidth: '100%', maxHeight: '100%',
-          width: 'auto', height: '100%',
-          display: 'block', objectFit: 'cover'
-        }} onError={(e) => { e.target.style.display = 'none'; }} />
+        {ytId ? (
+          /* ── Video de YouTube ── */
+          <iframe
+            src={`https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1&loop=1&playlist=${ytId}&controls=0&showinfo=0&rel=0&modestbranding=1`}
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none' }}
+            allow="autoplay; encrypted-media; picture-in-picture"
+            allowFullScreen
+            title={title}
+          />
+        ) : isDirect ? (
+          /* ── Video directo MP4/WebM ── */
+          <video
+            src={videoPortada}
+            autoPlay muted loop playsInline
+            style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: '100%', objectFit: 'cover' }}
+          />
+        ) : (
+          /* ── Imagen estática (default) ── */
+          <img src={img} alt={title} style={{
+            maxWidth: '100%', maxHeight: '100%',
+            width: 'auto', height: '100%',
+            display: 'block', objectFit: 'cover'
+          }} onError={(e) => { e.target.style.display = 'none'; }} />
+        )}
       </div>
     </section>
   );
@@ -291,6 +331,56 @@ function WideFigure({ src, alt, caption }) {
       `}</style>
     </figure>
   );
+}
+
+// =============================================================
+// WideMedia — imagen o video a ancho extendido
+// =============================================================
+function WideMedia({ item, alt, caption }) {
+  const type = item?.type || 'image';
+  const url  = typeof item === 'string' ? item : (item?.url || '');
+
+  if (type === 'video') {
+    const ytId = getYoutubeId(url);
+    return (
+      <figure style={{
+        margin: '40px calc(-1 * min(80px, 7vw)) 48px',
+        maxWidth: 'calc(100% + 2 * min(80px, 7vw))'
+      }} className="wide-figure">
+        {ytId ? (
+          /* ── YouTube embed 16:9 ── */
+          <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, background: '#000' }}>
+            <iframe
+              src={`https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1`}
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none' }}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              title={alt}
+            />
+          </div>
+        ) : (
+          /* ── Video directo ── */
+          <video
+            src={url}
+            controls
+            playsInline
+            style={{ width: '100%', display: 'block', background: '#000', maxHeight: 600 }}
+          />
+        )}
+        {caption && (
+          <figcaption style={{
+            marginTop: 14,
+            fontFamily: 'var(--mono)', fontSize: 11,
+            letterSpacing: '0.15em', textTransform: 'uppercase',
+            color: 'var(--text-muted)',
+            textAlign: 'center'
+          }}>{caption}</figcaption>
+        )}
+      </figure>
+    );
+  }
+
+  return <WideFigure src={url} alt={alt} caption={caption} />;
 }
 
 function ProductAnnouncementBlock({ producto, brand }) {

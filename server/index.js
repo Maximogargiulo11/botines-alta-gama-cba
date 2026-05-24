@@ -63,11 +63,12 @@ function normalizeLanzamiento(raw) {
     ? raw.detallesTecnicos.colorways.split('|').map(s => s.trim()).filter(Boolean)
     : (Array.isArray(raw.detallesTecnicos?.colorways) ? raw.detallesTecnicos.colorways : []);
 
-  // Galería: aceptar strings o {url,size,layout}; guardar como objetos internamente
+  // Galería: aceptar strings o {type,url,size,layout}; guardar como objetos internamente
   const galeria = Array.isArray(raw.galeria)
     ? raw.galeria.map(g => typeof g === 'string'
-        ? { url: g, size: 'full', layout: 'solo' }
-        : { url: g.url || '', size: g.size || 'full', layout: g.layout || 'solo' })
+        ? { type: 'image', url: g, size: 'full', layout: 'solo' }
+        : { type: g.type || 'image', url: g.url || '', size: g.size || 'full', layout: g.layout || 'solo' })
+      .filter(g => g.url)
     : [];
 
   return {
@@ -84,6 +85,7 @@ function normalizeLanzamiento(raw) {
     destacado:        Boolean(raw.destacado),
     contenido,
     galeria,
+    videoPortada:     raw.videoPortada    || '',
     detallesTecnicos: {
       suela:     raw.detallesTecnicos?.suela     || '',
       terreno:   raw.detallesTecnicos?.terreno   || '',
@@ -160,11 +162,14 @@ const BRANDS_INFO = [
 function generateArticlesDataJS(lanzamientos, stockRaw) {
   const ts = new Date().toISOString();
 
-  // Limpiar campos internos y normalizar galería → array de strings URLs
+  // Limpiar campos internos y normalizar galería → preservar {type,url,size,layout} para video
   const articles = lanzamientos.map(l => {
     const { _id, ...rest } = l;
     rest.galeria = Array.isArray(rest.galeria)
-      ? rest.galeria.map(g => typeof g === 'string' ? g : (g?.url || '')).filter(Boolean)
+      ? rest.galeria.map(g => {
+          if (typeof g === 'string') return { type: 'image', url: g, size: 'full', layout: 'solo' };
+          return { type: g.type || 'image', url: g.url || '', size: g.size || 'full', layout: g.layout || 'solo' };
+        }).filter(g => g.url)
       : [];
     return rest;
   });

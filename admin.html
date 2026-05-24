@@ -318,6 +318,7 @@ function itemToForm(item) {
     fecha: '', fechaISO: '', categoria: 'Lanzamiento', descripcionCorta: '',
     imagen: '', destacado: false,
     contenido: '', galeria: [], coleccion: '',
+    videoPortada: '',
     suela: '', terreno: '', peso: '', colorways: '',
   };
   return {
@@ -335,10 +336,11 @@ function itemToForm(item) {
     contenido: Array.isArray(item.contenido) ? item.contenido.join('|||') : (item.contenido || ''),
     galeria: Array.isArray(item.galeria)
       ? item.galeria.map(g => typeof g === 'string'
-          ? { url: g, size: 'full', layout: 'solo' }
-          : { url: g.url || '', size: g.size || 'full', layout: g.layout || 'solo' })
+          ? { type: 'image', url: g, size: 'full', layout: 'solo' }
+          : { type: g.type || 'image', url: g.url || '', size: g.size || 'full', layout: g.layout || 'solo' })
       : [],
     coleccion: item.coleccion || '',
+    videoPortada: item.videoPortada || '',
     suela: item.detallesTecnicos?.suela || '',
     terreno: item.detallesTecnicos?.terreno || '',
     peso: item.detallesTecnicos?.peso || '',
@@ -364,6 +366,7 @@ function formToPayload(form) {
     contenido: form.contenido,  // server normalizes |||
     galeria: form.galeria,
     coleccion: form.coleccion,
+    videoPortada: form.videoPortada,
     detallesTecnicos: {
       suela: form.suela,
       terreno: form.terreno,
@@ -445,6 +448,46 @@ function PreviewImg({ src }) {
   return <img src={src} alt="" style={{ maxWidth: '100%', maxHeight: 160, width: 'auto', height: 'auto', display: 'block' }} onError={() => setErr(true)} />;
 }
 
+// ── Preview de video de portada en el modal ───────────────────
+function VideoPortadaPreview({ url }) {
+  const ytId = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/)?.[1];
+  if (ytId) {
+    return (
+      <div style={{ marginTop: 8, position: 'relative', display: 'inline-block' }}>
+        <img src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`} alt="YouTube preview"
+          style={{ maxHeight: 100, display: 'block', border: '1px solid var(--line2)' }} />
+        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.45)', color: '#fff', fontSize: 24, cursor: 'default' }}>▶</div>
+      </div>
+    );
+  }
+  return (
+    <div style={{ marginTop: 8, padding: '8px 12px', background: 'var(--bg-3)', border: '1px solid var(--line)', fontSize: 12, color: 'var(--dim)' }}>
+      🎬 {url.split('/').pop().slice(0, 60)}
+    </div>
+  );
+}
+
+// ── Item de galería en preview (imagen o video) ───────────────
+function PreviewGaleriaItem({ item }) {
+  const type = item?.type || 'image';
+  const url  = item?.url  || '';
+  if (type === 'video') {
+    const ytId = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/)?.[1];
+    if (ytId) {
+      return (
+        <div style={{ position: 'relative', display: 'inline-block', maxWidth: '100%' }}>
+          <img src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`} alt="YouTube"
+            style={{ maxWidth: '100%', maxHeight: 160, display: 'block' }} />
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.4)', color: '#fff', fontSize: 24 }}>▶</div>
+        </div>
+      );
+    }
+    if (!url.trim()) return <div style={{ padding: '18px', color: 'var(--muted)', fontSize: 12, fontStyle: 'italic', textAlign: 'center' }}>URL de video vacía</div>;
+    return <div style={{ padding: '12px', color: 'var(--dim)', fontSize: 12, textAlign: 'center' }}>🎬 {url.split('/').pop().slice(0, 40)}</div>;
+  }
+  return <PreviewImg src={url} />;
+}
+
 function GaleriaPreview({ images }) {
   const valid = images.filter(g => g.url.trim());
   if (!valid.length) return null;
@@ -467,13 +510,13 @@ function GaleriaPreview({ images }) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {rows.map(row => row.type === 'pair' ? (
           <div key={row.key} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-            <div style={{ background: 'var(--bg-3)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}><PreviewImg src={row.left.url} /></div>
-            <div style={{ background: 'var(--bg-3)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}><PreviewImg src={row.right.url} /></div>
+            <div style={{ background: 'var(--bg-3)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}><PreviewGaleriaItem item={row.left} /></div>
+            <div style={{ background: 'var(--bg-3)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}><PreviewGaleriaItem item={row.right} /></div>
           </div>
         ) : (
           <div key={row.key} style={{ display: 'flex', justifyContent: 'center' }}>
             <div style={{ width: W[row.item.size] || '100%', background: 'var(--bg-3)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <PreviewImg src={row.item.url} />
+              <PreviewGaleriaItem item={row.item} />
             </div>
           </div>
         ))}
@@ -483,49 +526,67 @@ function GaleriaPreview({ images }) {
 }
 
 function GaleriaEditor({ images, onChange }) {
-  function add() { onChange([...images, { url: '', size: 'full', layout: 'solo' }]); }
+  function add() { onChange([...images, { type: 'image', url: '', size: 'full', layout: 'solo' }]); }
   function remove(idx) { onChange(images.filter((_, i) => i !== idx)); }
   function upd(idx, field, val) { onChange(images.map((g, i) => i === idx ? { ...g, [field]: val } : g)); }
 
   return (
     <div>
       {images.length === 0 && (
-        <div style={{ padding: '12px 0', color: 'var(--muted)', fontSize: 13, fontStyle: 'italic' }}>Sin imágenes. Agregá la primera.</div>
+        <div style={{ padding: '12px 0', color: 'var(--muted)', fontSize: 13, fontStyle: 'italic' }}>Sin imágenes ni videos. Agregá el primero.</div>
       )}
-      {images.map((img, idx) => (
-        <div key={idx} style={{ marginBottom: 10, border: '1px solid var(--line)', background: 'var(--bg-2)', padding: 12 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 10, alignItems: 'center', marginBottom: 8 }}>
-            <input
-              type="url" value={img.url} placeholder="https://i.imgur.com/..."
-              onChange={e => upd(idx, 'url', e.target.value)}
-              style={{ background: 'var(--bg)', border: '1px solid var(--line2)', color: 'var(--text)', padding: '8px 12px', fontSize: 13, outline: 'none', width: '100%' }}
-            />
-            <button type="button" onClick={() => remove(idx)} title="Eliminar imagen"
-              style={{ background: 'none', border: '1px solid rgba(248,113,113,0.3)', color: 'var(--red)', padding: '6px 10px', fontSize: 14, cursor: 'pointer', lineHeight: 1 }}>✕</button>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-            <div>
-              <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 4 }}>Tamaño</div>
-              <select value={img.size} onChange={e => upd(idx, 'size', e.target.value)}
-                style={{ background: 'var(--bg)', border: '1px solid var(--line2)', color: 'var(--text)', padding: '6px 10px', fontSize: 12, width: '100%' }}>
-                <option value="full">Ancho completo</option>
-                <option value="medium">Mediana (70%)</option>
-                <option value="small">Pequeña (50%)</option>
-              </select>
+      {images.map((img, idx) => {
+        const tipo = img.type || 'image';
+        return (
+          <div key={idx} style={{ marginBottom: 10, border: '1px solid var(--line)', background: 'var(--bg-2)', padding: 12 }}>
+            {/* Selector de tipo: Imagen / Video */}
+            <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
+              {[['image','🖼 Imagen'],['video','🎬 Video']].map(([t, label]) => (
+                <button key={t} type="button" onClick={() => upd(idx, 'type', t)}
+                  style={{
+                    padding: '3px 10px', fontSize: 10, fontWeight: 600, letterSpacing: '0.1em',
+                    textTransform: 'uppercase', cursor: 'pointer',
+                    background: tipo === t ? 'rgba(255,255,255,0.12)' : 'transparent',
+                    border: `1px solid ${tipo === t ? 'var(--line2)' : 'var(--line)'}`,
+                    color: tipo === t ? 'var(--text)' : 'var(--muted)',
+                  }}
+                >{label}</button>
+              ))}
             </div>
-            <div>
-              <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 4 }}>Disposición</div>
-              <select value={img.layout} onChange={e => upd(idx, 'layout', e.target.value)}
-                style={{ background: 'var(--bg)', border: '1px solid var(--line2)', color: 'var(--text)', padding: '6px 10px', fontSize: 12, width: '100%' }}>
-                <option value="solo">Sola (fila propia)</option>
-                <option value="pair-left">Par — izquierda</option>
-                <option value="pair-right">Par — derecha</option>
-              </select>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 10, alignItems: 'center', marginBottom: 8 }}>
+              <input
+                type="url" value={img.url}
+                placeholder={tipo === 'video' ? 'https://youtu.be/... o URL de video .mp4' : 'https://i.imgur.com/...'}
+                onChange={e => upd(idx, 'url', e.target.value)}
+                style={{ background: 'var(--bg)', border: '1px solid var(--line2)', color: 'var(--text)', padding: '8px 12px', fontSize: 13, outline: 'none', width: '100%' }}
+              />
+              <button type="button" onClick={() => remove(idx)} title={tipo === 'video' ? 'Eliminar video' : 'Eliminar imagen'}
+                style={{ background: 'none', border: '1px solid rgba(248,113,113,0.3)', color: 'var(--red)', padding: '6px 10px', fontSize: 14, cursor: 'pointer', lineHeight: 1 }}>✕</button>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+              <div>
+                <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 4 }}>Tamaño</div>
+                <select value={img.size} onChange={e => upd(idx, 'size', e.target.value)}
+                  style={{ background: 'var(--bg)', border: '1px solid var(--line2)', color: 'var(--text)', padding: '6px 10px', fontSize: 12, width: '100%' }}>
+                  <option value="full">Ancho completo</option>
+                  <option value="medium">Mediana (70%)</option>
+                  <option value="small">Pequeña (50%)</option>
+                </select>
+              </div>
+              <div>
+                <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 4 }}>Disposición</div>
+                <select value={img.layout} onChange={e => upd(idx, 'layout', e.target.value)}
+                  style={{ background: 'var(--bg)', border: '1px solid var(--line2)', color: 'var(--text)', padding: '6px 10px', fontSize: 12, width: '100%' }}>
+                  <option value="solo">Solo (fila propia)</option>
+                  <option value="pair-left">Par — izquierda</option>
+                  <option value="pair-right">Par — derecha</option>
+                </select>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
-      <button type="button" className="btn btn-ghost btn-sm" onClick={add} style={{ marginTop: 4 }}>+ Agregar imagen</button>
+        );
+      })}
+      <button type="button" className="btn btn-ghost btn-sm" onClick={add} style={{ marginTop: 4 }}>+ Agregar imagen / video</button>
       <GaleriaPreview images={images} />
     </div>
   );
@@ -653,7 +714,13 @@ function LanzamientoModal({ item, token, onSaved, onClose }) {
               <img src={form.imagen} alt="" style={{ marginTop: 10, maxHeight: 120, objectFit: 'cover', borderRadius: 2 }} onError={e => e.target.style.display='none'} />
             )}
             <div className="field" style={{ marginTop: 16 }}>
-              <label>Galería de imágenes</label>
+              <label>Video de portada (opcional)</label>
+              <input type="url" value={form.videoPortada} onChange={e => set('videoPortada', e.target.value)} placeholder="https://youtu.be/... o URL directa de video .mp4" />
+              <span className="hint">Reemplaza la imagen en el hero del artículo. Acepta YouTube, youtu.be o .mp4/.webm. Se reproduce automático, silenciado.</span>
+            </div>
+            {form.videoPortada && <VideoPortadaPreview url={form.videoPortada} />}
+            <div className="field" style={{ marginTop: 16 }}>
+              <label>Galería de imágenes / videos</label>
               <GaleriaEditor images={form.galeria} onChange={val => set('galeria', val)} />
             </div>
           </div>

@@ -63,10 +63,14 @@ function mapLanzamientoBackend(item) {
     imagen:           item.imagen           || '',
     destacado:        Boolean(item.destacado),
     contenido:        Array.isArray(item.contenido) ? item.contenido : [],
-    // Normaliza galería: acepta strings o {url,size,layout} (del admin)
+    // Normaliza galería: preserva {type,url,size,layout} para soporte de video
     galeria: Array.isArray(item.galeria)
-      ? item.galeria.map(g => typeof g === 'string' ? g : (g?.url || '')).filter(Boolean)
+      ? item.galeria.map(g => {
+          if (typeof g === 'string') return { type: 'image', url: g, size: 'full', layout: 'solo' };
+          return { type: g.type || 'image', url: g.url || '', size: g.size || 'full', layout: g.layout || 'solo' };
+        }).filter(g => g.url)
       : [],
+    videoPortada: item.videoPortada || '',
     detallesTecnicos: {
       suela:     item.detallesTecnicos?.suela     || '',
       terreno:   item.detallesTecnicos?.terreno   || '',
