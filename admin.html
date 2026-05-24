@@ -794,19 +794,31 @@ function LanzamientosTab({ token }) {
 
   useEffect(() => { load(); }, []);
 
+  // Auto-publicar en segundo plano tras cualquier cambio
+  async function autoPublish() {
+    try {
+      await apiFetch('/api/publish', { token, method: 'POST' });
+      setSuccess(s => s.replace('Publicando...', '✓ Publicado en vivo.'));
+    } catch {
+      setSuccess(s => s.replace('Publicando...', '(Publicación manual disponible en "Publicar")'));
+    }
+  }
+
   async function del(slug) {
     if (!confirm(`¿Eliminar el lanzamiento "${slug}"? Esta acción no se puede deshacer.`)) return;
     try {
       await apiFetch(`/api/lanzamientos/${slug}`, { token, method: 'DELETE' });
-      setSuccess('Lanzamiento eliminado.');
+      setSuccess('Lanzamiento eliminado. Publicando...');
       load();
+      autoPublish();
     } catch (err) { setError(err.message); }
   }
 
   function onSaved() {
     setModal(null);
-    setSuccess('Lanzamiento guardado correctamente.');
+    setSuccess('Lanzamiento guardado. Publicando...');
     load();
+    autoPublish();
   }
 
   return (

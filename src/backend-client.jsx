@@ -8,9 +8,10 @@
 // ============================================================
 
 // ── URL del backend en Railway ────────────────────────────────────
-// Se actualiza automáticamente con la URL de Railway al deployar.
-// En desarrollo local se usa localhost:3001.
-const RAILWAY_BACKEND_URL = window.RAILWAY_URL || '';
+// El frontend en Vercel usa esta URL para cargar datos en vivo.
+// Cambios guardados en el admin se ven en todos los dispositivos
+// (desktop y celular) sin necesidad de hacer "Publicar en vivo".
+const RAILWAY_BACKEND_URL = window.RAILWAY_URL || 'https://botines-alta-gama-cba-production.up.railway.app';
 
 // ── Detectar la URL correcta según el entorno ─────────────────────
 const BACKEND_URL = (() => {
