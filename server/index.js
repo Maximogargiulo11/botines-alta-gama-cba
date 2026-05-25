@@ -117,7 +117,10 @@ function normalizeLanzamiento(raw) {
     destacado:        Boolean(raw.destacado),
     contenido,
     galeria,
-    videoPortada:     raw.videoPortada    || '',
+    videoPortada:          raw.videoPortada          || '',
+    urlInstagram:          raw.urlInstagram          || '',
+    instagramHandle:       raw.instagramHandle       || '',
+    productoRelacionadoId: raw.productoRelacionadoId || '',
     detallesTecnicos: {
       suela:     raw.detallesTecnicos?.suela     || '',
       terreno:   raw.detallesTecnicos?.terreno   || '',

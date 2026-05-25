@@ -319,6 +319,7 @@ function itemToForm(item) {
     imagen: '', destacado: false,
     contenido: '', galeria: [], coleccion: '',
     videoPortada: '',
+    urlInstagram: '', instagramHandle: '', productoRelacionadoId: '',
     suela: '', terreno: '', peso: '', colorways: '',
   };
   return {
@@ -341,6 +342,9 @@ function itemToForm(item) {
       : [],
     coleccion: item.coleccion || '',
     videoPortada: item.videoPortada || '',
+    urlInstagram: item.urlInstagram || '',
+    instagramHandle: item.instagramHandle || '',
+    productoRelacionadoId: item.productoRelacionadoId || '',
     suela: item.detallesTecnicos?.suela || '',
     terreno: item.detallesTecnicos?.terreno || '',
     peso: item.detallesTecnicos?.peso || '',
@@ -367,6 +371,9 @@ function formToPayload(form) {
     galeria: form.galeria,
     coleccion: form.coleccion,
     videoPortada: form.videoPortada,
+    urlInstagram: form.urlInstagram,
+    instagramHandle: form.instagramHandle,
+    productoRelacionadoId: form.productoRelacionadoId,
     detallesTecnicos: {
       suela: form.suela,
       terreno: form.terreno,
@@ -761,6 +768,35 @@ function LanzamientoModal({ item, token, onSaved, onClose }) {
                 <label>Colorways (separados por |)</label>
                 <input type="text" value={form.colorways} onChange={e => set('colorways', e.target.value)} placeholder="Solar Yellow / Black|Electric Blue" />
               </div>
+            </div>
+          </div>
+
+          {/* Instagram + Producto */}
+          <div className="modal-section">
+            <div className="modal-section-title">Instagram y producto anunciado</div>
+
+            <div className="field">
+              <label>Perfil de Instagram (handle)</label>
+              <input type="text" value={form.instagramHandle}
+                onChange={e => set('instagramHandle', e.target.value)}
+                placeholder="botinesaltagamacba" />
+              <span className="hint">Solo el nombre de usuario (sin @). Muestra un bloque "Seguinos en Instagram" con botón de seguir.</span>
+            </div>
+
+            <div className="field" style={{ marginTop: 16 }}>
+              <label>URL post/reel de Instagram (embed)</label>
+              <input type="url" value={form.urlInstagram}
+                onChange={e => set('urlInstagram', e.target.value)}
+                placeholder="https://www.instagram.com/p/ABC123/" />
+              <span className="hint">Incrusta una publicación o reel específico en el artículo.</span>
+            </div>
+
+            <div className="field" style={{ marginTop: 16 }}>
+              <label>ID producto anunciado (del stock)</label>
+              <input type="text" value={form.productoRelacionadoId}
+                onChange={e => set('productoRelacionadoId', e.target.value)}
+                placeholder="adidas-f50-solar-yellow" />
+              <span className="hint">ID de un producto cargado en el stock. Muestra un bloque editorial con imagen, precio y talles disponibles.</span>
             </div>
           </div>
 

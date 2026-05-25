@@ -71,7 +71,10 @@ function mapLanzamientoBackend(item) {
           return { type: g.type || 'image', url: g.url || '', size: g.size || 'full', layout: g.layout || 'solo' };
         }).filter(g => g.url)
       : [],
-    videoPortada: item.videoPortada || '',
+    videoPortada:          item.videoPortada          || '',
+    urlInstagram:          item.urlInstagram          || '',
+    instagramHandle:       item.instagramHandle       || '',
+    productoRelacionadoId: item.productoRelacionadoId || '',
     detallesTecnicos: {
       suela:     item.detallesTecnicos?.suela     || '',
       terreno:   item.detallesTecnicos?.terreno   || '',

@@ -30,9 +30,18 @@ function ArticlePage({ slug }) {
     })
     .filter(item => item.url);
 
-  const heroImg = galleryItems[0]?.url || a.imagen;
+  const heroImg    = galleryItems[0]?.url || a.imagen;
   const inlineItems = galleryItems.slice(1);
-  const productoRelacionado = a.productoRelacionadoId ? findProductById(a.productoRelacionadoId) : null;
+
+  // Producto relacionado — busca en STOCK por id
+  const productoRelacionado = (() => {
+    if (!a.productoRelacionadoId || !window.STOCK) return null;
+    for (const productos of Object.values(window.STOCK)) {
+      const p = productos.find(p => p.id === a.productoRelacionadoId);
+      if (p) return p;
+    }
+    return null;
+  })();
 
   const related = [...ARTICLES.filter((x) => x.slug !== a.slug)].sort((x, y) => {
     const sameX = x.marcaSlug === a.marcaSlug ? 1 : 0;
@@ -47,7 +56,7 @@ function ArticlePage({ slug }) {
       {/* ============ HERO ============ */}
       <SBHero img={heroImg} title={a.titulo} videoPortada={a.videoPortada} />
 
-      {/* ============ BREADCRUMB + TITLE + META + SHARE ============ */}
+      {/* ============ BREADCRUMB + TITLE + META ============ */}
       <section className="container" style={{ paddingTop: 40 }}>
         <Breadcrumb crumbs={[
           { label: 'Inicio', to: '/' },
@@ -59,24 +68,25 @@ function ArticlePage({ slug }) {
           <div className="eyebrow" style={{ marginBottom: 18 }}>{a.categoria} · {a.marca}</div>
           <h1 style={{
             fontFamily: 'var(--display)',
-            fontSize: 'clamp(34px, 4.8vw, 60px)',
-            fontWeight: 600, lineHeight: 1.08,
-            letterSpacing: '-0.015em',
+            fontSize: 'clamp(34px, 4.8vw, 64px)',
+            fontWeight: 600, lineHeight: 1.05,
+            letterSpacing: '-0.02em',
             textWrap: 'pretty'
           }}>{a.titulo}</h1>
 
           <p style={{
             fontFamily: 'var(--display)',
             fontStyle: 'italic',
-            fontSize: 'clamp(17px, 1.6vw, 21px)',
+            fontSize: 'clamp(17px, 1.6vw, 22px)',
             color: 'var(--text-dim)',
-            marginTop: 18,
-            lineHeight: 1.5,
-            textWrap: 'pretty'
+            marginTop: 20,
+            lineHeight: 1.55,
+            textWrap: 'pretty',
+            maxWidth: 760
           }}>{a.descripcionCorta}</p>
 
           <div style={{
-            marginTop: 26,
+            marginTop: 28,
             paddingTop: 22,
             borderTop: '1px solid var(--line)',
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
@@ -87,35 +97,28 @@ function ArticlePage({ slug }) {
               letterSpacing: '0.18em', textTransform: 'uppercase',
               color: 'var(--text-muted)'
             }}>
-              Publicado · {a.fecha} · <span style={{ color: 'var(--text-dim)' }}>por Botines Alta Gama CBA</span>
+              {a.fecha} · <span style={{ color: 'var(--text-dim)' }}>Botines Alta Gama CBA</span>
             </div>
             <ShareRow title={a.titulo} slug={a.slug} />
           </div>
         </div>
       </section>
 
-      {/* ============ BODY 720px ============ */}
-      <section className="container" style={{ paddingTop: 56, paddingBottom: 40 }}>
+      {/* ============ BODY — 720px column ============ */}
+      <section className="container" style={{ paddingTop: 56, paddingBottom: 48 }}>
         <div style={{ maxWidth: 720, margin: '0 auto' }}>
           {paras.map((p, i) =>
             <React.Fragment key={i}>
-              {i === 1 && productoRelacionado &&
-                <ProductAnnouncementBlock producto={productoRelacionado} brand={a.marca} />
-              }
-
               <BodyParagraph isFirst={i === 0}>{p}</BodyParagraph>
 
               {i === 0 && inlineItems[0] &&
-                <WideMedia item={inlineItems[0]} alt={`${a.titulo} — Fig. 01`} caption={a.coleccion} />
+                <WideMedia item={inlineItems[0]} alt={`${a.titulo} — Fig. 01`} caption={a.coleccion || null} />
               }
-
               {i === 2 && inlineItems[1] &&
-                <WideMedia item={inlineItems[1]} alt={`${a.titulo} — Fig. 02`} caption={a.detallesTecnicos.colorways[0]} />
+                <WideMedia item={inlineItems[1]} alt={`${a.titulo} — Fig. 02`} caption={a.detallesTecnicos?.colorways?.[0] || null} />
               }
             </React.Fragment>
           )}
-
-          <div style={{ clear: 'both' }}></div>
 
           {/* Items 2+ con soporte de tamaño y pares lado a lado */}
           {(() => {
@@ -147,22 +150,36 @@ function ArticlePage({ slug }) {
             return result;
           })()}
 
+          {/* Tags + share final */}
           <div style={{
-            marginTop: 48, paddingTop: 24,
+            marginTop: 56, paddingTop: 24,
             borderTop: '1px solid var(--line)',
             display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 18
           }}>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               <Tag>{a.marca}</Tag>
               <Tag>{a.categoria}</Tag>
-              <Tag>{a.fecha}</Tag>
+              {a.fecha && <Tag>{a.fecha}</Tag>}
             </div>
             <ShareRow title={a.titulo} slug={a.slug} compact />
           </div>
         </div>
       </section>
 
-      {/* ============ INSTAGRAM EMBED ============ */}
+      {/* ============ PRODUCT ANNOUNCEMENT ============ */}
+      {productoRelacionado && (
+        <ProductAnnouncementBlock
+          producto={productoRelacionado}
+          brand={a.marca}
+          marcaSlug={a.marcaSlug}
+          modeloSlug={a.modeloSlug}
+        />
+      )}
+
+      {/* ============ INSTAGRAM PROFILE ============ */}
+      {a.instagramHandle && <InstagramProfileSection handle={a.instagramHandle} />}
+
+      {/* ============ INSTAGRAM POST EMBED ============ */}
       {a.urlInstagram && <InstagramSection url={a.urlInstagram} />}
 
       {/* ============ RELATED ARTICLES ============ */}
@@ -172,7 +189,7 @@ function ArticlePage({ slug }) {
 }
 
 // =============================================================
-// HERO with blurred background — soporta imagen y video de portada
+// HERO — soporta imagen y video de portada
 // =============================================================
 function SBHero({ img, title, videoPortada }) {
   const ytId    = getYoutubeId(videoPortada);
@@ -182,31 +199,23 @@ function SBHero({ img, title, videoPortada }) {
     <section style={{ position: 'relative', width: '100%', overflow: 'hidden', background: '#000' }}>
       <div style={{
         position: 'relative',
-        height: '70vh', minHeight: 420, maxHeight: 820,
+        height: '70vh', minHeight: 400, maxHeight: 860,
         display: 'flex', alignItems: 'center', justifyContent: 'center'
       }}>
         {ytId ? (
-          /* ── Video de YouTube ── */
           <iframe
             src={`https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1&loop=1&playlist=${ytId}&controls=0&showinfo=0&rel=0&modestbranding=1`}
             style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none' }}
             allow="autoplay; encrypted-media; picture-in-picture"
-            allowFullScreen
-            title={title}
+            allowFullScreen title={title}
           />
         ) : isDirect ? (
-          /* ── Video directo MP4/WebM ── */
-          <video
-            src={videoPortada}
-            autoPlay muted loop playsInline
-            style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: '100%', objectFit: 'cover' }}
+          <video src={videoPortada} autoPlay muted loop playsInline
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
           />
         ) : (
-          /* ── Imagen estática (default) ── */
           <img src={img} alt={title} style={{
-            maxWidth: '100%', maxHeight: '100%',
-            width: 'auto', height: '100%',
-            display: 'block', objectFit: 'cover'
+            width: '100%', height: '100%', objectFit: 'cover', display: 'block'
           }} onError={(e) => { e.target.style.display = 'none'; }} />
         )}
       </div>
@@ -310,32 +319,34 @@ function BodyParagraph({ children, isFirst }) {
     <p style={{
       fontFamily: 'var(--body)',
       fontSize: 'clamp(16px, 1.18vw, 18px)',
-      lineHeight: 1.8,
+      lineHeight: 1.82,
       color: '#dcdcdc',
-      marginBottom: 28,
+      marginBottom: 32,
       textWrap: 'pretty',
       fontWeight: isFirst ? 500 : 400
     }}>{children}</p>
   );
 }
 
+// ── WideFigure: imagen con relación de aspecto 3:2 fija ────────────
 function WideFigure({ src, alt, caption, size, noPad }) {
   const sz = size || 'full';
-  // noPad: dentro de un par, el contenedor padre ya maneja márgenes
   const figStyle = noPad
     ? { margin: 0 }
     : sz === 'full'
     ? { margin: '40px calc(-1 * min(80px, 7vw)) 48px', maxWidth: 'calc(100% + 2 * min(80px, 7vw))' }
     : sz === 'medium'
     ? { margin: '40px 0 48px' }
-    : { margin: '40px auto 48px', maxWidth: '55%' };   // small
+    : { margin: '40px auto 48px', maxWidth: '55%' };
   return (
     <figure style={figStyle} className={!noPad && sz === 'full' ? 'wide-figure' : ''}>
-      <img src={src} alt={alt} style={{
-        width: '100%', height: 'auto',
-        display: 'block',
-        background: 'var(--bg-3)', objectFit: 'cover'
-      }} onError={(e) => { e.target.style.display = 'none'; }} />
+      {/* Aspect ratio 3:2 fijo para que todas las imágenes sean del mismo tamaño */}
+      <div style={{ aspectRatio: '3/2', overflow: 'hidden', background: 'var(--bg-3)' }}>
+        <img src={src} alt={alt} style={{
+          width: '100%', height: '100%',
+          display: 'block', objectFit: 'cover'
+        }} onError={(e) => { e.target.style.display = 'none'; }} />
+      </div>
       {caption &&
         <figcaption style={{
           marginTop: 14,
@@ -373,37 +384,27 @@ function WideMedia({ item, alt, caption, noPad }) {
     return (
       <figure style={figStyle} className={!noPad && sz === 'full' ? 'wide-figure' : ''}>
         {ytId ? (
-          /* ── YouTube embed 16:9 ── */
           <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, background: '#000' }}>
             <iframe
               src={`https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1`}
               style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none' }}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              title={alt}
+              allowFullScreen title={alt}
             />
           </div>
         ) : (
-          /* ── Video directo ── */
-          <video
-            src={url}
-            controls
-            playsInline
+          <video src={url} controls playsInline
             style={{ width: '100%', display: 'block', background: '#000', maxHeight: 600 }}
           />
         )}
         {caption && (
           <figcaption style={{
-            marginTop: 14,
-            fontFamily: 'var(--mono)', fontSize: 11,
+            marginTop: 14, fontFamily: 'var(--mono)', fontSize: 11,
             letterSpacing: '0.15em', textTransform: 'uppercase',
-            color: 'var(--text-muted)',
-            textAlign: 'center'
+            color: 'var(--text-muted)', textAlign: 'center'
           }}>{caption}</figcaption>
         )}
-        <style>{`
-          @media (max-width: 720px) { .wide-figure { margin-left: 0 !important; margin-right: 0 !important; } }
-        `}</style>
+        <style>{`@media (max-width: 720px) { .wide-figure { margin-left: 0 !important; margin-right: 0 !important; } }`}</style>
       </figure>
     );
   }
@@ -411,62 +412,101 @@ function WideMedia({ item, alt, caption, noPad }) {
   return <WideFigure src={url} alt={alt} caption={caption} size={size} noPad={noPad} />;
 }
 
-function ProductAnnouncementBlock({ producto, brand }) {
+// =============================================================
+// Product Announcement — bloque editorial full-width
+// =============================================================
+function ProductAnnouncementBlock({ producto, brand, marcaSlug, modeloSlug }) {
+  const bSlug = marcaSlug  || (brand || '').toLowerCase().replace(/\s+/g, '-');
+  const mSlug = modeloSlug || producto.modeloSlug
+    || (producto.modelo || '').split(' ')[0].toLowerCase().replace(/[^a-z0-9]/g, '-');
+
   return (
-    <aside style={{
-      float: 'right',
-      width: 240,
-      maxWidth: '50%',
-      marginLeft: 24,
-      marginBottom: 20,
-      marginRight: 'calc(-1 * min(80px, 7vw))',
-      padding: 16,
+    <section style={{
+      borderTop: '1px solid var(--line-strong)',
+      borderBottom: '1px solid var(--line-strong)',
       background: 'var(--bg-2)',
-      border: '1px solid var(--line-strong)',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 12
-    }} className="prod-announce">
-      <div style={{ aspectRatio: '1 / 1', overflow: 'hidden', background: 'var(--bg-3)' }}>
-        <img src={producto.imagen} alt={producto.modelo}
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          onError={(e) => { e.target.style.display = 'none'; }} />
-      </div>
-      <div>
-        <div className="eyebrow" style={{ marginBottom: 8, fontSize: 9 }}>{brand} · En catálogo</div>
-        <h3 style={{
-          fontFamily: 'var(--display)',
-          fontSize: 17,
-          fontWeight: 600, lineHeight: 1.2,
-          letterSpacing: '-0.005em',
-          marginBottom: 4,
-          textWrap: 'pretty'
-        }}>{producto.modelo}</h3>
-        <div style={{
-          fontFamily: 'var(--display)', fontStyle: 'italic',
-          color: 'var(--text-dim)', fontSize: 13, marginBottom: 10,
-          lineHeight: 1.3
-        }}>{producto.colorway}</div>
-        <div style={{ fontFamily: 'var(--display)', fontSize: 19, fontWeight: 600, marginBottom: 12 }}>
-          {fmtPrice(producto.precio)}
+      overflow: 'hidden',
+    }}>
+      <div className="prod-announce-grid">
+        {/* Imagen del producto */}
+        <div style={{ background: 'var(--bg-3)', overflow: 'hidden', minHeight: 320 }}>
+          <img
+            src={producto.imagen}
+            alt={producto.modelo}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', aspectRatio: '1/1' }}
+            onError={(e) => { e.target.style.display = 'none'; }}
+          />
         </div>
-        <L to={`/marcas/${producto.brandSlug || brand.toLowerCase()}/${producto.modeloSlug || producto.modelo.split(' ')[0].toLowerCase()}`}
-          className="btn btn-primary"
-          style={{ fontSize: 10, padding: '10px 14px', width: '100%' }}>
-          Ver en catálogo →
-        </L>
+
+        {/* Info */}
+        <div style={{
+          padding: 'clamp(32px, 5vw, 72px)',
+          display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 18
+        }}>
+          <div className="eyebrow">{brand} · Disponible en catálogo</div>
+
+          <h3 style={{
+            fontFamily: 'var(--display)',
+            fontSize: 'clamp(26px, 3vw, 44px)',
+            fontWeight: 600, lineHeight: 1.05,
+            letterSpacing: '-0.015em'
+          }}>{producto.modelo}</h3>
+
+          {producto.colorway && (
+            <p style={{
+              fontFamily: 'var(--display)', fontStyle: 'italic',
+              color: 'var(--text-dim)', fontSize: 'clamp(15px, 1.4vw, 19px)', lineHeight: 1.4
+            }}>{producto.colorway}</p>
+          )}
+
+          <div style={{
+            fontFamily: 'var(--display)',
+            fontSize: 'clamp(28px, 2.8vw, 40px)',
+            fontWeight: 600, letterSpacing: '-0.01em'
+          }}>
+            {fmtPrice(producto.precio)}
+          </div>
+
+          {(producto.tallesDisponibles?.length > 0) && (
+            <div>
+              <div style={{
+                fontFamily: 'var(--mono)', fontSize: 10,
+                letterSpacing: '0.2em', textTransform: 'uppercase',
+                color: 'var(--text-muted)', marginBottom: 10
+              }}>Talles disponibles (EU)</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {producto.tallesDisponibles.map(t => (
+                  <span key={t.eu} style={{
+                    padding: '5px 11px',
+                    border: '1px solid var(--line-strong)',
+                    fontFamily: 'var(--mono)', fontSize: 11,
+                    color: 'var(--text-dim)'
+                  }}>{t.eu}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <L
+            to={`/marcas/${bSlug}/${mSlug}`}
+            className="btn btn-primary"
+            style={{ alignSelf: 'flex-start', marginTop: 8 }}
+          >
+            Ver en catálogo →
+          </L>
+        </div>
       </div>
+
       <style>{`
-        @media (max-width: 720px) {
-          .prod-announce {
-            float: none !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            margin: 24px 0 24px 0 !important;
-          }
+        .prod-announce-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+        }
+        @media (max-width: 768px) {
+          .prod-announce-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
-    </aside>
+    </section>
   );
 }
 
@@ -484,7 +524,62 @@ function Tag({ children }) {
 }
 
 // =============================================================
-// Instagram embed section
+// Instagram — Perfil (follow CTA)
+// =============================================================
+function InstagramProfileSection({ handle }) {
+  const clean = (handle || '')
+    .replace(/^@/, '')
+    .replace(/https?:\/\/(?:www\.)?instagram\.com\//, '')
+    .replace(/\/+$/, '')
+    .trim();
+  if (!clean) return null;
+
+  return (
+    <section style={{
+      background: 'var(--bg-2)',
+      borderTop: '1px solid var(--line)',
+      borderBottom: '1px solid var(--line)',
+      padding: '80px 0'
+    }}>
+      <div className="container" style={{ maxWidth: 640, textAlign: 'center' }}>
+        {/* Instagram icon */}
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none"
+          stroke="var(--gold)" strokeWidth="1.4"
+          style={{ display: 'block', margin: '0 auto 28px' }}>
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+          <circle cx="12" cy="12" r="4" />
+          <circle cx="17.5" cy="6.5" r="1.3" fill="var(--gold)" stroke="none" />
+        </svg>
+
+        <div className="eyebrow" style={{ marginBottom: 16 }}>Seguinos</div>
+        <h2 style={{
+          fontFamily: 'var(--display)',
+          fontSize: 'clamp(30px, 4vw, 54px)',
+          fontWeight: 600, letterSpacing: '-0.015em', lineHeight: 1.05,
+          marginBottom: 20
+        }}>@{clean}</h2>
+        <p style={{
+          color: 'var(--text-dim)', fontSize: 'clamp(15px, 1.4vw, 18px)',
+          fontFamily: 'var(--display)', fontStyle: 'italic',
+          lineHeight: 1.6, maxWidth: 440, margin: '0 auto 40px'
+        }}>
+          Drops exclusivos, novedades y contenido detrás de escena.
+        </p>
+        <a
+          href={`https://www.instagram.com/${clean}/`}
+          target="_blank" rel="noopener noreferrer"
+          className="btn btn-primary"
+          style={{ fontSize: 11, letterSpacing: '0.2em' }}
+        >
+          Seguir en Instagram
+        </a>
+      </div>
+    </section>
+  );
+}
+
+// =============================================================
+// Instagram — Post embed
 // =============================================================
 function InstagramSection({ url }) {
   const m = url.match(/instagram\.com\/(?:p|reel)\/([A-Za-z0-9_-]+)/);
@@ -519,22 +614,15 @@ function InstagramSection({ url }) {
         </div>
 
         <div style={{
-          background: '#000',
-          border: '1px solid var(--line)',
-          maxWidth: 540, margin: '0 auto',
-          minHeight: 600
+          background: '#000', border: '1px solid var(--line)',
+          maxWidth: 540, margin: '0 auto', minHeight: 600
         }}>
           {embedSrc ?
-            <iframe
-              src={embedSrc}
-              width="100%"
-              height="780"
-              frameBorder="0"
-              scrolling="no"
-              allowTransparency="true"
+            <iframe src={embedSrc} width="100%" height="780" frameBorder="0"
+              scrolling="no" allowTransparency="true"
               style={{ display: 'block', border: 'none', background: '#000', maxWidth: '100%' }}
-              title="Instagram post">
-            </iframe> :
+              title="Instagram post" />
+            :
             <div style={{ padding: 60, textAlign: 'center', color: 'var(--text-dim)' }}>
               No se pudo cargar el post de Instagram.
             </div>
@@ -569,20 +657,23 @@ function RelatedArticles({ items }) {
       </div>
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(min(260px, 100%), 1fr))',
         gap: 28
       }}>
         {items.map((a) =>
           <L to={`/lanzamientos/${a.slug}`} key={a.slug} className="rel-card">
-            <div style={{ aspectRatio: '4 / 5', overflow: 'hidden', background: 'var(--bg-3)' }}>
-              <SmartImage src={a.imagen} alt={a.titulo} className="zoom-img" />
+            <div style={{ aspectRatio: '3/2', overflow: 'hidden', background: 'var(--bg-3)' }}>
+              <img src={a.imagen} alt={a.titulo}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.7s cubic-bezier(0.2,0.8,0.2,1)' }}
+                className="zoom-img"
+                onError={(e) => { e.target.style.display = 'none'; }} />
             </div>
             <div style={{ paddingTop: 16 }}>
               <div className="eyebrow" style={{ marginBottom: 8, fontSize: 10 }}>{a.marca} · {a.fecha}</div>
               <h3 style={{
                 fontFamily: 'var(--display)',
                 fontSize: 19, fontWeight: 600,
-                lineHeight: 1.25, marginBottom: 4,
+                lineHeight: 1.2, marginBottom: 4,
                 letterSpacing: '-0.005em',
                 textWrap: 'pretty'
               }}>{a.titulo}</h3>
