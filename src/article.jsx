@@ -117,9 +117,35 @@ function ArticlePage({ slug }) {
 
           <div style={{ clear: 'both' }}></div>
 
-          {inlineItems.slice(2).map((item, i) =>
-            <WideMedia key={i} item={item} alt={`${a.titulo} — Fig. 0${i + 3}`} caption={`Detalle ${i + 3}`} />
-          )}
+          {/* Items 2+ con soporte de tamaño y pares lado a lado */}
+          {(() => {
+            const items = inlineItems.slice(2);
+            if (!items.length) return null;
+            const result = [];
+            let i = 0;
+            while (i < items.length) {
+              const cur  = items[i];
+              const next = items[i + 1];
+              if (cur.layout === 'pair-left' && next?.layout === 'pair-right') {
+                result.push(
+                  <div key={i} style={{
+                    display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12,
+                    margin: '40px calc(-1 * min(80px, 7vw)) 48px'
+                  }} className="wide-figure">
+                    <WideMedia item={cur}  noPad alt={`${a.titulo} — Fig. 0${i + 3}`} caption={null} />
+                    <WideMedia item={next} noPad alt={`${a.titulo} — Fig. 0${i + 4}`} caption={null} />
+                  </div>
+                );
+                i += 2;
+              } else {
+                result.push(
+                  <WideMedia key={i} item={cur} alt={`${a.titulo} — Fig. 0${i + 3}`} caption={`Detalle ${i + 3}`} />
+                );
+                i++;
+              }
+            }
+            return result;
+          })()}
 
           <div style={{
             marginTop: 48, paddingTop: 24,
@@ -151,22 +177,9 @@ function ArticlePage({ slug }) {
 function SBHero({ img, title, videoPortada }) {
   const ytId    = getYoutubeId(videoPortada);
   const isDirect = isDirectVideo(videoPortada);
-  // Fondo desenfocado: thumbnail de YouTube si es video, imagen original si no
-  const bgSrc = ytId ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg` : img;
 
   return (
     <section style={{ position: 'relative', width: '100%', overflow: 'hidden', background: '#000' }}>
-      {/* Fondo desenfocado */}
-      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
-        <img src={bgSrc || img} alt="" aria-hidden="true" style={{
-          width: '110%', height: '110%',
-          marginLeft: '-5%', marginTop: '-5%',
-          objectFit: 'cover',
-          filter: 'blur(50px) brightness(0.35) saturate(1.4)',
-          transform: 'scale(1.1)'
-        }} onError={(e) => { e.target.style.display = 'none'; }} />
-      </div>
-
       <div style={{
         position: 'relative',
         height: '70vh', minHeight: 420, maxHeight: 820,
@@ -306,12 +319,18 @@ function BodyParagraph({ children, isFirst }) {
   );
 }
 
-function WideFigure({ src, alt, caption }) {
+function WideFigure({ src, alt, caption, size, noPad }) {
+  const sz = size || 'full';
+  // noPad: dentro de un par, el contenedor padre ya maneja márgenes
+  const figStyle = noPad
+    ? { margin: 0 }
+    : sz === 'full'
+    ? { margin: '40px calc(-1 * min(80px, 7vw)) 48px', maxWidth: 'calc(100% + 2 * min(80px, 7vw))' }
+    : sz === 'medium'
+    ? { margin: '40px 0 48px' }
+    : { margin: '40px auto 48px', maxWidth: '55%' };   // small
   return (
-    <figure style={{
-      margin: '40px calc(-1 * min(80px, 7vw)) 48px',
-      maxWidth: 'calc(100% + 2 * min(80px, 7vw))'
-    }} className="wide-figure">
+    <figure style={figStyle} className={!noPad && sz === 'full' ? 'wide-figure' : ''}>
       <img src={src} alt={alt} style={{
         width: '100%', height: 'auto',
         display: 'block',
@@ -336,17 +355,23 @@ function WideFigure({ src, alt, caption }) {
 // =============================================================
 // WideMedia — imagen o video a ancho extendido
 // =============================================================
-function WideMedia({ item, alt, caption }) {
+function WideMedia({ item, alt, caption, noPad }) {
   const type = item?.type || 'image';
   const url  = typeof item === 'string' ? item : (item?.url || '');
+  const size = typeof item === 'object' ? (item?.size || 'full') : 'full';
+  const sz   = size;
 
   if (type === 'video') {
     const ytId = getYoutubeId(url);
+    const figStyle = noPad
+      ? { margin: 0 }
+      : sz === 'full'
+      ? { margin: '40px calc(-1 * min(80px, 7vw)) 48px', maxWidth: 'calc(100% + 2 * min(80px, 7vw))' }
+      : sz === 'medium'
+      ? { margin: '40px 0 48px' }
+      : { margin: '40px auto 48px', maxWidth: '55%' };
     return (
-      <figure style={{
-        margin: '40px calc(-1 * min(80px, 7vw)) 48px',
-        maxWidth: 'calc(100% + 2 * min(80px, 7vw))'
-      }} className="wide-figure">
+      <figure style={figStyle} className={!noPad && sz === 'full' ? 'wide-figure' : ''}>
         {ytId ? (
           /* ── YouTube embed 16:9 ── */
           <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, background: '#000' }}>
@@ -376,11 +401,14 @@ function WideMedia({ item, alt, caption }) {
             textAlign: 'center'
           }}>{caption}</figcaption>
         )}
+        <style>{`
+          @media (max-width: 720px) { .wide-figure { margin-left: 0 !important; margin-right: 0 !important; } }
+        `}</style>
       </figure>
     );
   }
 
-  return <WideFigure src={url} alt={alt} caption={caption} />;
+  return <WideFigure src={url} alt={alt} caption={caption} size={size} noPad={noPad} />;
 }
 
 function ProductAnnouncementBlock({ producto, brand }) {

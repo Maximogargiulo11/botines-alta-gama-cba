@@ -14,17 +14,9 @@ function SmartImage({ src, alt, className }) {
   const isP = orientation === 'portrait';
   return (
     <div className={className} style={{
-      position: 'relative', width: '100%', height: '100%', overflow: 'hidden'
+      position: 'relative', width: '100%', height: '100%', overflow: 'hidden',
+      background: 'var(--bg-3)'
     }}>
-      {isP && (
-        <img src={src} alt="" aria-hidden="true" style={{
-          position: 'absolute', inset: 0,
-          width: '100%', height: '100%',
-          objectFit: 'cover',
-          filter: 'blur(24px) brightness(0.45)',
-          transform: 'scale(1.1)'
-        }} onError={(e) => { e.target.style.display = 'none'; }} />
-      )}
       <img src={src} alt={alt}
         onLoad={onLoad}
         style={isP ? {
@@ -135,31 +127,21 @@ function HeroSlide({ article, active }) {
         overflow: 'hidden'
       }}>
         {isPortrait ? (
-          <>
-            <img src={a.imagen} alt="" aria-hidden="true"
-              style={{
-                position: 'absolute', inset: 0,
-                width: '100%', height: '100%',
-                objectFit: 'cover',
-                filter: 'blur(28px) brightness(0.4)',
-                transform: 'scale(1.1)'
-              }} />
-            <img src={a.imagen} alt={a.titulo}
-              onLoad={onLoad}
-              style={{
-                position: 'absolute', left: '50%', top: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: 'auto',
-                maxWidth: '60%',
-                maxHeight: '85vh',
-                height: 'auto',
-                objectFit: 'contain',
-                opacity: loaded ? 1 : 0,
-                transition: 'opacity 0.4s ease',
-                zIndex: 1
-              }}
-              onError={(e) => { e.target.style.display = 'none'; }} />
-          </>
+          <img src={a.imagen} alt={a.titulo}
+            onLoad={onLoad}
+            style={{
+              position: 'absolute', left: '50%', top: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: 'auto',
+              maxWidth: '60%',
+              maxHeight: '85vh',
+              height: 'auto',
+              objectFit: 'contain',
+              opacity: loaded ? 1 : 0,
+              transition: 'opacity 0.4s ease',
+              zIndex: 1
+            }}
+            onError={(e) => { e.target.style.display = 'none'; }} />
         ) : (
           <img src={a.imagen} alt={a.titulo}
             onLoad={onLoad}
