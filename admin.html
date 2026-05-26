@@ -6,267 +6,243 @@
 <title>Admin — Botines Alta Gama CBA</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg:    #000;
     --bg-2:  #0a0a0a;
-    --bg-3:  #141414;
-    --bg-4:  #1a1a1a;
-    --line:  rgba(255,255,255,0.08);
-    --line2: rgba(255,255,255,0.18);
-    --text:  #fff;
-    --dim:   rgba(255,255,255,0.55);
-    --muted: rgba(255,255,255,0.35);
-    --accent: #fff;
-    --green:  #4ade80;
-    --red:    #f87171;
-    --yellow: #fbbf24;
-    --body: 'Inter', sans-serif;
-    --mono: 'JetBrains Mono', monospace;
+    --bg-3:  #111;
+    --bg-4:  #181818;
+    --line:  rgba(255,255,255,0.07);
+    --line2: rgba(255,255,255,0.14);
+    --text:  #f0f0f0;
+    --dim:   rgba(240,240,240,0.55);
+    --muted: rgba(240,240,240,0.3);
+    --accent:#fff;
+    --green: #4ade80;
+    --red:   #f87171;
+    --yellow:#fbbf24;
+    --blue:  #60a5fa;
+    --body:  'Inter', sans-serif;
+    --mono:  'JetBrains Mono', monospace;
+    --sidebar: 232px;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { background: var(--bg); color: var(--text); font-family: var(--body); -webkit-font-smoothing: antialiased; min-height: 100vh; }
-  a { color: inherit; text-decoration: none; }
-  button { font-family: inherit; cursor: pointer; }
-  input, textarea, select { font-family: inherit; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--text);font-family:var(--body);-webkit-font-smoothing:antialiased;min-height:100vh}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+  input,textarea,select{font-family:inherit}
+  ::-webkit-scrollbar{width:5px;height:5px}
+  ::-webkit-scrollbar-track{background:var(--bg-2)}
+  ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.2)}
 
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--line2); border-radius: 3px; }
+  /* ── Login ──────────────────────────────────────────────── */
+  .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .login-card{width:100%;max-width:380px;background:var(--bg-3);border:1px solid var(--line2);padding:48px 40px}
+  .login-logo{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-bottom:28px}
+  .login-title{font-size:21px;font-weight:700;margin-bottom:5px}
+  .login-sub{font-size:13px;color:var(--dim);margin-bottom:28px}
 
-  /* ── Login ─────────────────────────────────────────────── */
-  .login-wrap {
-    min-height: 100vh;
-    display: flex; align-items: center; justify-content: center;
-    padding: 24px;
-  }
-  .login-card {
-    width: 100%; max-width: 400px;
-    background: var(--bg-3);
-    border: 1px solid var(--line2);
-    padding: 48px 40px;
-  }
-  .login-logo {
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--dim);
-    margin-bottom: 32px;
-  }
-  .login-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
-  .login-sub { font-size: 13px; color: var(--dim); margin-bottom: 32px; }
+  /* ── Fields ─────────────────────────────────────────────── */
+  .field{display:flex;flex-direction:column;gap:5px}
+  .field+.field{margin-top:13px}
+  .field label{font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+  .field input,.field textarea,.field select{background:var(--bg-2);border:1px solid var(--line2);color:var(--text);padding:9px 12px;font-size:13px;outline:none;transition:border-color .18s;width:100%}
+  .field input:focus,.field textarea:focus,.field select:focus{border-color:rgba(255,255,255,.45)}
+  .field textarea{resize:vertical;min-height:72px;line-height:1.55}
+  .field select option{background:var(--bg-3)}
+  .field .hint{font-size:11px;color:var(--muted)}
+  .field-row{display:grid;gap:13px}
+  .col2{grid-template-columns:1fr 1fr}
+  .col3{grid-template-columns:1fr 1fr 1fr}
 
-  /* ── Form elements ─────────────────────────────────────── */
-  .field { display: flex; flex-direction: column; gap: 6px; }
-  .field + .field { margin-top: 16px; }
-  .field label { font-size: 11px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--dim); }
-  .field input, .field textarea, .field select {
-    background: var(--bg-2);
-    border: 1px solid var(--line2);
-    color: var(--text);
-    padding: 10px 14px;
-    font-size: 14px;
-    outline: none;
-    transition: border-color 0.2s;
-    width: 100%;
-  }
-  .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--accent); }
-  .field textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
-  .field select option { background: var(--bg-3); }
-  .field .hint { font-size: 11px; color: var(--muted); margin-top: 2px; }
-  .field-row { display: grid; gap: 16px; }
-  .field-row.col2 { grid-template-columns: 1fr 1fr; }
-  .field-row.col3 { grid-template-columns: 1fr 1fr 1fr; }
+  /* ── Buttons ────────────────────────────────────────────── */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 18px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;border:1px solid transparent;cursor:pointer;transition:all .17s;white-space:nowrap;flex-shrink:0}
+  .btn-primary{background:var(--text);color:#000;border-color:var(--text)}
+  .btn-primary:hover:not(:disabled){background:#d0d0d0}
+  .btn-ghost{background:transparent;color:var(--text);border-color:var(--line2)}
+  .btn-ghost:hover:not(:disabled){border-color:rgba(255,255,255,.45);background:rgba(255,255,255,.04)}
+  .btn-danger{background:transparent;color:var(--red);border-color:rgba(248,113,113,.22)}
+  .btn-danger:hover:not(:disabled){background:rgba(248,113,113,.07);border-color:var(--red)}
+  .btn-green{background:var(--green);color:#000;border-color:var(--green)}
+  .btn-green:hover:not(:disabled){filter:brightness(1.1);box-shadow:0 6px 20px rgba(74,222,128,.22)}
+  .btn-yellow{background:transparent;color:var(--yellow);border-color:rgba(251,191,36,.28)}
+  .btn-yellow:hover:not(:disabled){background:rgba(251,191,36,.07);border-color:var(--yellow)}
+  .btn-blue{background:transparent;color:var(--blue);border-color:rgba(96,165,250,.28)}
+  .btn-blue:hover:not(:disabled){background:rgba(96,165,250,.07);border-color:var(--blue)}
+  .btn-lg{padding:14px 32px;font-size:12px}
+  .btn-sm{padding:5px 12px;font-size:10px}
+  .btn-xs{padding:3px 9px;font-size:10px}
+  .btn:disabled{opacity:.35;cursor:not-allowed}
+  .btn-full{width:100%}
 
-  .checkbox-row { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-  .checkbox-row input[type=checkbox] {
-    width: 16px; height: 16px; cursor: pointer;
-    accent-color: var(--accent);
-  }
-  .checkbox-row span { font-size: 14px; }
+  /* ── Layout ─────────────────────────────────────────────── */
+  .layout{display:flex;min-height:100vh}
+  .sidebar{width:var(--sidebar);flex-shrink:0;background:var(--bg-2);border-right:1px solid var(--line);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+  .sidebar-logo{padding:18px 16px 14px;border-bottom:1px solid var(--line)}
+  .sidebar-brand{font-size:12px;font-weight:700;letter-spacing:.03em}
+  .sidebar-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+  .sidebar-nav{flex:1;padding:8px 0}
+  .nav-group{font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);padding:10px 16px 4px}
+  .nav-item{display:flex;align-items:center;gap:9px;padding:9px 16px;font-size:13px;font-weight:500;color:var(--dim);cursor:pointer;transition:all .12s;border:none;background:none;width:100%;text-align:left;position:relative}
+  .nav-item:hover{color:var(--text);background:rgba(255,255,255,.04)}
+  .nav-item.active{color:var(--text);background:rgba(255,255,255,.07)}
+  .nav-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--text)}
+  .nav-icon{width:18px;text-align:center;font-size:14px}
+  .nav-badge{margin-left:auto;font-family:var(--mono);font-size:10px;background:var(--bg-4);padding:1px 7px;color:var(--dim)}
+  .sidebar-footer{padding:12px 16px;border-top:1px solid var(--line)}
+  .sidebar-user{font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:8px}
 
-  /* ── Buttons ───────────────────────────────────────────── */
-  .btn {
-    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    padding: 10px 20px;
-    font-size: 12px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
-    border: 1px solid transparent;
-    cursor: pointer; transition: all 0.2s;
-    white-space: nowrap;
-  }
-  .btn-primary { background: var(--text); color: #000; border-color: var(--text); }
-  .btn-primary:hover { background: rgba(255,255,255,0.85); }
-  .btn-ghost { background: transparent; color: var(--text); border-color: var(--line2); }
-  .btn-ghost:hover { border-color: var(--text); }
-  .btn-danger { background: transparent; color: var(--red); border-color: rgba(248,113,113,0.3); }
-  .btn-danger:hover { background: rgba(248,113,113,0.08); border-color: var(--red); }
-  .btn-green { background: var(--green); color: #000; border-color: var(--green); }
-  .btn-green:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(74,222,128,0.25); }
-  .btn-lg { padding: 16px 36px; font-size: 13px; }
-  .btn-sm { padding: 6px 14px; font-size: 11px; }
-  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-  .btn-full { width: 100%; }
+  .main{flex:1;overflow-y:auto;min-width:0}
+  .main-header{padding:22px 32px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;background:var(--bg);z-index:20}
+  .main-title{font-size:18px;font-weight:700}
+  .main-sub{font-size:11px;color:var(--muted);margin-top:3px;font-family:var(--mono)}
+  .main-body{padding:22px 32px}
 
-  /* ── Layout ────────────────────────────────────────────── */
-  .layout { display: flex; min-height: 100vh; }
-  .sidebar {
-    width: 220px; flex-shrink: 0;
-    background: var(--bg-2);
-    border-right: 1px solid var(--line);
-    display: flex; flex-direction: column;
-    padding: 0;
-  }
-  .sidebar-logo {
-    padding: 24px 20px 20px;
-    border-bottom: 1px solid var(--line);
-  }
-  .sidebar-logo-label {
-    font-family: var(--mono);
-    font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase;
-    color: var(--muted); margin-bottom: 4px;
-  }
-  .sidebar-logo-name { font-size: 13px; font-weight: 700; }
-  .sidebar-nav { flex: 1; padding: 16px 0; }
-  .nav-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 10px 20px;
-    font-size: 13px; font-weight: 500;
-    color: var(--dim); cursor: pointer;
-    transition: all 0.15s;
-    border: none; background: none; width: 100%; text-align: left;
-  }
-  .nav-item:hover { color: var(--text); background: var(--line); }
-  .nav-item.active { color: var(--text); background: var(--bg-4); border-left: 2px solid var(--accent); padding-left: 18px; }
-  .nav-icon { width: 16px; text-align: center; }
-  .sidebar-footer {
-    padding: 16px 20px;
-    border-top: 1px solid var(--line);
-  }
-  .sidebar-user { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+  /* ── Stats ──────────────────────────────────────────────── */
+  .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:11px;margin-bottom:28px}
+  .stat-card{background:var(--bg-3);border:1px solid var(--line);padding:16px 18px;cursor:default}
+  .stat-icon{font-size:18px;margin-bottom:8px}
+  .stat-val{font-family:var(--mono);font-size:30px;font-weight:700;line-height:1}
+  .stat-label{font-size:10px;color:var(--muted);margin-top:5px;letter-spacing:.1em;text-transform:uppercase}
+  .stat-sub{font-size:11px;color:var(--dim);margin-top:3px}
 
-  .main { flex: 1; overflow-y: auto; }
-  .main-header {
-    padding: 28px 36px 20px;
-    border-bottom: 1px solid var(--line);
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .main-title { font-size: 20px; font-weight: 700; }
-  .main-sub { font-size: 13px; color: var(--dim); margin-top: 2px; }
-  .main-body { padding: 28px 36px; }
+  /* ── Table ──────────────────────────────────────────────── */
+  .table-wrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse}
+  th{padding:7px 12px;font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line2);text-align:left;white-space:nowrap}
+  td{padding:9px 12px;font-size:13px;border-bottom:1px solid var(--line);vertical-align:middle}
+  tr:hover td{background:rgba(255,255,255,.02)}
+  .td-thumb{width:56px;padding-right:0}
+  .td-thumb img{width:56px;height:37px;object-fit:cover;display:block;background:var(--bg-3)}
+  .td-slug{font-family:var(--mono);font-size:11px;color:var(--muted);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .td-actions{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+  .table-empty{padding:48px;text-align:center;color:var(--muted);font-size:14px;font-style:italic}
 
-  /* ── Table ─────────────────────────────────────────────── */
-  .table-wrap { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; }
-  th {
-    padding: 10px 16px;
-    font-size: 10px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
-    color: var(--muted);
-    border-bottom: 1px solid var(--line2);
-    text-align: left; white-space: nowrap;
-  }
-  td {
-    padding: 12px 16px;
-    font-size: 13px;
-    border-bottom: 1px solid var(--line);
-    vertical-align: middle;
-  }
-  tr:hover td { background: var(--bg-2); }
-  .td-slug { font-family: var(--mono); font-size: 11px; color: var(--dim); }
-  .td-featured {
-    display: inline-block;
-    padding: 2px 8px;
-    font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
-    border: 1px solid;
-  }
-  .td-featured.yes { color: var(--green); border-color: rgba(74,222,128,0.3); }
-  .td-featured.no  { color: var(--muted); border-color: var(--line); }
-  .td-actions { display: flex; gap: 8px; align-items: center; }
-  .table-empty { padding: 48px; text-align: center; color: var(--muted); font-size: 14px; }
+  /* ── Badges ─────────────────────────────────────────────── */
+  .badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;border:1px solid}
+  .badge-green {color:var(--green); border-color:rgba(74,222,128,.22); background:rgba(74,222,128,.06)}
+  .badge-red   {color:var(--red);   border-color:rgba(248,113,113,.22);background:rgba(248,113,113,.06)}
+  .badge-yellow{color:var(--yellow);border-color:rgba(251,191,36,.22); background:rgba(251,191,36,.06)}
+  .badge-muted {color:var(--muted); border-color:var(--line)}
 
-  /* ── Modal ─────────────────────────────────────────────── */
-  .overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.8);
-    z-index: 100;
-    display: flex; align-items: flex-start; justify-content: center;
-    padding: 40px 20px;
-    overflow-y: auto;
-  }
-  .modal {
-    background: var(--bg-3);
-    border: 1px solid var(--line2);
-    width: 100%; max-width: 760px;
-    padding: 36px;
-    position: relative;
-  }
-  .modal-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 28px;
-  }
-  .modal-title { font-size: 18px; font-weight: 700; }
-  .modal-close {
-    background: none; border: none; cursor: pointer;
-    font-size: 20px; color: var(--dim); line-height: 1;
-    padding: 4px 8px;
-  }
-  .modal-close:hover { color: var(--text); }
-  .modal-section { margin-bottom: 24px; }
-  .modal-section-title {
-    font-size: 10px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--muted); margin-bottom: 14px;
-    padding-bottom: 8px; border-bottom: 1px solid var(--line);
-  }
-  .modal-footer { display: flex; justify-content: flex-end; gap: 12px; margin-top: 28px; }
+  /* ── Quick toggle button ────────────────────────────────── */
+  .qtoggle{background:none;border:none;cursor:pointer;padding:3px 4px;font-size:15px;line-height:1;transition:opacity .18s;display:inline-flex;align-items:center}
+  .qtoggle:hover{opacity:.65}
 
-  /* ── Stock tab ─────────────────────────────────────────── */
-  .upload-zone {
-    border: 2px dashed var(--line2);
-    padding: 48px 32px;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color 0.2s;
+  /* ── Modal ──────────────────────────────────────────────── */
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.87);z-index:100;display:flex;align-items:flex-start;justify-content:center;padding:28px 16px;overflow-y:auto;backdrop-filter:blur(3px)}
+  .modal{background:var(--bg-3);border:1px solid var(--line2);width:100%;max-width:840px;position:relative}
+  .modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:20px 26px 0}
+  .modal-title{font-size:16px;font-weight:700}
+  .modal-x{background:none;border:none;cursor:pointer;font-size:20px;color:var(--dim);line-height:1;padding:2px 8px}
+  .modal-x:hover{color:var(--text)}
+  .modal-footer{display:flex;justify-content:flex-end;gap:10px;padding:14px 26px;border-top:1px solid var(--line)}
+
+  /* ── Modal tabs ─────────────────────────────────────────── */
+  .modal-tabs{display:flex;gap:0;border-bottom:1px solid var(--line);padding:0 26px;margin-top:14px}
+  .m-tab{padding:9px 16px;background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);font-size:11px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;cursor:pointer;transition:all .14s;margin-bottom:-1px}
+  .m-tab:hover{color:var(--dim)}
+  .m-tab.on{color:var(--text);border-bottom-color:var(--text)}
+  .tab-body{padding:20px 26px}
+
+  /* ── Section title ──────────────────────────────────────── */
+  .sec-title{font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);padding-bottom:9px;border-bottom:1px solid var(--line);margin-bottom:14px}
+
+  /* ── Alert ──────────────────────────────────────────────── */
+  .alert{padding:10px 14px;font-size:12px;margin-bottom:14px;border:1px solid}
+  .alert-error {background:rgba(248,113,113,.07);border-color:rgba(248,113,113,.25);color:var(--red)}
+  .alert-success{background:rgba(74,222,128,.07);border-color:rgba(74,222,128,.25);color:var(--green)}
+
+  /* ── Toast ──────────────────────────────────────────────── */
+  .toast-wrap{position:fixed;top:18px;right:18px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+  .toast{padding:11px 17px;font-size:13px;max-width:340px;pointer-events:auto;animation:tIn .18s ease}
+  .toast-ok  {background:#071509;border:1px solid rgba(74,222,128,.35);color:var(--green)}
+  .toast-err {background:#150707;border:1px solid rgba(248,113,113,.35);color:var(--red)}
+  .toast-info{background:#060e15;border:1px solid rgba(96,165,250,.35);color:var(--blue)}
+  @keyframes tIn{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
+
+  /* ── Spinner ────────────────────────────────────────────── */
+  .spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.15);border-top-color:var(--text);border-radius:50%;animation:rot .55s linear infinite}
+  .spin-dark{border-top-color:#000;border-color:rgba(0,0,0,.2)}
+  @keyframes rot{to{transform:rotate(360deg)}}
+
+  /* ── Upload zone ────────────────────────────────────────── */
+  .upload-zone{border:2px dashed var(--line2);padding:44px 32px;text-align:center;cursor:pointer;transition:all .2s}
+  .upload-zone:hover{border-color:var(--dim);background:rgba(255,255,255,.02)}
+  .upload-zone.drag{border-color:var(--accent)}
+  .uz-icon{font-size:26px;margin-bottom:10px}
+  .uz-title{font-size:15px;font-weight:600;margin-bottom:4px}
+  .uz-sub{font-size:12px;color:var(--dim)}
+  .uz-hint{font-size:11px;color:var(--muted);margin-top:6px}
+
+  /* ── Stock cards ────────────────────────────────────────── */
+  .stock-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:11px;margin-top:18px}
+  .stock-card{background:var(--bg-2);border:1px solid var(--line);padding:13px}
+  .sc-brand{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+  .sc-model{font-size:13px;font-weight:600;margin-bottom:7px;line-height:1.3}
+  .sc-val{font-family:var(--mono);font-size:26px;font-weight:700}
+  .sc-lbl{font-size:10px;color:var(--muted)}
+  .sc-thumb{width:100%;aspect-ratio:1;object-fit:cover;margin-bottom:9px;background:var(--bg-3);display:block}
+
+  /* ── Search bar ─────────────────────────────────────────── */
+  .search-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+  .search-inp{flex:1;min-width:180px;background:var(--bg-2);border:1px solid var(--line2);color:var(--text);padding:8px 13px;font-size:13px;outline:none}
+  .search-inp:focus{border-color:rgba(255,255,255,.4)}
+  .filter-sel{background:var(--bg-2);border:1px solid var(--line2);color:var(--text);padding:8px 11px;font-size:12px;outline:none;cursor:pointer}
+
+  /* ── Destacados grid ────────────────────────────────────── */
+  .dest-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:12px}
+  .dest-card{background:var(--bg-3);border:1px solid var(--line);overflow:hidden;transition:border-color .2s}
+  .dest-card.on{border-color:rgba(251,191,36,.45)}
+  .dest-img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:var(--bg-2)}
+  .dest-body{padding:9px 11px}
+  .dest-title{font-size:12px;font-weight:600;line-height:1.3;margin-bottom:5px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  .dest-meta{font-size:10px;color:var(--muted);font-family:var(--mono)}
+
+  /* ── Gallery editor ─────────────────────────────────────── */
+  .gal-item{border:1px solid var(--line);background:var(--bg-2);margin-bottom:7px}
+  .gal-hdr{display:flex;align-items:center;gap:8px;padding:7px 10px;border-bottom:1px solid var(--line);background:var(--bg-4)}
+  .gal-num{font-family:var(--mono);font-size:9px;color:var(--muted);flex-shrink:0}
+  .gal-thumb{width:44px;height:29px;object-fit:cover;background:var(--bg-3);flex-shrink:0;display:block}
+  .gal-body{padding:10px}
+  .tbtn{padding:3px 9px;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;border:1px solid;transition:all .14s;background:none}
+  .tbtn.on{background:rgba(255,255,255,.1);border-color:var(--line2);color:var(--text)}
+  .tbtn:not(.on){border-color:var(--line);color:var(--muted)}
+  .szbtns{display:flex;gap:4px;flex-wrap:wrap}
+  .szbtn{padding:3px 9px;font-size:10px;cursor:pointer;border:1px solid;transition:all .14s;background:none;font-weight:500}
+  .szbtn.on{background:rgba(255,255,255,.1);border-color:var(--line2);color:var(--text)}
+  .szbtn:not(.on){border-color:var(--line);color:var(--muted)}
+
+  /* ── Paragraphs editor ──────────────────────────────────── */
+  .para-row{display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:8px;align-items:flex-start}
+  .para-ta{background:var(--bg-2);border:1px solid var(--line2);color:var(--text);padding:9px 12px;font-size:13px;resize:vertical;min-height:70px;line-height:1.55;width:100%;outline:none}
+  .para-ta:focus{border-color:rgba(255,255,255,.4)}
+  .para-num{font-family:var(--mono);font-size:9px;color:var(--muted);padding-top:3px;min-width:20px;text-align:right}
+
+  /* ── Publish steps ──────────────────────────────────────── */
+  .pub-steps{display:flex;flex-direction:column;gap:0}
+  .pub-step{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+  .pub-step:last-child{border-bottom:none}
+  .step-n{width:26px;height:26px;border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:700;color:var(--muted);flex-shrink:0}
+  .step-t{font-size:13px;font-weight:600;margin-bottom:3px}
+  .step-d{font-size:12px;color:var(--dim);line-height:1.5}
+
+  /* ── Responsive ─────────────────────────────────────────── */
+  @media(max-width:860px){
+    :root{--sidebar:54px}
+    .sidebar-brand,.sidebar-lbl,.nav-item span:not(.nav-icon),.sidebar-user,.nav-badge,.nav-group{display:none}
+    .nav-item{justify-content:center;padding:10px}
+    .nav-item.active::before{width:2px}
+    .main-header{padding:14px 16px 12px}
+    .main-body{padding:14px 16px}
+    .col2,.col3{grid-template-columns:1fr!important}
+    .stats-grid{grid-template-columns:1fr 1fr}
   }
-  .upload-zone:hover { border-color: var(--dim); }
-  .upload-zone.drag { border-color: var(--accent); }
-  .upload-icon { font-size: 32px; margin-bottom: 12px; }
-  .upload-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
-  .upload-sub { font-size: 13px; color: var(--dim); }
-  .upload-hint { font-size: 11px; color: var(--muted); margin-top: 8px; }
-
-  .stock-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 16px; margin-top: 24px; }
-  .stock-card {
-    background: var(--bg-2); border: 1px solid var(--line);
-    padding: 16px;
-  }
-  .stock-card-brand { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
-  .stock-card-model { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
-  .stock-card-count { font-family: var(--mono); font-size: 22px; font-weight: 600; }
-  .stock-card-label { font-size: 11px; color: var(--dim); }
-
-  /* ── Alert ─────────────────────────────────────────────── */
-  .alert {
-    padding: 12px 16px;
-    font-size: 13px;
-    margin-bottom: 20px;
-    border: 1px solid;
-  }
-  .alert-error   { background: rgba(248,113,113,0.08); border-color: rgba(248,113,113,0.3); color: var(--red); }
-  .alert-success { background: rgba(74,222,128,0.08);  border-color: rgba(74,222,128,0.3);  color: var(--green); }
-
-  /* ── Loading spinner ───────────────────────────────────── */
-  .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid var(--line2); border-top-color: var(--text); border-radius: 50%; animation: spin 0.6s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  @media (max-width: 768px) {
-    .sidebar { width: 60px; }
-    .nav-item span, .sidebar-logo-name, .sidebar-user { display: none; }
-    .main-header { padding: 20px; }
-    .main-body { padding: 20px; }
-    .field-row.col2, .field-row.col3 { grid-template-columns: 1fr; }
+  @media(max-width:560px){
+    .overlay{padding:0}
+    .modal{max-width:100%;min-height:100vh}
   }
 </style>
 </head>
@@ -278,18 +254,16 @@
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 
 <script type="text/babel">
-const { useState, useEffect, useRef, useCallback } = React;
+const { useState, useEffect, useRef, useCallback, useContext, createContext } = React;
 
-// Usa siempre el mismo origen que sirve el admin (funciona desde cualquier dispositivo)
 const API = window.location.origin;
 
-// ── API helper ────────────────────────────────────────────────
+// ── API helper ───────────────────────────────────────────────────
 async function apiFetch(path, { token, method = 'GET', body } = {}) {
   const headers = { 'Content-Type': 'application/json' };
   if (token) headers['x-admin-token'] = token;
   const res = await fetch(`${API}${path}`, {
-    method,
-    headers,
+    method, headers,
     body: body ? JSON.stringify(body) : undefined,
   });
   const data = await res.json();
@@ -297,14 +271,41 @@ async function apiFetch(path, { token, method = 'GET', body } = {}) {
   return data;
 }
 
-// ── Token storage ─────────────────────────────────────────────
+// ── Token storage ────────────────────────────────────────────────
 function useToken() {
   const [token, setToken] = useState(() => localStorage.getItem('admin_token') || null);
-  const save = useCallback(t => { setToken(t); if (t) localStorage.setItem('admin_token', t); else localStorage.removeItem('admin_token'); }, []);
+  const save = useCallback(t => {
+    setToken(t);
+    if (t) localStorage.setItem('admin_token', t);
+    else localStorage.removeItem('admin_token');
+  }, []);
   return [token, save];
 }
 
-// ── Form helpers ──────────────────────────────────────────────
+// ── Toasts ───────────────────────────────────────────────────────
+const ToastCtx = createContext(null);
+
+function ToastProvider({ children }) {
+  const [list, setList] = useState([]);
+  const add = useCallback((msg, type = 'ok', ms = 3800) => {
+    const id = Date.now() + Math.random();
+    setList(l => [...l, { id, msg, type }]);
+    setTimeout(() => setList(l => l.filter(x => x.id !== id)), ms);
+  }, []);
+  return (
+    <ToastCtx.Provider value={add}>
+      {children}
+      <div className="toast-wrap">
+        {list.map(t => (
+          <div key={t.id} className={`toast toast-${t.type}`}>{t.msg}</div>
+        ))}
+      </div>
+    </ToastCtx.Provider>
+  );
+}
+const useToast = () => useContext(ToastCtx);
+
+// ── Helpers ──────────────────────────────────────────────────────
 function slugify(str) {
   return str.toLowerCase()
     .normalize('NFD').replace(/[̀-ͯ]/g, '')
@@ -312,16 +313,22 @@ function slugify(str) {
     .trim().replace(/\s+/g, '-');
 }
 
+// Convierte el item del servidor al estado del formulario
 function itemToForm(item) {
   if (!item) return {
     slug: '', titulo: '', marca: '', marcaSlug: 'adidas', modeloSlug: '',
     fecha: '', fechaISO: '', categoria: 'Lanzamiento', descripcionCorta: '',
-    imagen: '', destacado: false,
-    contenido: '', galeria: [], coleccion: '',
-    videoPortada: '',
+    imagen: '', destacado: false, visible: true,
+    contenido: [''],
+    galeria: [], coleccion: '', videoPortada: '',
     urlInstagram: '', instagramHandle: '', productoRelacionadoId: '',
     suela: '', terreno: '', peso: '', colorways: '',
   };
+  const contenidoArr = Array.isArray(item.contenido)
+    ? (item.contenido.length ? item.contenido : [''])
+    : (typeof item.contenido === 'string' && item.contenido
+        ? item.contenido.split('|||').map(s => s.trim()).filter(Boolean)
+        : ['']);
   return {
     slug: item.slug || '',
     titulo: item.titulo || '',
@@ -334,7 +341,8 @@ function itemToForm(item) {
     descripcionCorta: item.descripcionCorta || '',
     imagen: item.imagen || '',
     destacado: Boolean(item.destacado),
-    contenido: Array.isArray(item.contenido) ? item.contenido.join('|||') : (item.contenido || ''),
+    visible: item.visible !== false,
+    contenido: contenidoArr,
     galeria: Array.isArray(item.galeria)
       ? item.galeria.map(g => typeof g === 'string'
           ? { type: 'image', url: g, size: 'full', layout: 'solo' }
@@ -356,40 +364,26 @@ function itemToForm(item) {
 
 function formToPayload(form) {
   return {
-    slug: form.slug,
-    titulo: form.titulo,
-    marca: form.marca,
-    marcaSlug: form.marcaSlug,
-    modeloSlug: form.modeloSlug,
-    fecha: form.fecha,
-    fechaISO: form.fechaISO,
-    categoria: form.categoria,
-    descripcionCorta: form.descripcionCorta,
-    imagen: form.imagen,
-    destacado: form.destacado,
-    contenido: form.contenido,  // server normalizes |||
-    galeria: form.galeria,
-    coleccion: form.coleccion,
-    videoPortada: form.videoPortada,
-    urlInstagram: form.urlInstagram,
-    instagramHandle: form.instagramHandle,
+    slug: form.slug, titulo: form.titulo, marca: form.marca,
+    marcaSlug: form.marcaSlug, modeloSlug: form.modeloSlug,
+    fecha: form.fecha, fechaISO: form.fechaISO, categoria: form.categoria,
+    descripcionCorta: form.descripcionCorta, imagen: form.imagen,
+    destacado: form.destacado, visible: form.visible,
+    contenido: form.contenido.filter(p => p.trim()),  // array → server handles it
+    galeria: form.galeria, coleccion: form.coleccion, videoPortada: form.videoPortada,
+    urlInstagram: form.urlInstagram, instagramHandle: form.instagramHandle,
     productoRelacionadoId: form.productoRelacionadoId,
-    detallesTecnicos: {
-      suela: form.suela,
-      terreno: form.terreno,
-      peso: form.peso,
-      colorways: form.colorways,
-    },
+    detallesTecnicos: { suela: form.suela, terreno: form.terreno, peso: form.peso, colorways: form.colorways },
   };
 }
 
-// ── Components ────────────────────────────────────────────────
-
+// ── Alert ────────────────────────────────────────────────────────
 function Alert({ type, children }) {
   if (!children) return null;
   return <div className={`alert alert-${type}`}>{children}</div>;
 }
 
+// ── Login ────────────────────────────────────────────────────────
 function LoginPage({ onLogin }) {
   const [form, setForm] = useState({ usuario: '', contrasena: '' });
   const [loading, setLoading] = useState(false);
@@ -401,11 +395,8 @@ function LoginPage({ onLogin }) {
     try {
       const data = await apiFetch('/api/login', { method: 'POST', body: form });
       onLogin(data.token);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) { setError(err.message); }
+    finally { setLoading(false); }
   }
 
   return (
@@ -413,28 +404,22 @@ function LoginPage({ onLogin }) {
       <div className="login-card">
         <div className="login-logo">Botines Alta Gama CBA</div>
         <h1 className="login-title">Panel de administración</h1>
-        <p className="login-sub">Ingresá con tus credenciales de admin.</p>
+        <p className="login-sub">Ingresá con tus credenciales.</p>
         <Alert type="error">{error}</Alert>
         <form onSubmit={submit}>
           <div className="field">
             <label>Usuario</label>
-            <input
-              type="text" value={form.usuario} autoComplete="username"
-              onChange={e => setForm(f => ({ ...f, usuario: e.target.value }))}
-              required
-            />
+            <input type="text" value={form.usuario} autoComplete="username"
+              onChange={e => setForm(f => ({ ...f, usuario: e.target.value }))} required />
           </div>
           <div className="field">
             <label>Contraseña</label>
-            <input
-              type="password" value={form.contrasena} autoComplete="current-password"
-              onChange={e => setForm(f => ({ ...f, contrasena: e.target.value }))}
-              required
-            />
+            <input type="password" value={form.contrasena} autoComplete="current-password"
+              onChange={e => setForm(f => ({ ...f, contrasena: e.target.value }))} required />
           </div>
-          <div className="field" style={{ marginTop: 24 }}>
+          <div className="field" style={{ marginTop: 22 }}>
             <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
-              {loading ? <span className="spinner" /> : 'Ingresar'}
+              {loading ? <span className="spin" /> : 'Ingresar'}
             </button>
           </div>
         </form>
@@ -443,182 +428,160 @@ function LoginPage({ onLogin }) {
   );
 }
 
-// ── Galería Editor ────────────────────────────────────────────
-
-function PreviewImg({ src }) {
-  const [err, setErr] = useState(false);
-  if (err || !src.trim()) return (
-    <div style={{ width: '100%', padding: '18px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', fontSize: 12, fontStyle: 'italic' }}>
-      Imagen no encontrada
-    </div>
-  );
-  return <img src={src} alt="" style={{ maxWidth: '100%', maxHeight: 160, width: 'auto', height: 'auto', display: 'block' }} onError={() => setErr(true)} />;
-}
-
-// ── Preview de video de portada en el modal ───────────────────
-function VideoPortadaPreview({ url }) {
-  const ytId = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/)?.[1];
-  if (ytId) {
-    return (
-      <div style={{ marginTop: 8, position: 'relative', display: 'inline-block' }}>
-        <img src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`} alt="YouTube preview"
-          style={{ maxHeight: 100, display: 'block', border: '1px solid var(--line2)' }} />
-        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.45)', color: '#fff', fontSize: 24, cursor: 'default' }}>▶</div>
-      </div>
-    );
-  }
+// ── Paragraph Editor ─────────────────────────────────────────────
+function ContenidoEditor({ paragraphs, onChange }) {
+  function add() { onChange([...paragraphs, '']); }
+  function remove(i) { onChange(paragraphs.filter((_, j) => j !== i)); }
+  function upd(i, val) { onChange(paragraphs.map((p, j) => j === i ? val : p)); }
   return (
-    <div style={{ marginTop: 8, padding: '8px 12px', background: 'var(--bg-3)', border: '1px solid var(--line)', fontSize: 12, color: 'var(--dim)' }}>
-      🎬 {url.split('/').pop().slice(0, 60)}
-    </div>
-  );
-}
-
-// ── Item de galería en preview (imagen o video) ───────────────
-function PreviewGaleriaItem({ item }) {
-  const type = item?.type || 'image';
-  const url  = item?.url  || '';
-  if (type === 'video') {
-    const ytId = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/)?.[1];
-    if (ytId) {
-      return (
-        <div style={{ position: 'relative', display: 'inline-block', maxWidth: '100%' }}>
-          <img src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`} alt="YouTube"
-            style={{ maxWidth: '100%', maxHeight: 160, display: 'block' }} />
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.4)', color: '#fff', fontSize: 24 }}>▶</div>
+    <div>
+      {paragraphs.map((p, i) => (
+        <div key={i} className="para-row">
+          <textarea
+            className="para-ta"
+            value={p}
+            placeholder={`Párrafo ${i + 1}…`}
+            onChange={e => upd(i, e.target.value)}
+          />
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+            <span className="para-num">P{i + 1}</span>
+            {paragraphs.length > 1 && (
+              <button type="button" onClick={() => remove(i)}
+                style={{ background: 'none', border: '1px solid rgba(248,113,113,.25)', color: 'var(--red)', padding: '4px 8px', fontSize: 12, cursor: 'pointer', lineHeight: 1 }}>✕</button>
+            )}
+          </div>
         </div>
-      );
-    }
-    if (!url.trim()) return <div style={{ padding: '18px', color: 'var(--muted)', fontSize: 12, fontStyle: 'italic', textAlign: 'center' }}>URL de video vacía</div>;
-    return <div style={{ padding: '12px', color: 'var(--dim)', fontSize: 12, textAlign: 'center' }}>🎬 {url.split('/').pop().slice(0, 40)}</div>;
-  }
-  return <PreviewImg src={url} />;
-}
-
-function GaleriaPreview({ images }) {
-  const valid = images.filter(g => g.url.trim());
-  if (!valid.length) return null;
-  const rows = [];
-  let i = 0;
-  while (i < valid.length) {
-    const cur = valid[i], nxt = valid[i + 1];
-    if (cur.layout === 'pair-left' && nxt && nxt.layout === 'pair-right') {
-      rows.push({ type: 'pair', left: cur, right: nxt, key: i });
-      i += 2;
-    } else {
-      rows.push({ type: 'solo', item: cur, key: i });
-      i++;
-    }
-  }
-  const W = { full: '100%', medium: '70%', small: '50%' };
-  return (
-    <div style={{ marginTop: 16, border: '1px solid var(--line2)', padding: 16, background: 'var(--bg)' }}>
-      <div style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 12 }}>Preview galería</div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {rows.map(row => row.type === 'pair' ? (
-          <div key={row.key} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-            <div style={{ background: 'var(--bg-3)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}><PreviewGaleriaItem item={row.left} /></div>
-            <div style={{ background: 'var(--bg-3)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}><PreviewGaleriaItem item={row.right} /></div>
-          </div>
-        ) : (
-          <div key={row.key} style={{ display: 'flex', justifyContent: 'center' }}>
-            <div style={{ width: W[row.item.size] || '100%', background: 'var(--bg-3)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <PreviewGaleriaItem item={row.item} />
-            </div>
-          </div>
-        ))}
-      </div>
+      ))}
+      <button type="button" className="btn btn-ghost btn-sm" onClick={add} style={{ marginTop: 2 }}>+ Agregar párrafo</button>
     </div>
   );
 }
 
+// ── Gallery Editor ───────────────────────────────────────────────
 function GaleriaEditor({ images, onChange }) {
-  function add() { onChange([...images, { type: 'image', url: '', size: 'full', layout: 'solo' }]); }
-  function remove(idx) { onChange(images.filter((_, i) => i !== idx)); }
-  function upd(idx, field, val) { onChange(images.map((g, i) => i === idx ? { ...g, [field]: val } : g)); }
+  function add()  { onChange([...images, { type: 'image', url: '', size: 'full', layout: 'solo' }]); }
+  function rem(i) { onChange(images.filter((_, j) => j !== i)); }
+  function upd(i, k, v) { onChange(images.map((g, j) => j === i ? { ...g, [k]: v } : g)); }
+  function move(i, dir) {
+    const arr = [...images];
+    const j = i + dir;
+    if (j < 0 || j >= arr.length) return;
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+    onChange(arr);
+  }
+
+  const SIZES = [
+    { v: 'full',   l: 'Completo' },
+    { v: 'medium', l: 'Mediana'  },
+    { v: 'small',  l: 'Pequeña'  },
+  ];
+  const LAYOUTS = [
+    { v: 'solo',       l: 'Solo'       },
+    { v: 'pair-left',  l: 'Par ◁'     },
+    { v: 'pair-right', l: 'Par ▷'     },
+  ];
 
   return (
     <div>
       {images.length === 0 && (
-        <div style={{ padding: '12px 0', color: 'var(--muted)', fontSize: 13, fontStyle: 'italic' }}>Sin imágenes ni videos. Agregá el primero.</div>
+        <p style={{ color: 'var(--muted)', fontSize: 13, fontStyle: 'italic', padding: '8px 0 12px' }}>
+          Sin elementos. Agregá imágenes o videos.
+        </p>
       )}
-      {images.map((img, idx) => {
-        const tipo = img.type || 'image';
+      {images.map((img, i) => {
+        const isVid = img.type === 'video';
+        const ytId = isVid && img.url
+          ? (img.url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/)?.[1])
+          : null;
         return (
-          <div key={idx} style={{ marginBottom: 10, border: '1px solid var(--line)', background: 'var(--bg-2)', padding: 12 }}>
-            {/* Selector de tipo: Imagen / Video */}
-            <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
-              {[['image','🖼 Imagen'],['video','🎬 Video']].map(([t, label]) => (
-                <button key={t} type="button" onClick={() => upd(idx, 'type', t)}
-                  style={{
-                    padding: '3px 10px', fontSize: 10, fontWeight: 600, letterSpacing: '0.1em',
-                    textTransform: 'uppercase', cursor: 'pointer',
-                    background: tipo === t ? 'rgba(255,255,255,0.12)' : 'transparent',
-                    border: `1px solid ${tipo === t ? 'var(--line2)' : 'var(--line)'}`,
-                    color: tipo === t ? 'var(--text)' : 'var(--muted)',
-                  }}
-                >{label}</button>
-              ))}
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 10, alignItems: 'center', marginBottom: 8 }}>
-              <input
-                type="url" value={img.url}
-                placeholder={tipo === 'video' ? 'https://youtu.be/... o URL de video .mp4' : 'https://i.imgur.com/...'}
-                onChange={e => upd(idx, 'url', e.target.value)}
-                style={{ background: 'var(--bg)', border: '1px solid var(--line2)', color: 'var(--text)', padding: '8px 12px', fontSize: 13, outline: 'none', width: '100%' }}
-              />
-              <button type="button" onClick={() => remove(idx)} title={tipo === 'video' ? 'Eliminar video' : 'Eliminar imagen'}
-                style={{ background: 'none', border: '1px solid rgba(248,113,113,0.3)', color: 'var(--red)', padding: '6px 10px', fontSize: 14, cursor: 'pointer', lineHeight: 1 }}>✕</button>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-              <div>
-                <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 4 }}>Tamaño</div>
-                <select value={img.size} onChange={e => upd(idx, 'size', e.target.value)}
-                  style={{ background: 'var(--bg)', border: '1px solid var(--line2)', color: 'var(--text)', padding: '6px 10px', fontSize: 12, width: '100%' }}>
-                  <option value="full">Ancho completo</option>
-                  <option value="medium">Mediana (70%)</option>
-                  <option value="small">Pequeña (50%)</option>
-                </select>
+          <div key={i} className="gal-item">
+            <div className="gal-hdr">
+              <span className="gal-num">#{i + 1}</span>
+              {/* Mini preview */}
+              {img.url && !isVid && (
+                <img className="gal-thumb" src={img.url} alt=""
+                  onError={e => e.target.style.display='none'} />
+              )}
+              {ytId && (
+                <div style={{ position: 'relative', width: 44, height: 29, flexShrink: 0 }}>
+                  <img className="gal-thumb" src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`} alt="" />
+                  <div style={{ position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center',background:'rgba(0,0,0,.45)',color:'#fff',fontSize:13 }}>▶</div>
+                </div>
+              )}
+              {/* Type toggle */}
+              <div style={{ display: 'flex', gap: 4, marginLeft: 2 }}>
+                {[['image','🖼'],['video','🎬']].map(([t, icon]) => (
+                  <button key={t} type="button" className={`tbtn ${img.type===t?'on':''}`}
+                    onClick={() => upd(i,'type',t)}>{icon} {t}</button>
+                ))}
               </div>
-              <div>
-                <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 4 }}>Disposición</div>
-                <select value={img.layout} onChange={e => upd(idx, 'layout', e.target.value)}
-                  style={{ background: 'var(--bg)', border: '1px solid var(--line2)', color: 'var(--text)', padding: '6px 10px', fontSize: 12, width: '100%' }}>
-                  <option value="solo">Solo (fila propia)</option>
-                  <option value="pair-left">Par — izquierda</option>
-                  <option value="pair-right">Par — derecha</option>
-                </select>
+              {/* Move buttons */}
+              <div style={{ marginLeft: 'auto', display: 'flex', gap: 3 }}>
+                <button type="button" className="btn btn-ghost btn-xs" onClick={() => move(i,-1)} disabled={i===0}>↑</button>
+                <button type="button" className="btn btn-ghost btn-xs" onClick={() => move(i,1)} disabled={i===images.length-1}>↓</button>
+                <button type="button" onClick={() => rem(i)}
+                  style={{ background:'none',border:'1px solid rgba(248,113,113,.25)',color:'var(--red)',padding:'3px 9px',fontSize:11,cursor:'pointer' }}>✕</button>
               </div>
+            </div>
+            <div className="gal-body">
+              <div className="field" style={{ marginBottom: 10 }}>
+                <input type="url" value={img.url}
+                  placeholder={isVid ? 'https://youtu.be/... o URL directa .mp4/.webm' : 'https://i.imgur.com/...'}
+                  onChange={e => upd(i, 'url', e.target.value)}
+                  style={{ background:'var(--bg)',border:'1px solid var(--line2)',color:'var(--text)',padding:'8px 12px',fontSize:13,outline:'none',width:'100%' }} />
+              </div>
+              {!isVid && (
+                <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                  <div>
+                    <div style={{ fontSize:9,fontWeight:700,letterSpacing:'.15em',textTransform:'uppercase',color:'var(--muted)',marginBottom:5 }}>Tamaño</div>
+                    <div className="szbtns">
+                      {SIZES.map(s => (
+                        <button key={s.v} type="button" className={`szbtn ${img.size===s.v?'on':''}`}
+                          onClick={() => upd(i,'size',s.v)}>{s.l}</button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize:9,fontWeight:700,letterSpacing:'.15em',textTransform:'uppercase',color:'var(--muted)',marginBottom:5 }}>Disposición</div>
+                    <div className="szbtns">
+                      {LAYOUTS.map(s => (
+                        <button key={s.v} type="button" className={`szbtn ${img.layout===s.v?'on':''}`}
+                          onClick={() => upd(i,'layout',s.v)}>{s.l}</button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         );
       })}
-      <button type="button" className="btn btn-ghost btn-sm" onClick={add} style={{ marginTop: 4 }}>+ Agregar imagen / video</button>
-      <GaleriaPreview images={images} />
+      <button type="button" className="btn btn-ghost btn-sm" onClick={add} style={{ marginTop: 4 }}>
+        + Imagen / video
+      </button>
     </div>
   );
 }
 
-// ── Lanzamiento Modal ─────────────────────────────────────────
-
-function LanzamientoModal({ item, token, onSaved, onClose }) {
+// ── Lanzamiento Modal (tabbed) ───────────────────────────────────
+function LanzamientoModal({ item, token, stockMap, onSaved, onClose }) {
+  const toast = useToast();
   const isEdit = Boolean(item?.slug);
   const [form, setForm] = useState(() => itemToForm(item));
+  const [tab, setTab] = useState('basico');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  function set(field, val) {
-    setForm(f => ({ ...f, [field]: val }));
-  }
+  function set(k, v) { setForm(f => ({ ...f, [k]: v })); }
 
-  function handleTituloChange(val) {
+  function handleTitulo(val) {
     set('titulo', val);
     if (!isEdit) set('slug', slugify(val));
   }
 
   async function submit(e) {
     e.preventDefault();
-    if (!form.slug || !form.titulo) { setError('Slug y título son requeridos.'); return; }
+    if (!form.slug || !form.titulo) { setError('Slug y título son requeridos.'); setTab('basico'); return; }
     setLoading(true); setError('');
     try {
       const payload = formToPayload(form);
@@ -628,182 +591,248 @@ function LanzamientoModal({ item, token, onSaved, onClose }) {
         await apiFetch('/api/lanzamientos', { token, method: 'POST', body: payload });
       }
       onSaved();
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) { setError(err.message); setLoading(false); }
   }
+
+  const TABS = [
+    { id: 'basico',    label: 'Básico'    },
+    { id: 'contenido', label: 'Contenido' },
+    { id: 'media',     label: 'Media'     },
+    { id: 'comercial', label: 'Comercial' },
+  ];
+
+  // List of products for autocomplete
+  const allProductos = Object.values(stockMap || {}).flat();
 
   return (
     <div className="overlay" onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="modal">
-        <div className="modal-header">
+      <div className="modal" onClick={e => e.stopPropagation()}>
+        <div className="modal-hdr">
           <h2 className="modal-title">{isEdit ? 'Editar lanzamiento' : 'Nuevo lanzamiento'}</h2>
-          <button className="modal-close" onClick={onClose}>×</button>
+          <button className="modal-x" onClick={onClose}>×</button>
         </div>
 
-        <Alert type="error">{error}</Alert>
+        {/* Tabs */}
+        <div className="modal-tabs">
+          {TABS.map(t => (
+            <button key={t.id} type="button"
+              className={`m-tab ${tab === t.id ? 'on' : ''}`}
+              onClick={() => setTab(t.id)}>{t.label}</button>
+          ))}
+        </div>
 
         <form onSubmit={submit}>
-          {/* Básico */}
-          <div className="modal-section">
-            <div className="modal-section-title">Información básica</div>
-            <div className="field">
-              <label>Título *</label>
-              <input type="text" value={form.titulo} onChange={e => handleTituloChange(e.target.value)} required />
-            </div>
-            <div className="field-row col2" style={{ marginTop: 16 }}>
-              <div className="field">
-                <label>Slug *</label>
-                <input type="text" value={form.slug} onChange={e => set('slug', e.target.value)} required />
-                <span className="hint">URL: /lanzamientos/{form.slug || '...'}</span>
-              </div>
-              <div className="field">
-                <label>Categoría</label>
-                <select value={form.categoria} onChange={e => set('categoria', e.target.value)}>
-                  {['Lanzamiento','Signature','Pack','Colección'].map(c => <option key={c}>{c}</option>)}
-                </select>
-              </div>
-            </div>
-            <div className="field" style={{ marginTop: 16 }}>
-              <label>Descripción corta</label>
-              <textarea value={form.descripcionCorta} onChange={e => set('descripcionCorta', e.target.value)} style={{ minHeight: 60 }} maxLength={220} />
-              <span className="hint">{form.descripcionCorta.length}/220 caracteres</span>
-            </div>
-          </div>
+          {/* ── Tab: BÁSICO ───────────────────────────────── */}
+          {tab === 'basico' && (
+            <div className="tab-body">
+              {error && <Alert type="error">{error}</Alert>}
 
-          {/* Marca */}
-          <div className="modal-section">
-            <div className="modal-section-title">Marca</div>
-            <div className="field-row col3">
+              <div className="sec-title">Información básica</div>
               <div className="field">
-                <label>Nombre de marca</label>
-                <input type="text" value={form.marca} onChange={e => set('marca', e.target.value)} placeholder="adidas" />
+                <label>Título *</label>
+                <input type="text" value={form.titulo} onChange={e => handleTitulo(e.target.value)} required />
               </div>
-              <div className="field">
-                <label>marcaSlug</label>
-                <select value={form.marcaSlug} onChange={e => set('marcaSlug', e.target.value)}>
-                  {['adidas','nike','puma','new-balance'].map(s => <option key={s}>{s}</option>)}
-                </select>
-              </div>
-              <div className="field">
-                <label>modeloSlug</label>
-                <input type="text" value={form.modeloSlug} onChange={e => set('modeloSlug', e.target.value)} placeholder="f50" />
-              </div>
-            </div>
-          </div>
 
-          {/* Fecha e imagen */}
-          <div className="modal-section">
-            <div className="modal-section-title">Fecha e imagen</div>
-            <div className="field-row col3">
-              <div className="field">
-                <label>Fecha visible</label>
-                <input type="text" value={form.fecha} onChange={e => set('fecha', e.target.value)} placeholder="23 ABR 2026" />
+              <div className="field-row col2" style={{ marginTop: 13 }}>
+                <div className="field">
+                  <label>Slug (URL) *</label>
+                  <input type="text" value={form.slug} onChange={e => set('slug', e.target.value)} required />
+                  <span className="hint">/lanzamientos/{form.slug || '…'}</span>
+                </div>
+                <div className="field">
+                  <label>Categoría</label>
+                  <select value={form.categoria} onChange={e => set('categoria', e.target.value)}>
+                    {['Lanzamiento','Signature','Pack','Colección'].map(c => <option key={c}>{c}</option>)}
+                  </select>
+                </div>
               </div>
-              <div className="field">
-                <label>Fecha ISO</label>
-                <input type="date" value={form.fechaISO} onChange={e => set('fechaISO', e.target.value)} />
-              </div>
-              <div className="field">
-                <label htmlFor="dest" className="checkbox-row" style={{ alignSelf: 'flex-end', marginBottom: 6 }}>
-                  <input id="dest" type="checkbox" checked={form.destacado} onChange={e => set('destacado', e.target.checked)} />
-                  <span>Destacado en home</span>
-                </label>
-              </div>
-            </div>
-            <div className="field" style={{ marginTop: 16 }}>
-              <label>URL imagen principal</label>
-              <input type="url" value={form.imagen} onChange={e => set('imagen', e.target.value)} placeholder="https://i.imgur.com/..." />
-            </div>
-            {form.imagen && (
-              <img src={form.imagen} alt="" style={{ marginTop: 10, maxHeight: 120, objectFit: 'cover', borderRadius: 2 }} onError={e => e.target.style.display='none'} />
-            )}
-            <div className="field" style={{ marginTop: 16 }}>
-              <label>Video de portada (opcional)</label>
-              <input type="url" value={form.videoPortada} onChange={e => set('videoPortada', e.target.value)} placeholder="https://youtu.be/... o URL directa de video .mp4" />
-              <span className="hint">Reemplaza la imagen en el hero del artículo. Acepta YouTube, youtu.be o .mp4/.webm. Se reproduce automático, silenciado.</span>
-            </div>
-            {form.videoPortada && <VideoPortadaPreview url={form.videoPortada} />}
-            <div className="field" style={{ marginTop: 16 }}>
-              <label>Galería de imágenes / videos</label>
-              <GaleriaEditor images={form.galeria} onChange={val => set('galeria', val)} />
-            </div>
-          </div>
 
-          {/* Contenido */}
-          <div className="modal-section">
-            <div className="modal-section-title">Contenido del artículo</div>
-            <div className="field">
-              <label>Párrafos (separados por |||)</label>
-              <textarea value={form.contenido} onChange={e => set('contenido', e.target.value)} style={{ minHeight: 120 }} placeholder="Primer párrafo del artículo.|||Segundo párrafo.|||Tercer párrafo." />
-              <span className="hint">Separar cada párrafo con |||</span>
-            </div>
-            <div className="field" style={{ marginTop: 16 }}>
-              <label>Colección</label>
-              <input type="text" value={form.coleccion} onChange={e => set('coleccion', e.target.value)} placeholder="F50 Archive Collection" />
-            </div>
-          </div>
-
-          {/* Detalles técnicos */}
-          <div className="modal-section">
-            <div className="modal-section-title">Detalles técnicos</div>
-            <div className="field-row col2">
-              <div className="field">
-                <label>Suela</label>
-                <input type="text" value={form.suela} onChange={e => set('suela', e.target.value)} placeholder="Sprintframe con carbono" />
+              <div className="field" style={{ marginTop: 13 }}>
+                <label>Descripción corta</label>
+                <textarea value={form.descripcionCorta} onChange={e => set('descripcionCorta', e.target.value)}
+                  style={{ minHeight: 58 }} maxLength={240} />
+                <span className="hint">{form.descripcionCorta.length}/240</span>
               </div>
-              <div className="field">
-                <label>Terreno</label>
-                <input type="text" value={form.terreno} onChange={e => set('terreno', e.target.value)} placeholder="Firm Ground (FG)" />
+
+              <div style={{ marginTop: 18 }}>
+                <div className="sec-title">Marca</div>
+                <div className="field-row col3">
+                  <div className="field">
+                    <label>Nombre marca</label>
+                    <input type="text" value={form.marca} onChange={e => set('marca', e.target.value)} placeholder="adidas" />
+                  </div>
+                  <div className="field">
+                    <label>marcaSlug</label>
+                    <select value={form.marcaSlug} onChange={e => set('marcaSlug', e.target.value)}>
+                      {['adidas','nike','puma','new-balance'].map(s => <option key={s}>{s}</option>)}
+                    </select>
+                  </div>
+                  <div className="field">
+                    <label>modeloSlug</label>
+                    <input type="text" value={form.modeloSlug} onChange={e => set('modeloSlug', e.target.value)} placeholder="f50" />
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ marginTop: 18 }}>
+                <div className="sec-title">Fecha y estado</div>
+                <div className="field-row col2">
+                  <div className="field">
+                    <label>Fecha visible</label>
+                    <input type="text" value={form.fecha} onChange={e => set('fecha', e.target.value)} placeholder="23 ABR 2026" />
+                  </div>
+                  <div className="field">
+                    <label>Fecha ISO</label>
+                    <input type="date" value={form.fechaISO} onChange={e => set('fechaISO', e.target.value)} />
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: 24, marginTop: 12, flexWrap: 'wrap' }}>
+                  <label style={{ display:'flex',alignItems:'center',gap:8,cursor:'pointer',fontSize:13,color:'var(--dim)' }}>
+                    <input type="checkbox" checked={form.visible} onChange={e => set('visible', e.target.checked)}
+                      style={{ width:16,height:16,accentColor:'var(--accent)',cursor:'pointer' }} />
+                    Visible en el sitio
+                  </label>
+                  <label style={{ display:'flex',alignItems:'center',gap:8,cursor:'pointer',fontSize:13,color:'var(--dim)' }}>
+                    <input type="checkbox" checked={form.destacado} onChange={e => set('destacado', e.target.checked)}
+                      style={{ width:16,height:16,accentColor:'#fbbf24',cursor:'pointer' }} />
+                    ⭐ Destacado en carrusel
+                  </label>
+                </div>
+              </div>
+
+              {form.coleccion !== undefined && (
+                <div style={{ marginTop: 18 }}>
+                  <div className="sec-title">Colección</div>
+                  <div className="field">
+                    <input type="text" value={form.coleccion} onChange={e => set('coleccion', e.target.value)}
+                      placeholder="F50 Archive Collection" />
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ── Tab: CONTENIDO ────────────────────────────── */}
+          {tab === 'contenido' && (
+            <div className="tab-body">
+              <div className="sec-title">Texto del artículo</div>
+              <ContenidoEditor
+                paragraphs={form.contenido}
+                onChange={val => set('contenido', val)}
+              />
+
+              <div style={{ marginTop: 22 }}>
+                <div className="sec-title">Detalles técnicos</div>
+                <div className="field-row col2">
+                  <div className="field">
+                    <label>Suela</label>
+                    <input type="text" value={form.suela} onChange={e => set('suela', e.target.value)} placeholder="Sprintframe con carbono" />
+                  </div>
+                  <div className="field">
+                    <label>Terreno</label>
+                    <input type="text" value={form.terreno} onChange={e => set('terreno', e.target.value)} placeholder="Firm Ground (FG)" />
+                  </div>
+                </div>
+                <div className="field-row col2" style={{ marginTop: 13 }}>
+                  <div className="field">
+                    <label>Peso</label>
+                    <input type="text" value={form.peso} onChange={e => set('peso', e.target.value)} placeholder="195g (talle 8.5 US)" />
+                  </div>
+                  <div className="field">
+                    <label>Colorways (separados por |)</label>
+                    <input type="text" value={form.colorways} onChange={e => set('colorways', e.target.value)} placeholder="Solar Yellow|Electric Blue" />
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="field-row col2" style={{ marginTop: 16 }}>
+          )}
+
+          {/* ── Tab: MEDIA ────────────────────────────────── */}
+          {tab === 'media' && (
+            <div className="tab-body">
+              <div className="sec-title">Imagen y video de portada</div>
               <div className="field">
-                <label>Peso</label>
-                <input type="text" value={form.peso} onChange={e => set('peso', e.target.value)} placeholder="195g (talle 8.5 US)" />
+                <label>URL imagen principal</label>
+                <input type="url" value={form.imagen} onChange={e => set('imagen', e.target.value)}
+                  placeholder="https://i.imgur.com/..." />
               </div>
+              {form.imagen && (
+                <img src={form.imagen} alt="" style={{ marginTop:8,maxHeight:100,maxWidth:'100%',objectFit:'cover',display:'block' }}
+                  onError={e => e.target.style.display='none'} />
+              )}
+
+              <div style={{ marginTop: 16 }}>
+                <div className="field">
+                  <label>Video de portada (YouTube / .mp4 / .webm)</label>
+                  <input type="url" value={form.videoPortada} onChange={e => set('videoPortada', e.target.value)}
+                    placeholder="https://youtu.be/... o URL directa" />
+                  <span className="hint">Reemplaza la imagen en el hero. Se reproduce automático y silenciado.</span>
+                </div>
+              </div>
+
+              <div style={{ marginTop: 22 }}>
+                <div className="sec-title">Galería</div>
+                <GaleriaEditor images={form.galeria} onChange={val => set('galeria', val)} />
+              </div>
+            </div>
+          )}
+
+          {/* ── Tab: COMERCIAL ────────────────────────────── */}
+          {tab === 'comercial' && (
+            <div className="tab-body">
+              <div className="sec-title">Instagram</div>
               <div className="field">
-                <label>Colorways (separados por |)</label>
-                <input type="text" value={form.colorways} onChange={e => set('colorways', e.target.value)} placeholder="Solar Yellow / Black|Electric Blue" />
+                <label>Handle de Instagram</label>
+                <input type="text" value={form.instagramHandle}
+                  onChange={e => set('instagramHandle', e.target.value)}
+                  placeholder="botinesaltagamacba" />
+                <span className="hint">Solo el nombre de usuario (sin @). Muestra bloque "Seguinos en Instagram".</span>
+              </div>
+              <div className="field" style={{ marginTop: 13 }}>
+                <label>URL post / reel (embed)</label>
+                <input type="url" value={form.urlInstagram}
+                  onChange={e => set('urlInstagram', e.target.value)}
+                  placeholder="https://www.instagram.com/p/ABC123/" />
+                <span className="hint">Incrusta una publicación específica en el artículo.</span>
+              </div>
+
+              <div style={{ marginTop: 22 }}>
+                <div className="sec-title">Producto anunciado</div>
+                <div className="field">
+                  <label>ID producto (del stock)</label>
+                  <input type="text" value={form.productoRelacionadoId}
+                    onChange={e => set('productoRelacionadoId', e.target.value)}
+                    placeholder="adidas-f50-solar-yellow" />
+                  <span className="hint">ID de un producto del stock. Muestra bloque editorial con precio y talles.</span>
+                </div>
+                {/* Products quick reference */}
+                {allProductos.length > 0 && (
+                  <div style={{ marginTop: 10 }}>
+                    <div style={{ fontSize:10,color:'var(--muted)',letterSpacing:'.12em',textTransform:'uppercase',marginBottom:6 }}>Productos disponibles</div>
+                    <div style={{ display:'flex',flexWrap:'wrap',gap:5 }}>
+                      {allProductos.slice(0, 20).map(p => (
+                        <button key={p.id} type="button"
+                          onClick={() => set('productoRelacionadoId', p.id)}
+                          style={{
+                            padding:'3px 9px',fontSize:11,cursor:'pointer',
+                            background: form.productoRelacionadoId === p.id ? 'rgba(255,255,255,.1)' : 'transparent',
+                            border:`1px solid ${form.productoRelacionadoId === p.id ? 'var(--line2)' : 'var(--line)'}`,
+                            color: form.productoRelacionadoId === p.id ? 'var(--text)' : 'var(--muted)',
+                          }}>
+                          {p.id}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
-          </div>
-
-          {/* Instagram + Producto */}
-          <div className="modal-section">
-            <div className="modal-section-title">Instagram y producto anunciado</div>
-
-            <div className="field">
-              <label>Perfil de Instagram (handle)</label>
-              <input type="text" value={form.instagramHandle}
-                onChange={e => set('instagramHandle', e.target.value)}
-                placeholder="botinesaltagamacba" />
-              <span className="hint">Solo el nombre de usuario (sin @). Muestra un bloque "Seguinos en Instagram" con botón de seguir.</span>
-            </div>
-
-            <div className="field" style={{ marginTop: 16 }}>
-              <label>URL post/reel de Instagram (embed)</label>
-              <input type="url" value={form.urlInstagram}
-                onChange={e => set('urlInstagram', e.target.value)}
-                placeholder="https://www.instagram.com/p/ABC123/" />
-              <span className="hint">Incrusta una publicación o reel específico en el artículo.</span>
-            </div>
-
-            <div className="field" style={{ marginTop: 16 }}>
-              <label>ID producto anunciado (del stock)</label>
-              <input type="text" value={form.productoRelacionadoId}
-                onChange={e => set('productoRelacionadoId', e.target.value)}
-                placeholder="adidas-f50-solar-yellow" />
-              <span className="hint">ID de un producto cargado en el stock. Muestra un bloque editorial con imagen, precio y talles disponibles.</span>
-            </div>
-          </div>
+          )}
 
           <div className="modal-footer">
             <button type="button" className="btn btn-ghost" onClick={onClose}>Cancelar</button>
             <button type="submit" className="btn btn-primary" disabled={loading}>
-              {loading ? <span className="spinner" /> : (isEdit ? 'Guardar cambios' : 'Crear lanzamiento')}
+              {loading ? <span className="spin" /> : (isEdit ? 'Guardar cambios' : 'Crear lanzamiento')}
             </button>
           </div>
         </form>
@@ -812,118 +841,276 @@ function LanzamientoModal({ item, token, onSaved, onClose }) {
   );
 }
 
-// ── Lanzamientos Tab ──────────────────────────────────────────
+// ── Dashboard Tab ────────────────────────────────────────────────
+function DashboardTab({ token, onNavigate }) {
+  const [stats, setStats] = useState(null);
+  const [recent, setRecent] = useState([]);
 
-function LanzamientosTab({ token }) {
+  useEffect(() => {
+    async function load() {
+      const [lanz, stock] = await Promise.all([
+        apiFetch('/api/lanzamientos', { token }).catch(() => []),
+        apiFetch('/api/stock').catch(() => ({})),
+      ]);
+      const sorted = [...lanz].sort((a, b) => (b.fechaISO || '').localeCompare(a.fechaISO || ''));
+      setRecent(sorted.slice(0, 6));
+      setStats({
+        total:     lanz.length,
+        visibles:  lanz.filter(l => l.visible !== false).length,
+        destacados:lanz.filter(l => l.destacado).length,
+        modelos:   Object.keys(stock).length,
+        productos: Object.values(stock).reduce((s, a) => s + a.length, 0),
+      });
+    }
+    load();
+  }, []);
+
+  return (
+    <div>
+      <div className="main-header">
+        <div>
+          <h1 className="main-title">Dashboard</h1>
+          <p className="main-sub">Resumen general del sitio</p>
+        </div>
+      </div>
+      <div className="main-body">
+        {stats ? (
+          <div className="stats-grid">
+            {[
+              { icon: '📰', val: stats.total,      label: 'Lanzamientos',     sub: `${stats.visibles} visibles` },
+              { icon: '⭐', val: stats.destacados,  label: 'En carrusel',      sub: 'Artículos destacados' },
+              { icon: '👁', val: stats.visibles,    label: 'Visibles',         sub: `${stats.total - stats.visibles} ocultos` },
+              { icon: '📦', val: stats.modelos,     label: 'Modelos en stock', sub: `${stats.productos} productos` },
+            ].map(s => (
+              <div key={s.label} className="stat-card">
+                <div className="stat-icon">{s.icon}</div>
+                <div className="stat-val">{s.val}</div>
+                <div className="stat-label">{s.label}</div>
+                {s.sub && <div className="stat-sub">{s.sub}</div>}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div style={{ display:'flex',gap:11,marginBottom:28 }}>
+            {[1,2,3,4].map(i => <div key={i} className="stat-card" style={{ flex:1,height:100,background:'var(--bg-3)' }} />)}
+          </div>
+        )}
+
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14 }}>
+            <div style={{ fontSize:11,fontWeight:700,letterSpacing:'.18em',textTransform:'uppercase',color:'var(--muted)' }}>
+              Lanzamientos recientes
+            </div>
+            <button type="button" className="btn btn-ghost btn-sm" onClick={() => onNavigate('lanzamientos')}>
+              Ver todos
+            </button>
+          </div>
+          <div style={{ display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(240px,1fr))',gap:11 }}>
+            {recent.map(a => (
+              <div key={a.slug} style={{ background:'var(--bg-3)',border:'1px solid var(--line)',overflow:'hidden' }}>
+                {a.imagen && (
+                  <img src={a.imagen} alt={a.titulo}
+                    style={{ width:'100%',height:120,objectFit:'cover',display:'block',background:'var(--bg-2)' }}
+                    onError={e => e.target.style.display='none'} />
+                )}
+                <div style={{ padding:'10px 12px' }}>
+                  <div style={{ display:'flex',gap:5,marginBottom:6 }}>
+                    {a.visible === false && <span className="badge badge-red">Oculto</span>}
+                    {a.destacado && <span className="badge badge-yellow">Destacado</span>}
+                    <span className="badge badge-muted">{a.categoria}</span>
+                  </div>
+                  <div style={{ fontSize:13,fontWeight:600,lineHeight:1.3,marginBottom:3 }}>{a.titulo}</div>
+                  <div style={{ fontSize:10,color:'var(--muted)',fontFamily:'var(--mono)' }}>{a.marca} · {a.fecha}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Quick actions */}
+        <div style={{ borderTop:'1px solid var(--line)',paddingTop:20,display:'flex',gap:10,flexWrap:'wrap' }}>
+          <button className="btn btn-primary" onClick={() => onNavigate('lanzamientos')}>
+            + Nuevo lanzamiento
+          </button>
+          <button className="btn btn-ghost" onClick={() => onNavigate('stock')}>
+            Actualizar stock
+          </button>
+          <button className="btn btn-ghost" onClick={() => onNavigate('publicar')}>
+            🚀 Publicar en vivo
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Lanzamientos Tab ─────────────────────────────────────────────
+function LanzamientosTab({ token, stockMap }) {
+  const toast = useToast();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [modal, setModal] = useState(null); // null | {mode: 'create'|'edit', item?}
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [modal, setModal] = useState(null);
+  const [search, setSearch] = useState('');
+  const [filterMarca, setFilterMarca] = useState('');
+  const [filterCat, setFilterCat] = useState('');
+  const [toggling, setToggling] = useState({}); // slug -> field
 
   async function load() {
     setLoading(true);
-    try { setItems(await apiFetch('/api/lanzamientos')); }
-    catch (err) { setError(err.message); }
+    try { setItems(await apiFetch('/api/lanzamientos', { token })); }
+    catch { toast('Error al cargar lanzamientos.', 'err'); }
     finally { setLoading(false); }
   }
-
   useEffect(() => { load(); }, []);
 
-  // Auto-publicar en segundo plano tras cualquier cambio
   async function autoPublish() {
-    try {
-      await apiFetch('/api/publish', { token, method: 'POST' });
-      setSuccess(s => s.replace('Publicando...', '✓ Publicado en vivo.'));
-    } catch {
-      setSuccess(s => s.replace('Publicando...', '(Publicación manual disponible en "Publicar")'));
-    }
+    try { await apiFetch('/api/publish', { token, method: 'POST' }); }
+    catch {}
   }
 
-  async function del(slug) {
-    if (!confirm(`¿Eliminar el lanzamiento "${slug}"? Esta acción no se puede deshacer.`)) return;
+  async function del(slug, titulo) {
+    if (!confirm(`¿Eliminar "${titulo}"? No se puede deshacer.`)) return;
     try {
       await apiFetch(`/api/lanzamientos/${slug}`, { token, method: 'DELETE' });
-      setSuccess('Lanzamiento eliminado. Publicando...');
-      load();
+      toast('Lanzamiento eliminado.');
+      load(); autoPublish();
+    } catch (err) { toast(err.message, 'err'); }
+  }
+
+  async function toggle(slug, field, current) {
+    const key = slug + field;
+    setToggling(t => ({ ...t, [key]: true }));
+    try {
+      await apiFetch(`/api/lanzamientos/${slug}`, { token, method: 'PATCH', body: { [field]: !current } });
+      setItems(items => items.map(i => i.slug === slug ? { ...i, [field]: !current } : i));
       autoPublish();
-    } catch (err) { setError(err.message); }
+    } catch (err) { toast(err.message, 'err'); }
+    finally { setToggling(t => { const n = {...t}; delete n[key]; return n; }); }
   }
 
   function onSaved() {
     setModal(null);
-    setSuccess('Lanzamiento guardado. Publicando...');
-    load();
-    autoPublish();
+    toast('Lanzamiento guardado. Publicando en segundo plano…');
+    load(); autoPublish();
   }
+
+  // Filters
+  const marcas = [...new Set(items.map(i => i.marcaSlug).filter(Boolean))].sort();
+  const cats   = [...new Set(items.map(i => i.categoria).filter(Boolean))].sort();
+  const filtered = items.filter(i => {
+    if (search && !i.titulo.toLowerCase().includes(search.toLowerCase()) && !i.slug.includes(search.toLowerCase())) return false;
+    if (filterMarca && i.marcaSlug !== filterMarca) return false;
+    if (filterCat   && i.categoria !== filterCat) return false;
+    return true;
+  });
 
   return (
     <div>
       <div className="main-header">
         <div>
           <h1 className="main-title">Lanzamientos</h1>
-          <p className="main-sub">{items.length} artículo{items.length !== 1 ? 's' : ''} publicado{items.length !== 1 ? 's' : ''}</p>
+          <p className="main-sub">{items.length} artículo{items.length !== 1 ? 's' : ''} · {items.filter(i=>i.visible!==false).length} visibles · {items.filter(i=>i.destacado).length} en carrusel</p>
         </div>
         <button className="btn btn-primary" onClick={() => setModal({ mode: 'create' })}>
-          + Nuevo lanzamiento
+          + Nuevo
         </button>
       </div>
 
       <div className="main-body">
-        <Alert type="error">{error}</Alert>
-        <Alert type="success">{success}</Alert>
+        <div className="search-row">
+          <input className="search-inp" placeholder="Buscar por título o slug…" value={search}
+            onChange={e => setSearch(e.target.value)} />
+          <select className="filter-sel" value={filterMarca} onChange={e => setFilterMarca(e.target.value)}>
+            <option value="">Todas las marcas</option>
+            {marcas.map(m => <option key={m} value={m}>{m}</option>)}
+          </select>
+          <select className="filter-sel" value={filterCat} onChange={e => setFilterCat(e.target.value)}>
+            <option value="">Todas las categorías</option>
+            {cats.map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+          {(search || filterMarca || filterCat) && (
+            <button className="btn btn-ghost btn-sm" onClick={() => { setSearch(''); setFilterMarca(''); setFilterCat(''); }}>
+              Limpiar
+            </button>
+          )}
+        </div>
 
         {loading ? (
-          <div style={{ textAlign: 'center', padding: 48, color: 'var(--muted)' }}>
-            <span className="spinner" style={{ width: 24, height: 24, borderWidth: 3 }} />
+          <div style={{ textAlign:'center',padding:48,color:'var(--muted)' }}>
+            <span className="spin" style={{ width:22,height:22,borderWidth:2 }} />
           </div>
         ) : (
           <div className="table-wrap">
             <table>
               <thead>
                 <tr>
+                  <th style={{ width:56 }}></th>
                   <th>Título</th>
-                  <th>Slug</th>
                   <th>Marca</th>
                   <th>Fecha</th>
-                  <th>Destacado</th>
+                  <th>Visible</th>
+                  <th>Carrusel</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
               <tbody>
-                {items.length === 0 && (
-                  <tr><td colSpan="6" className="table-empty">No hay lanzamientos. ¡Creá el primero!</td></tr>
+                {filtered.length === 0 && (
+                  <tr><td colSpan="7" className="table-empty">
+                    {items.length === 0 ? '¡Creá el primer lanzamiento!' : 'Sin resultados para este filtro.'}
+                  </td></tr>
                 )}
-                {items.map(item => (
-                  <tr key={item.slug}>
-                    <td style={{ maxWidth: 260 }}>
-                      <div style={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.titulo}</div>
-                      {item.descripcionCorta && (
-                        <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 240 }}>
-                          {item.descripcionCorta}
+                {filtered.map(item => {
+                  const vis = item.visible !== false;
+                  const dest = item.destacado;
+                  return (
+                    <tr key={item.slug}>
+                      <td className="td-thumb">
+                        {item.imagen
+                          ? <img src={item.imagen} alt="" onError={e => e.target.style.display='none'} />
+                          : <div style={{ width:56,height:37,background:'var(--bg-3)' }} />
+                        }
+                      </td>
+                      <td style={{ maxWidth:280 }}>
+                        <div style={{ fontWeight:600,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:260 }}>{item.titulo}</div>
+                        <div className="td-slug">{item.slug}</div>
+                      </td>
+                      <td style={{ textTransform:'capitalize',color:'var(--dim)',fontSize:12 }}>{item.marcaSlug}</td>
+                      <td style={{ whiteSpace:'nowrap',color:'var(--muted)',fontSize:12,fontFamily:'var(--mono)' }}>{item.fecha || item.fechaISO || '—'}</td>
+                      <td>
+                        <button type="button" className="qtoggle"
+                          title={vis ? 'Visible — clic para ocultar' : 'Oculto — clic para mostrar'}
+                          disabled={toggling[item.slug+'visible']}
+                          onClick={() => toggle(item.slug, 'visible', vis)}>
+                          {toggling[item.slug+'visible']
+                            ? <span className="spin" style={{width:12,height:12}} />
+                            : vis ? '🟢' : '⭕'
+                          }
+                        </button>
+                      </td>
+                      <td>
+                        <button type="button" className="qtoggle"
+                          title={dest ? 'En carrusel — clic para quitar' : 'No en carrusel — clic para destacar'}
+                          disabled={toggling[item.slug+'destacado']}
+                          onClick={() => toggle(item.slug, 'destacado', dest)}>
+                          {toggling[item.slug+'destacado']
+                            ? <span className="spin" style={{width:12,height:12}} />
+                            : dest ? '⭐' : '☆'
+                          }
+                        </button>
+                      </td>
+                      <td>
+                        <div className="td-actions">
+                          <button className="btn btn-ghost btn-sm"
+                            onClick={() => setModal({ mode:'edit', item })}>Editar</button>
+                          <a href={`/index.html#/lanzamientos/${item.slug}`} target="_blank"
+                            className="btn btn-blue btn-sm">↗</a>
+                          <button className="btn btn-danger btn-sm"
+                            onClick={() => del(item.slug, item.titulo)}>Eliminar</button>
                         </div>
-                      )}
-                    </td>
-                    <td className="td-slug">{item.slug}</td>
-                    <td style={{ textTransform: 'capitalize' }}>{item.marcaSlug}</td>
-                    <td style={{ whiteSpace: 'nowrap', color: 'var(--dim)' }}>{item.fecha || item.fechaISO || '—'}</td>
-                    <td>
-                      <span className={`td-featured ${item.destacado ? 'yes' : 'no'}`}>
-                        {item.destacado ? 'Sí' : 'No'}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="td-actions">
-                        <button className="btn btn-ghost btn-sm" onClick={() => setModal({ mode: 'edit', item })}>
-                          Editar
-                        </button>
-                        <button className="btn btn-danger btn-sm" onClick={() => del(item.slug)}>
-                          Eliminar
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -934,6 +1121,7 @@ function LanzamientosTab({ token }) {
         <LanzamientoModal
           item={modal.item}
           token={token}
+          stockMap={stockMap}
           onSaved={onSaved}
           onClose={() => setModal(null)}
         />
@@ -942,176 +1130,143 @@ function LanzamientosTab({ token }) {
   );
 }
 
-// ── Publicar Tab ──────────────────────────────────────────────
+// ── Destacados Tab ───────────────────────────────────────────────
+function DestacadosTab({ token }) {
+  const toast = useToast();
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-function PublicarTab({ token }) {
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState(null); // { ok, lanzamientos, modelos, timestamp } | { error }
-  const [stats, setStats] = useState(null);
-
-  useEffect(() => {
-    // Cargar stats iniciales
-    Promise.all([
-      apiFetch('/api/lanzamientos').catch(() => []),
-      apiFetch('/api/stock').catch(() => ({})),
-    ]).then(([lanz, stock]) => {
-      setStats({
-        lanzamientos: lanz.length,
-        modelos: Object.keys(stock).length,
-        productos: Object.values(stock).reduce((s, a) => s + a.length, 0),
-      });
-    });
-  }, []);
-
-  async function publish() {
-    if (!confirm('Esto va a generar el archivo de datos, hacer un commit a GitHub y desplegar en Vercel. ¿Continuar?')) return;
+  async function load() {
     setLoading(true);
-    setResult(null);
-    try {
-      const data = await apiFetch('/api/publish', { token, method: 'POST' });
-      setResult({ ok: true, ...data });
-    } catch (err) {
-      setResult({ ok: false, error: err.message });
-    } finally {
-      setLoading(false);
-    }
+    try { setItems(await apiFetch('/api/lanzamientos', { token })); }
+    catch { toast('Error al cargar.', 'err'); }
+    finally { setLoading(false); }
   }
+  useEffect(() => { load(); }, []);
+
+  async function autoPublish() {
+    try { await apiFetch('/api/publish', { token, method: 'POST' }); } catch {}
+  }
+
+  async function toggle(slug, current) {
+    try {
+      await apiFetch(`/api/lanzamientos/${slug}`, { token, method: 'PATCH', body: { destacado: !current } });
+      setItems(items => items.map(i => i.slug === slug ? { ...i, destacado: !current } : i));
+      toast(!current ? 'Agregado al carrusel.' : 'Quitado del carrusel.');
+      autoPublish();
+    } catch (err) { toast(err.message, 'err'); }
+  }
+
+  const destacados  = items.filter(i => i.destacado);
+  const noDestacados = items.filter(i => !i.destacado && i.visible !== false);
+
+  if (loading) return (
+    <div>
+      <div className="main-header"><div><h1 className="main-title">Carrusel</h1></div></div>
+      <div className="main-body" style={{ textAlign:'center',padding:48,color:'var(--muted)' }}>
+        <span className="spin" style={{ width:22,height:22,borderWidth:2 }} />
+      </div>
+    </div>
+  );
 
   return (
     <div>
       <div className="main-header">
         <div>
-          <h1 className="main-title">Publicar en vivo</h1>
-          <p className="main-sub">Genera el archivo de datos, commitea a GitHub y despliega en Vercel.</p>
+          <h1 className="main-title">Carrusel Hero</h1>
+          <p className="main-sub">{destacados.length} artículo{destacados.length !== 1 ? 's' : ''} en el carrusel</p>
         </div>
       </div>
-
       <div className="main-body">
 
-        {/* Resumen del estado actual */}
-        {stats && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16, marginBottom: 32 }}>
-            {[
-              { label: 'Lanzamientos', val: stats.lanzamientos, icon: '📰' },
-              { label: 'Modelos con stock', val: stats.modelos, icon: '📦' },
-              { label: 'Productos en stock', val: stats.productos, icon: '👟' },
-            ].map(s => (
-              <div key={s.label} style={{ background: 'var(--bg-2)', border: '1px solid var(--line)', padding: '20px 24px' }}>
-                <div style={{ fontSize: 22, marginBottom: 8 }}>{s.icon}</div>
-                <div style={{ fontFamily: 'var(--mono)', fontSize: 28, fontWeight: 700 }}>{s.val}</div>
-                <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 4, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{s.label}</div>
-              </div>
-            ))}
+        {/* Featured articles */}
+        <div style={{ marginBottom: 32 }}>
+          <div style={{ fontSize:10,fontWeight:700,letterSpacing:'.18em',textTransform:'uppercase',color:'var(--muted)',marginBottom:12 }}>
+            ⭐ En el carrusel ({destacados.length})
           </div>
-        )}
-
-        {/* Cómo funciona */}
-        <div style={{ background: 'var(--bg-2)', border: '1px solid var(--line)', padding: '24px 28px', marginBottom: 28 }}>
-          <div style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 16 }}>
-            Qué hace al publicar
-          </div>
-          <ol style={{ paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {[
-              ['Genera', 'src/articles-data.jsx con los lanzamientos y stock actuales del servidor.'],
-              ['Commitea', 'El archivo generado en el repositorio de GitHub con timestamp.'],
-              ['Despliega', 'GitHub Actions detecta el push y Vercel hace el deploy automático (~1–2 min).'],
-            ].map(([strong, rest]) => (
-              <li key={strong} style={{ fontSize: 13, color: 'var(--dim)', lineHeight: 1.6 }}>
-                <strong style={{ color: 'var(--text)' }}>{strong}:</strong> {rest}
-              </li>
-            ))}
-          </ol>
-        </div>
-
-        {/* Resultado anterior */}
-        {result && (
-          <div style={{ marginBottom: 24 }}>
-            {result.ok ? (
-              <div className="alert alert-success" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                <strong>✅ Publicado correctamente</strong>
-                <span style={{ fontSize: 12, opacity: 0.85 }}>
-                  {result.lanzamientos} lanzamiento{result.lanzamientos !== 1 ? 's' : ''} · {result.modelos} modelo{result.modelos !== 1 ? 's' : ''} con stock · commit pusheado a GitHub
-                </span>
-                <span style={{ fontFamily: 'var(--mono)', fontSize: 11, opacity: 0.65 }}>
-                  Vercel desplegará en ~1–2 minutos. Verificá en{' '}
-                  <a href="https://vercel.com" target="_blank" rel="noopener" style={{ textDecoration: 'underline' }}>vercel.com</a>
-                </span>
-              </div>
-            ) : (
-              <div className="alert alert-error">
-                <strong>❌ Error al publicar:</strong> {result.error}
-                <div style={{ fontSize: 11, marginTop: 6, opacity: 0.8 }}>
-                  Verificá que el servidor tenga acceso a internet y git esté configurado correctamente.
+          {destacados.length === 0 ? (
+            <div style={{ border:'2px dashed var(--line)',padding:'28px',textAlign:'center',color:'var(--muted)',fontSize:13,fontStyle:'italic' }}>
+              Ningún artículo destacado. Hacé clic en ☆ para agregar.
+            </div>
+          ) : (
+            <div className="dest-grid">
+              {destacados.map(a => (
+                <div key={a.slug} className="dest-card on">
+                  {a.imagen && (
+                    <img className="dest-img" src={a.imagen} alt={a.titulo}
+                      onError={e => e.target.style.display='none'} />
+                  )}
+                  <div className="dest-body">
+                    <div className="dest-title">{a.titulo}</div>
+                    <div className="dest-meta" style={{ marginBottom: 8 }}>{a.marca} · {a.fecha}</div>
+                    <button type="button" className="btn btn-yellow btn-sm" style={{ width:'100%' }}
+                      onClick={() => toggle(a.slug, true)}>
+                      Quitar del carrusel
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Non-featured visible articles */}
+        {noDestacados.length > 0 && (
+          <div>
+            <div style={{ fontSize:10,fontWeight:700,letterSpacing:'.18em',textTransform:'uppercase',color:'var(--muted)',marginBottom:12,borderTop:'1px solid var(--line)',paddingTop:20 }}>
+              Artículos disponibles para agregar ({noDestacados.length})
+            </div>
+            <div className="dest-grid">
+              {noDestacados.map(a => (
+                <div key={a.slug} className="dest-card">
+                  {a.imagen && (
+                    <img className="dest-img" src={a.imagen} alt={a.titulo}
+                      onError={e => e.target.style.display='none'} />
+                  )}
+                  <div className="dest-body">
+                    <div className="dest-title">{a.titulo}</div>
+                    <div className="dest-meta" style={{ marginBottom: 8 }}>{a.marca} · {a.fecha}</div>
+                    <button type="button" className="btn btn-ghost btn-sm" style={{ width:'100%' }}
+                      onClick={() => toggle(a.slug, false)}>
+                      ☆ Agregar al carrusel
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
-
-        {/* Botón principal */}
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '32px 0' }}>
-          <button
-            className="btn btn-green btn-lg"
-            onClick={publish}
-            disabled={loading}
-            style={{ gap: 12, minWidth: 260 }}
-          >
-            {loading ? (
-              <>
-                <span className="spinner" style={{ borderTopColor: '#000', borderColor: 'rgba(0,0,0,0.2)' }} />
-                Publicando…
-              </>
-            ) : (
-              <>
-                🚀 Publicar en vivo
-              </>
-            )}
-          </button>
-        </div>
-
-        {/* Nota de requerimientos */}
-        <div style={{ borderTop: '1px solid var(--line)', paddingTop: 20, marginTop: 8 }}>
-          <p style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.7 }}>
-            <strong style={{ color: 'var(--dim)' }}>Requisitos:</strong> git configurado localmente con acceso al repositorio, y el workflow de GitHub Actions activo con los secrets{' '}
-            <code style={{ fontFamily: 'var(--mono)', fontSize: 11 }}>VERCEL_TOKEN</code>,{' '}
-            <code style={{ fontFamily: 'var(--mono)', fontSize: 11 }}>VERCEL_ORG_ID</code>,{' '}
-            <code style={{ fontFamily: 'var(--mono)', fontSize: 11 }}>VERCEL_PROJECT_ID</code>.
-          </p>
-        </div>
-
       </div>
     </div>
   );
 }
 
-// ── Stock Tab ─────────────────────────────────────────────────
-
-function StockTab({ token }) {
+// ── Stock Tab ────────────────────────────────────────────────────
+function StockTab({ token, onStockChange }) {
+  const toast = useToast();
   const [stock, setStock] = useState({});
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [drag, setDrag] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [expanded, setExpanded] = useState(null);
   const inputRef = useRef(null);
 
   async function loadStock() {
     setLoading(true);
-    try { setStock(await apiFetch('/api/stock')); }
-    catch (err) { setError(err.message); }
+    try {
+      const s = await apiFetch('/api/stock');
+      setStock(s);
+      onStockChange && onStockChange(s);
+    } catch { toast('Error al cargar stock.', 'err'); }
     finally { setLoading(false); }
   }
-
   useEffect(() => { loadStock(); }, []);
 
   async function uploadFile(file) {
     if (!file) return;
     const ext = file.name.split('.').pop().toLowerCase();
-    if (!['xlsx','xls','csv'].includes(ext)) {
-      setError('Formato no soportado. Usá .xlsx, .xls o .csv');
-      return;
-    }
-    setUploading(true); setError(''); setSuccess('');
+    if (!['xlsx','xls','csv'].includes(ext)) { toast('Formato no soportado. Usá .xlsx, .xls o .csv', 'err'); return; }
+    setUploading(true);
     try {
       const fd = new FormData();
       fd.append('archivo', file);
@@ -1122,43 +1277,38 @@ function StockTab({ token }) {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Error en la subida');
-      setSuccess(`Stock actualizado: ${data.productos} producto${data.productos !== 1 ? 's' : ''} en ${data.modelos} modelo${data.modelos !== 1 ? 's' : ''}.`);
+      toast(`Stock actualizado: ${data.productos} producto${data.productos !== 1 ? 's' : ''} en ${data.modelos} modelo${data.modelos !== 1 ? 's' : ''}.`);
       loadStock();
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setUploading(false);
-    }
+    } catch (err) { toast(err.message, 'err'); }
+    finally { setUploading(false); }
   }
 
   async function clearStock() {
     if (!confirm('¿Limpiar todo el stock? No se puede deshacer.')) return;
     try {
       await apiFetch('/api/stock', { token, method: 'DELETE' });
-      setSuccess('Stock limpiado.');
+      toast('Stock limpiado.');
       setStock({});
-    } catch (err) { setError(err.message); }
+      onStockChange && onStockChange({});
+    } catch (err) { toast(err.message, 'err'); }
   }
 
-  const totalProductos = Object.values(stock).reduce((s, arr) => s + arr.length, 0);
-  const totalModelos = Object.keys(stock).length;
+  const totalP = Object.values(stock).reduce((s, a) => s + a.length, 0);
+  const totalM = Object.keys(stock).length;
 
   return (
     <div>
       <div className="main-header">
         <div>
           <h1 className="main-title">Stock</h1>
-          <p className="main-sub">{totalProductos} producto{totalProductos !== 1 ? 's' : ''} en {totalModelos} modelo{totalModelos !== 1 ? 's' : ''}</p>
+          <p className="main-sub">{totalP} producto{totalP !== 1 ? 's' : ''} · {totalM} modelo{totalM !== 1 ? 's' : ''}</p>
         </div>
-        {totalProductos > 0 && (
-          <button className="btn btn-danger" onClick={clearStock}>Limpiar stock</button>
+        {totalP > 0 && (
+          <button className="btn btn-danger" onClick={clearStock}>Limpiar todo</button>
         )}
       </div>
 
       <div className="main-body">
-        <Alert type="error">{error}</Alert>
-        <Alert type="success">{success}</Alert>
-
         {/* Upload zone */}
         <div
           className={`upload-zone ${drag ? 'drag' : ''}`}
@@ -1168,54 +1318,70 @@ function StockTab({ token }) {
           onDrop={e => { e.preventDefault(); setDrag(false); uploadFile(e.dataTransfer.files[0]); }}
         >
           {uploading ? (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
-              <span className="spinner" style={{ width: 28, height: 28, borderWidth: 3 }} />
-              <span style={{ fontSize: 14, color: 'var(--dim)' }}>Procesando archivo…</span>
+            <div style={{ display:'flex',flexDirection:'column',alignItems:'center',gap:10 }}>
+              <span className="spin" style={{ width:26,height:26,borderWidth:3 }} />
+              <span style={{ fontSize:13,color:'var(--dim)' }}>Procesando archivo…</span>
             </div>
           ) : (
             <>
-              <div className="upload-icon">📊</div>
-              <div className="upload-title">Subir Excel de stock</div>
-              <div className="upload-sub">Arrastrá el archivo acá o hacé clic para seleccionar</div>
-              <div className="upload-hint">Formatos: .xlsx · .xls · .csv</div>
+              <div className="uz-icon">📊</div>
+              <div className="uz-title">Subir Excel de stock</div>
+              <div className="uz-sub">Arrastrá el archivo acá o hacé clic para seleccionar</div>
+              <div className="uz-hint">Formatos: .xlsx · .xls · .csv</div>
             </>
           )}
         </div>
-        <input
-          ref={inputRef} type="file" accept=".xlsx,.xls,.csv"
-          style={{ display: 'none' }}
-          onChange={e => uploadFile(e.target.files[0])}
-        />
+        <input ref={inputRef} type="file" accept=".xlsx,.xls,.csv"
+          style={{ display:'none' }} onChange={e => uploadFile(e.target.files[0])} />
 
-        {/* Columns reference */}
-        <div style={{ marginTop: 20, padding: '14px 16px', background: 'var(--bg-2)', border: '1px solid var(--line)', fontSize: 12 }}>
-          <span style={{ color: 'var(--muted)', fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase' }}>Columnas requeridas en el Excel: </span>
-          <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--dim)' }}>
-            id · modelo · marcaSlug · modeloSlug · colorway · precio · imagen · euTalles
-          </span>
+        <div style={{ marginTop:14,padding:'11px 14px',background:'var(--bg-2)',border:'1px solid var(--line)',fontSize:12 }}>
+          <span style={{ color:'var(--muted)',fontFamily:'var(--mono)',fontSize:10,letterSpacing:'.15em',textTransform:'uppercase' }}>Columnas: </span>
+          <span style={{ fontFamily:'var(--mono)',fontSize:11,color:'var(--dim)' }}>id · modelo · marcaSlug · modeloSlug · colorway · precio · imagen · euTalles</span>
         </div>
 
         {/* Stock grid */}
         {loading ? (
-          <div style={{ textAlign: 'center', padding: 48 }}>
-            <span className="spinner" style={{ width: 24, height: 24, borderWidth: 3 }} />
+          <div style={{ textAlign:'center',padding:40 }}>
+            <span className="spin" style={{ width:22,height:22,borderWidth:2 }} />
           </div>
-        ) : totalModelos > 0 ? (
+        ) : totalM > 0 ? (
           <div className="stock-grid">
             {Object.entries(stock).map(([key, productos]) => {
               const [brand, model] = key.split('/');
+              const sample = productos.find(p => p.imagen);
+              const isExp  = expanded === key;
               return (
-                <div key={key} className="stock-card">
-                  <div className="stock-card-brand">{brand}</div>
-                  <div className="stock-card-model">{model}</div>
-                  <div className="stock-card-count">{productos.length}</div>
-                  <div className="stock-card-label">producto{productos.length !== 1 ? 's' : ''}</div>
+                <div key={key} className="stock-card" style={{ cursor:'pointer' }}
+                  onClick={() => setExpanded(isExp ? null : key)}>
+                  {sample?.imagen && (
+                    <img className="sc-thumb" src={sample.imagen} alt={model}
+                      onError={e => e.target.style.display='none'} />
+                  )}
+                  <div className="sc-brand">{brand}</div>
+                  <div className="sc-model">{model}</div>
+                  <div className="sc-val">{productos.length}</div>
+                  <div className="sc-lbl">producto{productos.length !== 1 ? 's' : ''}</div>
+                  {isExp && (
+                    <div style={{ marginTop:10,borderTop:'1px solid var(--line)',paddingTop:10 }}>
+                      {productos.map(p => (
+                        <div key={p.id} style={{ fontSize:11,color:'var(--dim)',marginBottom:5,lineHeight:1.3 }}>
+                          <div style={{ fontWeight:600,color:'var(--text)',marginBottom:1 }}>{p.colorway || p.modelo}</div>
+                          <div style={{ fontFamily:'var(--mono)',fontSize:10 }}>
+                            ${p.precio?.toLocaleString('es-AR') || 0} · {p.tallesDisponibles?.length || 0} talles
+                          </div>
+                          <div style={{ fontFamily:'var(--mono)',fontSize:10,color:'var(--muted)' }}>
+                            {(p.tallesDisponibles || []).map(t => t.eu).join(' · ')}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               );
             })}
           </div>
         ) : (
-          <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--muted)', fontSize: 14 }}>
+          <div style={{ textAlign:'center',padding:'40px 0',color:'var(--muted)',fontSize:13,fontStyle:'italic' }}>
             No hay stock cargado. Subí un Excel para comenzar.
           </div>
         )}
@@ -1224,10 +1390,130 @@ function StockTab({ token }) {
   );
 }
 
-// ── Dashboard ─────────────────────────────────────────────────
+// ── Publicar Tab ─────────────────────────────────────────────────
+function PublicarTab({ token }) {
+  const toast = useToast();
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
+  const [stats, setStats] = useState(null);
 
+  useEffect(() => {
+    Promise.all([
+      apiFetch('/api/lanzamientos', { token }).catch(() => []),
+      apiFetch('/api/stock').catch(() => ({})),
+    ]).then(([lanz, stock]) => {
+      setStats({
+        total: lanz.length,
+        visibles: lanz.filter(l => l.visible !== false).length,
+        modelos: Object.keys(stock).length,
+        productos: Object.values(stock).reduce((s, a) => s + a.length, 0),
+      });
+    });
+  }, []);
+
+  async function publish() {
+    if (!confirm('Esto genera el archivo de datos, hace commit en GitHub y despliega en Vercel. ¿Continuar?')) return;
+    setLoading(true); setResult(null);
+    try {
+      const data = await apiFetch('/api/publish', { token, method: 'POST' });
+      setResult({ ok: true, ...data });
+      toast('Publicado correctamente. Vercel desplegará en ~1–2 min.');
+    } catch (err) {
+      setResult({ ok: false, error: err.message });
+      toast('Error al publicar: ' + err.message, 'err');
+    } finally { setLoading(false); }
+  }
+
+  return (
+    <div>
+      <div className="main-header">
+        <div>
+          <h1 className="main-title">Publicar en vivo</h1>
+          <p className="main-sub">Genera datos, commitea a GitHub y despliega en Vercel</p>
+        </div>
+      </div>
+      <div className="main-body">
+
+        {/* Stats */}
+        {stats && (
+          <div className="stats-grid" style={{ marginBottom:28 }}>
+            {[
+              { icon:'📰', val:stats.total,    label:'Lanzamientos totales' },
+              { icon:'👁', val:stats.visibles, label:'Se publicarán',        sub:'Visibles en el sitio' },
+              { icon:'📦', val:stats.modelos,  label:'Modelos con stock' },
+              { icon:'👟', val:stats.productos,label:'Productos en stock' },
+            ].map(s => (
+              <div key={s.label} className="stat-card">
+                <div className="stat-icon">{s.icon}</div>
+                <div className="stat-val">{s.val}</div>
+                <div className="stat-label">{s.label}</div>
+                {s.sub && <div className="stat-sub">{s.sub}</div>}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Steps */}
+        <div style={{ background:'var(--bg-2)',border:'1px solid var(--line)',padding:'16px 20px',marginBottom:24 }}>
+          <div style={{ fontSize:9,fontWeight:700,letterSpacing:'.2em',textTransform:'uppercase',color:'var(--muted)',marginBottom:14 }}>Qué hace al publicar</div>
+          <div className="pub-steps">
+            {[
+              ['Genera', 'src/articles-data.jsx con todos los artículos visibles y el stock actual.'],
+              ['Commitea', 'El archivo generado en el repositorio de GitHub con timestamp.'],
+              ['Despliega', 'GitHub Actions detecta el push y Vercel hace el deploy automático (~1–2 min).'],
+            ].map(([t, d]) => (
+              <div key={t} className="pub-step">
+                <div className="step-n">{['1','2','3'][['Genera','Commitea','Despliega'].indexOf(t)]}</div>
+                <div><div className="step-t">{t}</div><div className="step-d">{d}</div></div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Result */}
+        {result && (
+          <div style={{ marginBottom:20 }}>
+            {result.ok ? (
+              <div className="alert alert-success">
+                <strong>✅ Publicado</strong> · {result.lanzamientos} lanzamiento{result.lanzamientos!==1?'s':''} · {result.modelos} modelo{result.modelos!==1?'s':''} con stock
+                <div style={{ fontSize:11,opacity:.75,marginTop:4 }}>Vercel desplegará en ~1–2 minutos.</div>
+              </div>
+            ) : (
+              <div className="alert alert-error"><strong>❌ Error:</strong> {result.error}</div>
+            )}
+          </div>
+        )}
+
+        {/* CTA */}
+        <div style={{ display:'flex',justifyContent:'center',padding:'28px 0' }}>
+          <button className="btn btn-green btn-lg" onClick={publish} disabled={loading} style={{ minWidth:240,gap:10 }}>
+            {loading
+              ? <><span className="spin spin-dark" />Publicando…</>
+              : '🚀 Publicar en vivo'
+            }
+          </button>
+        </div>
+
+        <div style={{ borderTop:'1px solid var(--line)',paddingTop:16 }}>
+          <p style={{ fontSize:12,color:'var(--muted)',lineHeight:1.7 }}>
+            <strong style={{ color:'var(--dim)' }}>Requisitos:</strong> Variables de entorno{' '}
+            <code style={{ fontFamily:'var(--mono)',fontSize:11 }}>GITHUB_TOKEN</code>,{' '}
+            <code style={{ fontFamily:'var(--mono)',fontSize:11 }}>GITHUB_REPO</code> y{' '}
+            <code style={{ fontFamily:'var(--mono)',fontSize:11 }}>GITHUB_BRANCH</code> en Railway.
+            GitHub Actions necesita <code style={{ fontFamily:'var(--mono)',fontSize:11 }}>VERCEL_TOKEN</code>,{' '}
+            <code style={{ fontFamily:'var(--mono)',fontSize:11 }}>VERCEL_ORG_ID</code> y{' '}
+            <code style={{ fontFamily:'var(--mono)',fontSize:11 }}>VERCEL_PROJECT_ID</code>.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Dashboard (layout + router) ──────────────────────────────────
 function Dashboard({ token, onLogout }) {
-  const [tab, setTab] = useState('lanzamientos');
+  const [tab, setTab]     = useState('dashboard');
+  const [stockMap, setStockMap] = useState({});
 
   async function logout() {
     try { await apiFetch('/api/logout', { token, method: 'POST' }); } catch {}
@@ -1235,30 +1521,30 @@ function Dashboard({ token, onLogout }) {
   }
 
   const NAV = [
+    { id: 'dashboard',    icon: '📊', label: 'Dashboard'  },
     { id: 'lanzamientos', icon: '📰', label: 'Lanzamientos' },
-    { id: 'stock',        icon: '📦', label: 'Stock' },
-    { id: 'publicar',     icon: '🚀', label: 'Publicar' },
+    { id: 'destacados',   icon: '⭐', label: 'Carrusel'   },
+    { id: 'stock',        icon: '📦', label: 'Stock'       },
+    { id: 'publicar',     icon: '🚀', label: 'Publicar'    },
   ];
 
   return (
     <div className="layout">
       <aside className="sidebar">
         <div className="sidebar-logo">
-          <div className="sidebar-logo-label">Admin</div>
-          <div className="sidebar-logo-name">Botines Alta Gama</div>
+          <div className="sidebar-brand">BAGCBA</div>
+          <div className="sidebar-lbl">Admin Panel</div>
         </div>
         <nav className="sidebar-nav">
           {NAV.map(n => (
-            <button
-              key={n.id}
-              className={`nav-item ${tab === n.id ? 'active' : ''}`}
-              onClick={() => setTab(n.id)}
-            >
+            <button key={n.id} className={`nav-item ${tab === n.id ? 'active' : ''}`}
+              onClick={() => setTab(n.id)}>
               <span className="nav-icon">{n.icon}</span>
               <span>{n.label}</span>
             </button>
           ))}
-          <a href="/index.html" target="_blank" className="nav-item" style={{ display: 'flex', color: 'var(--muted)' }}>
+          <div style={{ height:1, background:'var(--line)', margin:'8px 0' }} />
+          <a href="/index.html" target="_blank" rel="noopener" className="nav-item" style={{ color:'var(--muted)' }}>
             <span className="nav-icon">↗</span>
             <span>Ver sitio</span>
           </a>
@@ -1270,16 +1556,17 @@ function Dashboard({ token, onLogout }) {
       </aside>
 
       <main className="main">
-        {tab === 'lanzamientos' && <LanzamientosTab token={token} />}
-        {tab === 'stock'        && <StockTab token={token} />}
-        {tab === 'publicar'     && <PublicarTab token={token} />}
+        {tab === 'dashboard'    && <DashboardTab    token={token} onNavigate={setTab} />}
+        {tab === 'lanzamientos' && <LanzamientosTab token={token} stockMap={stockMap} />}
+        {tab === 'destacados'   && <DestacadosTab   token={token} />}
+        {tab === 'stock'        && <StockTab        token={token} onStockChange={setStockMap} />}
+        {tab === 'publicar'     && <PublicarTab      token={token} />}
       </main>
     </div>
   );
 }
 
-// ── Root ──────────────────────────────────────────────────────
-
+// ── Root ─────────────────────────────────────────────────────────
 function AdminApp() {
   const [token, setToken] = useToken();
   const [checking, setChecking] = useState(true);
@@ -1291,16 +1578,20 @@ function AdminApp() {
       .catch(() => { setToken(null); setChecking(false); });
   }, []);
 
-  if (checking) {
-    return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <span className="spinner" style={{ width: 28, height: 28, borderWidth: 3 }} />
-      </div>
-    );
-  }
+  if (checking) return (
+    <div style={{ minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center' }}>
+      <span className="spin" style={{ width:28,height:28,borderWidth:3 }} />
+    </div>
+  );
 
-  if (!token) return <LoginPage onLogin={setToken} />;
-  return <Dashboard token={token} onLogout={() => setToken(null)} />;
+  return (
+    <ToastProvider>
+      {!token
+        ? <LoginPage onLogin={setToken} />
+        : <Dashboard token={token} onLogout={() => setToken(null)} />
+      }
+    </ToastProvider>
+  );
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(<AdminApp />);

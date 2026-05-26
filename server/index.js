@@ -115,6 +115,7 @@ function normalizeLanzamiento(raw) {
     descripcionCorta: raw.descripcionCorta|| '',
     imagen:           raw.imagen          || '',
     destacado:        Boolean(raw.destacado),
+    visible:          raw.visible !== false,
     contenido,
     galeria,
     videoPortada:          raw.videoPortada          || '',
@@ -197,8 +198,11 @@ const BRANDS_INFO = [
 function generateArticlesDataJS(lanzamientos, stockRaw) {
   const ts = new Date().toISOString();
 
+  // Solo publicar artículos visibles (visible !== false)
+  const visibles = lanzamientos.filter(l => l.visible !== false);
+
   // Limpiar campos internos y normalizar galería → preservar {type,url,size,layout} para video
-  const articles = lanzamientos.map(l => {
+  const articles = visibles.map(l => {
     const { _id, ...rest } = l;
     rest.galeria = Array.isArray(rest.galeria)
       ? rest.galeria.map(g => {
@@ -400,8 +404,11 @@ app.get('/api/me', requireAuth, (req, res) => {
 });
 
 // ── Lanzamientos CRUD ───────────────────────────────────────────────
-app.get('/api/lanzamientos', (_req, res) => {
-  res.json(readJSON(LANZ_FILE, []));
+app.get('/api/lanzamientos', (req, res) => {
+  const all = readJSON(LANZ_FILE, []);
+  // Admin (con token válido) ve todos; el público solo los visibles
+  const isAdmin = req.headers['x-admin-token'] && verifyToken(req.headers['x-admin-token']);
+  res.json(isAdmin ? all : all.filter(l => l.visible !== false));
 });
 
 app.post('/api/lanzamientos', requireAuth, (req, res) => {
@@ -419,6 +426,19 @@ app.post('/api/lanzamientos', requireAuth, (req, res) => {
   items.unshift(nuevo);
   writeJSON(LANZ_FILE, items);
   res.status(201).json(nuevo);
+});
+
+// Toggle rápido de campos booleanos (visible / destacado) sin PUT completo
+app.patch('/api/lanzamientos/:slug', requireAuth, (req, res) => {
+  const items = readJSON(LANZ_FILE, []);
+  const idx   = items.findIndex(l => l.slug === req.params.slug);
+  if (idx === -1) return res.status(404).json({ error: 'No encontrado' });
+  const allowed = ['visible', 'destacado'];
+  for (const key of allowed) {
+    if (key in req.body) items[idx][key] = Boolean(req.body[key]);
+  }
+  writeJSON(LANZ_FILE, items);
+  res.json(items[idx]);
 });
 
 app.put('/api/lanzamientos/:slug', requireAuth, (req, res) => {
@@ -523,7 +543,7 @@ app.post('/api/publish', requireAuth, async (req, res) => {
 
     res.json({
       ok:           true,
-      lanzamientos: lanzamientos.length,
+      lanzamientos: lanzamientos.filter(l => l.visible !== false).length,
       modelos:      Object.keys(stock).length,
       timestamp:    new Date().toISOString(),
       mode,
